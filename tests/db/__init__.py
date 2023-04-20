@@ -40,7 +40,6 @@ def populate(count: int = NUM_TEST_USERS):
     for username, email in gen_test_items(count):
         m.User(
             username=username,
-            email=email,
         ).save(False)
 
     db.session.commit()

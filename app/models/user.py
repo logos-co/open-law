@@ -22,12 +22,8 @@ class User(db.Model, UserMixin, ModelMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(60), unique=True, nullable=False)
-    email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), default="")
-    activated = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
-    unique_id = db.Column(db.String(36), default=gen_password_reset_id)
-    reset_password_uid = db.Column(db.String(64), default=gen_password_reset_id)
 
     @hybrid_property
     def password(self):
@@ -40,10 +36,7 @@ class User(db.Model, UserMixin, ModelMixin):
     @classmethod
     def authenticate(cls, user_id, password):
         user = cls.query.filter(
-            db.or_(
-                func.lower(cls.username) == func.lower(user_id),
-                func.lower(cls.email) == func.lower(user_id),
-            )
+            func.lower(cls.username) == func.lower(user_id),
         ).first()
         if not user:
             log(log.WARNING, "user:[%s] not found", user_id)
@@ -51,13 +44,8 @@ class User(db.Model, UserMixin, ModelMixin):
         if user is not None and check_password_hash(user.password, password):
             return user
 
-    def reset_password(self):
-        self.password_hash = ""
-        self.reset_password_uid = gen_password_reset_id()
-        self.save()
-
     def __repr__(self):
-        return f"<{self.id}: {self.username},{self.email}>"
+        return f"<{self.id}: {self.username}>"
 
     @property
     def json(self):

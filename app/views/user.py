@@ -23,7 +23,7 @@ def get_all():
     q = request.args.get("q", type=str, default=None)
     users = m.User.query.order_by(m.User.id)
     if q:
-        users = users.filter(m.User.username.like(f"{q}%") | m.User.email.like(f"{q}%"))
+        users = users.filter(m.User.username.like(f"{q}%"))
 
     pagination = create_pagination(total=users.count())
 
@@ -45,7 +45,6 @@ def save():
             log(log.ERROR, "Not found user by id : [%s]", form.user_id.data)
             flash("Cannot save user data", "danger")
         u.username = form.username.data
-        u.email = form.email.data
         u.activated = form.activated.data
         if form.password.data.strip("*\n "):
             u.password = form.password.data
@@ -67,7 +66,6 @@ def create():
     if form.validate_on_submit():
         user = m.User(
             username=form.username.data,
-            email=form.email.data,
             password=form.password.data,
             activated=form.activated.data,
         )
