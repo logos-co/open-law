@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>{{ config.APP_NAME }}</title>
     <!-- meta -->
-    <meta name="description" content="Simple2B Flask App" />
+    <meta name="description" content="OpenLaw Flask App" />
     <meta name="author" content="Simple2B" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
@@ -16,13 +16,13 @@
     <script>
       // On page load or when changing themes, best to add inline in `head` to avoid FOUC
       if (
-        localStorage.getItem("color-theme") === "dark" ||
-        (!("color-theme" in localStorage) &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches)
+        localStorage.getItem('color-theme') === 'dark' ||
+        (!('color-theme' in localStorage) &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches)
       ) {
-        document.documentElement.classList.add("dark");
+        document.documentElement.classList.add('dark');
       } else {
-        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.remove('dark');
       }
     </script>
     <!-- prettier-ignore -->
