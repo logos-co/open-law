@@ -4,7 +4,7 @@ from flask.testing import FlaskClient
 
 from app import create_app, db
 from app import models as m
-from tests.utils import register
+from tests.utils import create
 
 
 @pytest.fixture()
@@ -27,7 +27,7 @@ def client(app: Flask):
 
         db.drop_all()
         db.create_all()
-        register()
+        create()
 
         yield client
         db.session.remove()

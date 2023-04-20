@@ -16,15 +16,6 @@ class BaseConfig(BaseSettings):
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
     WTF_CSRF_ENABLED: bool = False
 
-    # Mail config
-    MAIL_SERVER: str
-    MAIL_PORT: int
-    MAIL_USE_TLS: bool
-    MAIL_USE_SSL: bool
-    MAIL_USERNAME: str
-    MAIL_PASSWORD: str
-    MAIL_DEFAULT_SENDER: str
-
     # Super admin
     ADMIN_USERNAME: str
     ADMIN_EMAIL: str
