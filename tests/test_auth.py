@@ -1,4 +1,4 @@
-from tests.utils import login
+from tests.utils import login, create
 
 TEST_EMAIL = "test@gmail.com"
 
@@ -12,11 +12,11 @@ def test_auth_pages(client):
 
 def test_login_and_logout(client):
     # Access to logout view before login should fail.
-    response = login(client, "sam")
+    response = login(client)
     assert b"Login successful." in response.data
     # Incorrect login credentials should fail.
     response = login(client, "sam", "wrongpassword")
     assert b"Wrong user ID or password." in response.data
     # Correct credentials should login
-    response = login(client, "sam")
+    response = login(client)
     assert b"Login successful." in response.data
