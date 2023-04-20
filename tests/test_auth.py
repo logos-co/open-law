@@ -1,4 +1,4 @@
-from tests.utils import login, create
+from tests.utils import login
 
 TEST_EMAIL = "test@gmail.com"
 
