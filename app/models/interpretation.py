@@ -6,7 +6,7 @@ class Interpretation(BaseModel):
     __tablename__ = "interpretations"
 
     label = db.Column(db.String(1024), unique=False, nullable=False)
-    about = db.Column(db.Text, unique=False, nullable=False)
+    text = db.Column(db.Text, unique=False, nullable=False)
     marked = db.Column(db.Boolean, default=False)
 
     # Foreign keys
