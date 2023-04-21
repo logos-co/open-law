@@ -36,14 +36,6 @@ def test_create_admin(runner: FlaskCliRunner):
     assert m.User.query.filter_by(username=app.config["ADMIN_USERNAME"]).first()
 
 
-def test_populate_db(runner: FlaskCliRunner):
-    TEST_COUNT = 56
-    count_before = m.User.query.count()
-    res: Result = runner.invoke(args=["db-populate", "--count", f"{TEST_COUNT}"])
-    assert f"populated by {TEST_COUNT}" in res.stdout
-    assert (m.User.query.count() - count_before) == TEST_COUNT
-
-
 def test_delete_user(populate: FlaskClient):
     login(populate)
     users = m.User.query.all()

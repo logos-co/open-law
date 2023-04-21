@@ -4,7 +4,6 @@ from sqlalchemy import func
 from app import db
 from app import models as m
 
-
 faker = Faker()
 
 NUM_TEST_USERS = 100
@@ -34,12 +33,3 @@ def gen_test_items(num_objects: int) -> Generator[str, None, None]:
 
         # email formatting
         yield f"{first_name}{i}".lower(), f"{first_name}.{last_name}{i}@{company}.{dns_org}".lower()
-
-
-def populate(count: int = NUM_TEST_USERS):
-    for username, email in gen_test_items(count):
-        m.User(
-            username=username,
-        ).save(False)
-
-    db.session.commit()

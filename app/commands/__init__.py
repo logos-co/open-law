@@ -1,4 +1,3 @@
-import click
 from flask import Flask
 from app import models as m
 from app import db, forms
@@ -16,13 +15,12 @@ def init(app: Flask):
     if app.config["ENV"] != "production":
 
         @app.cli.command()
-        @click.option("--count", default=100, type=int)
-        def db_populate(count: int):
+        def db_populate():
             """Fill DB by dummy data."""
-            from tests.db import populate
+            from tests.db import create_dummy_data
 
-            populate(count)
-            print(f"DB populated by {count} instancies")
+            create_dummy_data()
+            print("Dummy data added")
 
     @app.cli.command("create-admin")
     def create_admin():

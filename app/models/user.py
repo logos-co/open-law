@@ -1,4 +1,3 @@
-from datetime import datetime
 from uuid import uuid4
 
 from flask_login import UserMixin, AnonymousUserMixin
@@ -7,7 +6,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
-from app.models.utils import ModelMixin
+from app.models.utils import BaseModel
 from app.logger import log
 from app import schema as s
 
@@ -16,14 +15,15 @@ def gen_password_reset_id() -> str:
     return str(uuid4())
 
 
-class User(db.Model, UserMixin, ModelMixin):
-
+class User(BaseModel, UserMixin):
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(60), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), default="")
-    created_at = db.Column(db.DateTime, default=datetime.now)
+
+    # Relationships
+    stars = db.relationship("Book", secondary="books_stars", back_populates="stars")
+    books = db.relationship("Book")
 
     @hybrid_property
     def password(self):

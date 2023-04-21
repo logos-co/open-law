@@ -6,7 +6,7 @@ from wtforms import (
     ValidationError,
     BooleanField,
 )
-from wtforms.validators import DataRequired, Email, Length, EqualTo
+from wtforms.validators import DataRequired, Length, EqualTo
 
 from app import models as m
 
