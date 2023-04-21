@@ -17,7 +17,7 @@ def init(app: Flask):
         @app.cli.command()
         def db_populate():
             """Fill DB by dummy data."""
-            from tests.db import create_dummy_data
+            from tests.db.create_dummy_data import create_dummy_data
 
             create_dummy_data()
             print("Dummy data added")
