@@ -1,4 +1,4 @@
 import './styles.css';
-import {initUsers} from './user';
+import {initBooks} from './books';
 
-initUsers();
+initBooks();
