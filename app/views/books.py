@@ -1,13 +1,11 @@
 from flask import (
     Blueprint,
     render_template,
-    request,
     flash,
     redirect,
     url_for,
 )
 from flask_login import login_required
-from app.controllers import create_pagination
 
 from app import models as m
 from app import forms as f
