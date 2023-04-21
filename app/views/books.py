@@ -18,18 +18,21 @@ bp = Blueprint("books", __name__, url_prefix="/books")
 
 @bp.route("/", methods=["GET"])
 def get_all():
-    q = request.args.get("q", type=str, default=None)
-    books = m.Book.query.order_by(m.Book.id)
-    if q:
-        books = books.filter(m.Book.label.like(f"{q}"))
+    # q = request.args.get("q", type=str, default=None)
+    # books = m.Book.query.order_by(m.Book.id)
+    # if q:
+    #     books = books.filter(m.Book.label.like(f"{q}"))
 
-    pagination = create_pagination(total=books.count())
+    # pagination = create_pagination(total=books.count())
 
+    # return render_template(
+    #     "books/index.html",
+    #     books=books.paginate(page=pagination.page, per_page=pagination.per_page),
+    #     page=pagination,
+    #     search_query=q,
+    # )
     return render_template(
         "books/index.html",
-        books=books.paginate(page=pagination.page, per_page=pagination.per_page),
-        page=pagination,
-        search_query=q,
     )
 
 
