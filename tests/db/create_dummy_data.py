@@ -114,14 +114,14 @@ def create_dummy_data():
 
     interpretation_1 = m.Interpretation(
         label="Dummy Interpretation 1 Label",
-        about="Dummy Interpretation 1 About",
+        text="Dummy Interpretation 1 About",
         section_id=section_1_1.id,
         user_id=user.id,
     ).save()
 
     interpretation_2 = m.Interpretation(
         label="Dummy Interpretation 2 Label",
-        about="Dummy Interpretation 2 About",
+        text="Dummy Interpretation 2 About",
         section_id=section_2_1_1.id,
         user_id=user.id,
         marked=True,
@@ -129,7 +129,7 @@ def create_dummy_data():
 
     interpretation_3 = m.Interpretation(
         label="Dummy Interpretation 3 Label",
-        about="Dummy Interpretation 3 About",
+        text="Dummy Interpretation 3 About",
         section_id=section_2_1_2.id,
         user_id=user.id,
         marked=True,
@@ -137,7 +137,7 @@ def create_dummy_data():
 
     m.Interpretation(
         label="Dummy Interpretation 4 Label",
-        about="Dummy Interpretation 4 About",
+        text="Dummy Interpretation 4 About",
         section_id=section_2_1_2.id,
         user_id=user.id,
     ).save()

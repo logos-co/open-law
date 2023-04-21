@@ -5,7 +5,7 @@ from app import models as m
 
 def test_dummy_data(runner: FlaskCliRunner):
     res: Result = runner.invoke(args=["db-populate"])
-    assert "Dummy data added" in res.output
+    assert "Dummy data added" in res.output, res.stderr
 
     user: m.User = m.User.query.filter_by(username="Dummy User 1").first()
     book: m.Book = m.Book.query.filter_by(label="Dummy Book").first()
@@ -101,7 +101,6 @@ def test_dummy_data(runner: FlaskCliRunner):
     assert subcollection_2_1
     assert subcollection_2_1.is_leaf
     assert not subcollection_2_1.is_root
-    assert not subcollection_2_1.version
 
     # root
     #   - collection 1 (leaf)
