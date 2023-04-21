@@ -11,7 +11,7 @@ class BaseConfig(BaseSettings):
     """Base configuration."""
 
     ENV: str = "base"
-    APP_NAME: str = "Simple Flask App"
+    APP_NAME: str = "Open Law"
     SECRET_KEY: str
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
     WTF_CSRF_ENABLED: bool = False
