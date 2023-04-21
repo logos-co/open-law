@@ -4,13 +4,6 @@ from app import db
 from app.models.utils import BaseModel
 
 
-# Table book_contributors {
-#   book_id int [ref: > books.id]
-#   user_id int [ref: > users.id]
-#   role contributors_role
-# }
-
-
 class BookContributor(BaseModel):
     __tablename__ = "book_contributors"
 
