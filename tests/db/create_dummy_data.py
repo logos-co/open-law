@@ -62,6 +62,7 @@ def create_dummy_data():
         label="Dummy SubCollection 2.1 Label",
         about="Dummy SubCollection 2.1 About",
         is_leaf=True,
+        version_id=unexported_version.id,
         parrent_id=collection_2.id,
     ).save()
 
@@ -79,6 +80,7 @@ def create_dummy_data():
         label="Dummy Section 1.1 Label",
         about="Dummy Section 1.1 About",
         collection_id=collection_1.id,
+        version_id=collection_1.version_id,
         user_id=user.id,
     ).save()
 
@@ -86,6 +88,7 @@ def create_dummy_data():
         label="Dummy Section 2.1.1 Label",
         about="Dummy Section 2.1.1 About",
         collection_id=subcollection_2_1.id,
+        version_id=unexported_version.id,
         user_id=user.id,
     ).save()
 
@@ -93,6 +96,7 @@ def create_dummy_data():
         label="Dummy Section 2.1.2 Label",
         about="Dummy Section 2.1.2 About",
         collection_id=subcollection_2_1.id,
+        version_id=unexported_version.id,
         user_id=user.id,
     ).save()
 
