@@ -5,10 +5,8 @@ TEST_ADMIN_EMAIL = "bob@test.com"
 TEST_ADMIN_PASSWORD = "password"
 
 
-def create(
-    username=TEST_ADMIN_NAME, email=TEST_ADMIN_EMAIL, password=TEST_ADMIN_PASSWORD
-):
-    user = User(username=username, email=email)
+def create(username=TEST_ADMIN_NAME, password=TEST_ADMIN_PASSWORD):
+    user = User(username=username)
     user.password = password
     user.save()
     return user.id

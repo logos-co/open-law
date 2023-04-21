@@ -97,8 +97,6 @@ function editUser(user: IUser) {
   input.value = user.username;
   input = document.querySelector('#user-edit-id');
   input.value = user.id.toString();
-  input = document.querySelector('#user-edit-email');
-  input.value = user.email;
   input = document.querySelector('#user-edit-password');
   input.value = '*******';
   input = document.querySelector('#user-edit-password_confirmation');

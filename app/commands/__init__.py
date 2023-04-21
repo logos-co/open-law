@@ -1,4 +1,3 @@
-import click
 from flask import Flask
 from app import models as m
 from app import db, forms
@@ -16,23 +15,23 @@ def init(app: Flask):
     if app.config["ENV"] != "production":
 
         @app.cli.command()
-        @click.option("--count", default=100, type=int)
-        def db_populate(count: int):
+        def db_populate():
             """Fill DB by dummy data."""
-            from tests.db import populate
+            from tests.db.create_dummy_data import create_dummy_data
 
-            populate(count)
-            print(f"DB populated by {count} instancies")
+            create_dummy_data()
+            print("Dummy data added")
 
     @app.cli.command("create-admin")
     def create_admin():
         """Create super admin account"""
-        if m.User.query.filter_by(email=app.config["ADMIN_EMAIL"]).first():
-            print(f"User with e-mail: [{app.config['ADMIN_EMAIL']}] already exists")
+        if m.User.query.filter_by(username=app.config["ADMIN_USERNAME"]).first():
+            print(
+                f"User with username: [{app.config['ADMIN_USERNAME']}] already exists"
+            )
             return
         m.User(
             username=app.config["ADMIN_USERNAME"],
-            email=app.config["ADMIN_EMAIL"],
             password=app.config["ADMIN_PASSWORD"],
         ).save()
         print("admin created")
