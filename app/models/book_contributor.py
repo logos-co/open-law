@@ -8,7 +8,7 @@ class BookContributor(BaseModel):
     __tablename__ = "book_contributors"
 
     class Roles(IntEnum):
-        UNKNOWN = 10
+        UNKNOWN = 0
         MODERATOR = 1
         EDITOR = 2
 
