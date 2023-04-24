@@ -21,6 +21,7 @@ class BookVersion(BaseModel):
     book = db.relationship("Book", viewonly=True)
     derivative = db.relationship("BookVersion", remote_side=[id])
     sections = db.relationship("Section", viewonly=True)
+    collections = db.relationship("Collection", viewonly=True)
 
     def __repr__(self):
         return f"<{self.id}: {self.semver}>"

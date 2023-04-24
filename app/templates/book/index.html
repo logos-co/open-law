@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5">
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 mr-64">
   <!-- prettier-ignore -->
   <div class="flex border-b-2 border-gray-200 border-solid dark:border-gray-700 text-gray-900 dark:text-white dark:divide-gray-700">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
@@ -12,7 +12,7 @@
   {% for book in books %}
   <!-- prettier-ignore -->
   <dl class="max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-    <a class="flex flex-col pb-2" href="{{url_for('book.view',book_id=book.id)}}">
+    <a class="flex flex-col pb-2" href="{{url_for('book.collection_view',book_id=book.id)}}">
       <dt class="mb-2"> {{book.owner.username}}/{{book.label}} </dt>
       <dd class=" flex text-lg font-semibold  text-gray-500 md:text-lg dark:text-gray-400">Last updated on  {{book.versions[-1].updated_at.strftime('%B %d, %Y')}} 
         <div class="flex ml-auto w-1/4 align-center justify-center">
