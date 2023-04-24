@@ -26,7 +26,7 @@ def get_all():
     pagination = create_pagination(total=books.count())
 
     return render_template(
-        "books/index.html",
+        "book/index.html",
         books=books.paginate(page=pagination.page, per_page=pagination.per_page),
         page=pagination,
         search_query=q,
@@ -56,4 +56,4 @@ def view(book_id):
         flash("Book not found", "danger")
         return redirect(url_for("book.get_all"))
     else:
-        return render_template("books/view.html", book=b)
+        return render_template("book/view.html", book=b)
