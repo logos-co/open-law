@@ -58,3 +58,25 @@ def test_create_book(client: FlaskClient):
     book = m.Book.query.filter_by(label=BOOK_NAME).first()
 
     assert book
+    assert book.versions
+    assert len(book.versions) == 1
+
+
+# def test_add_c(client: FlaskClient):
+#     login(client)
+
+
+#     response: Response = client.post(
+#         "/book/create",
+#         data=dict(
+#             label=BOOK_NAME,
+#         ),
+#         follow_redirects=True,
+#     )
+
+#     assert response.status_code == 200
+#     assert b"Book added!" in response.data
+
+#     book = m.Book.query.filter_by(label=BOOK_NAME).first()
+
+#     assert book

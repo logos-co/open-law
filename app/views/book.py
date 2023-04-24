@@ -37,8 +37,10 @@ def create():
             label=form.label.data,
         )
         log(log.INFO, "Form submitted. Book: [%s]", book)
-        flash("Book added!", "success")
         book.save()
+        m.BookVersion(semver="1.0.0", book_id=book.id).save()
+
+        flash("Book added!", "success")
         return redirect(url_for("book.get_all"))
     else:
         log(log.ERROR, "Book create errors: [%s]", form.errors)
