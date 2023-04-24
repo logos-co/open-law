@@ -1,17 +1,11 @@
-from flask import (
-    Blueprint,
-    render_template,
-    flash,
-    redirect,
-    url_for,
-)
+from flask import Blueprint, render_template, flash, redirect, url_for
 from flask_login import login_required
 
 from app import models as m
 from app import forms as f
 from app.logger import log
 
-bp = Blueprint("books", __name__, url_prefix="/books")
+bp = Blueprint("book", __name__, url_prefix="/book")
 
 
 @bp.route("/", methods=["GET"])
@@ -37,12 +31,19 @@ def get_all():
 @bp.route("/create", methods=["POST"])
 @login_required
 def create():
-    form = f.NewBookForm()
+    form = f.CreateBookForm()
     if form.validate_on_submit():
         book = m.Book(
             label=form.label.data,
         )
-        log(log.INFO, "Form submitted. User: [%s]", book)
+        log(log.INFO, "Form submitted. Book: [%s]", book)
         flash("Book added!", "success")
         book.save()
-        return redirect(url_for("books.get_all"))
+        return redirect(url_for("book.get_all"))
+    else:
+        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(url_for("book.get_all"))
