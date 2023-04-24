@@ -40,6 +40,47 @@ def test_delete_user(populate: FlaskClient):
     login(populate)
     users = m.User.query.all()
     uc = len(users)
-    response = populate.delete("/user/delete/1")
+    response = populate.get("/user/delete/1")
     assert m.User.query.count() < uc
     assert response.status_code == 200
+
+
+def test_search_user(populate: FlaskClient):
+    login(populate)
+    MAX_SEARCH_RESULTS = populate.application.config["MAX_SEARCH_RESULTS"]
+
+    response = populate.get("/user/search")
+    assert response.status_code == 422
+    assert response.json["message"] == "q parameter is required"
+
+    q = "user"
+
+    response = populate.get(f"/user/search?q={q}")
+    assert response.json
+
+    users = response.json.get("users")
+    assert users
+    assert len(users) <= MAX_SEARCH_RESULTS
+
+    for user in users:
+        assert q in user["username"]
+
+    q = "user1"
+
+    response = populate.get(f"/user/search?q={q}")
+    assert response.json
+
+    users = response.json.get("users")
+    assert users
+    assert len(users) <= MAX_SEARCH_RESULTS
+
+    user = users[0]
+    assert user["username"] == q
+
+    q = "booboo"
+
+    response = populate.get(f"/user/search?q={q}")
+    assert response.json
+
+    users = response.json.get("users")
+    assert not users

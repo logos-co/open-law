@@ -1,19 +1,13 @@
-from flask import (
-    Blueprint,
-    render_template,
-    request,
-    flash,
-    redirect,
-    url_for,
-)
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required
 from app.controllers import create_pagination
 
 from app import models as m, db
 from app import forms as f
 from app.logger import log
+from config import config
 
-
+configuration = config()
 bp = Blueprint("user", __name__, url_prefix="/user")
 
 
@@ -89,3 +83,17 @@ def delete(id):
     log(log.INFO, "User deleted. User: [%s]", u)
     flash("User deleted!", "success")
     return "ok", 200
+
+
+@bp.route("/search", methods=["GET"])
+@login_required
+def search():
+    q = request.args.get("q", type=str, default=None)
+    if not q:
+        return jsonify({"message": "q parameter is required"}), 422
+
+    users = m.User.query.order_by(m.User.username).filter(m.User.username.like(f"{q}%"))
+    users = users.limit(configuration.MAX_SEARCH_RESULTS)
+    users = [{"username": user.username, "id": user.id} for user in users.all()]
+
+    return jsonify({"users": users})
