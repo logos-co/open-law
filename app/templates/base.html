@@ -74,10 +74,12 @@
     <!-- SideBar -->
     <!-- prettier-ignore -->
     {% include 'sidebar.html' %}
-    {% include 'right_sidebar.html' %}
+
+    {% block right_sidebar %} {% include 'right_sidebar.html' %} {% endblock %}
+
     {% include 'book/add_book_modal.html' %}
 
-    <div class="sm:mx-64 p-0 mt-16 h-full overflow-x-scroll">
+    <div class="ml-64 p-0 mt-16 h-full overflow-x-scroll">
       <!-- Main Content -->
       {% block content %}{% endblock %}
     </div>
