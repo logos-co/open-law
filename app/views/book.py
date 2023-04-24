@@ -23,7 +23,7 @@ def get_all():
     #     search_query=q,
     # )
     return render_template(
-        "books/index.html",
+        "book/index.html",
     )
 
 
@@ -48,6 +48,16 @@ def create():
             for error in errors:
                 flash(error.replace("Field", field_label), "danger")
         return redirect(url_for("book.get_all"))
+
+
+@bp.route("/<int:book_id>/settings", methods=["GET", "POST"])
+@login_required
+def settings(book_id):
+    book: m.Book = db.session.get(m.Book, book_id)
+
+    return render_template(
+        "book/settings.html", book=book, roles=m.BookContributor.Roles
+    )
 
 
 @bp.route("/<int:book_id>/add_contributor", methods=["POST"])

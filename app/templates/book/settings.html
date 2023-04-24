@@ -1,0 +1,45 @@
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+{% include 'book/add_contributor_modal.html' %}
+
+{% block content %}
+<!-- Hide right_sidebar -->
+<!-- prettier-ignore -->
+{% block right_sidebar %} {% endblock %}
+
+<div class="p-5">
+  <div class="flex justify-between ml-4 mb-2">
+    <h1 class="text-2xl font-extrabold dark:text-white">Contributors</h1>
+    <!-- prettier-ignore -->
+    <button
+      type="button" data-modal-target="add-contributor-modal" data-modal-toggle="add-contributor-modal"
+      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
+      Add
+    </button>
+  </div>
+
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <thead
+        class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3">Username</th>
+          <th scope="col" class="px-6 py-3">Role</th>
+          <th scope="col" class="px-6 py-3">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for contributor in book.contributors %}
+        <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+          <td class="px-6 py-4">{{ contributor.username }}</td>
+          <td class="px-6 py-4">{{ contributor.role.name }}</td>
+          <td class="px-6 py-4"></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
