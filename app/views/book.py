@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, flash, redirect, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 
-from app import models as m
-from app import forms as f
+from app import models as m, db, forms as f
 from app.logger import log
 
 bp = Blueprint("book", __name__, url_prefix="/book")
@@ -41,6 +40,32 @@ def create():
         m.BookVersion(semver="1.0.0", book_id=book.id).save()
 
         flash("Book added!", "success")
+        return redirect(url_for("book.get_all"))
+    else:
+        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(url_for("book.get_all"))
+
+
+@bp.route("/<int:book_id>/add_contributor", methods=["POST"])
+@login_required
+def add_contributor(book_id):
+    # TODO replace redirects to book.edit/settings
+    book: m.Book = db.session.get(m.Book, book_id)
+    if book.owner != current_user:
+        flash("You are not owner of this book!", "danger")
+        return redirect(url_for("book.get_all"))
+
+    form = f.AddContributorForm()
+
+    if form.validate_on_submit():
+        role = m.BookContributor.Roles(int(form.role.data))
+        m.BookContributor(user_id=form.user_id.data, book_id=book_id, role=role).save()
+
+        flash("Contributor was added!", "success")
         return redirect(url_for("book.get_all"))
     else:
         log(log.ERROR, "Book create errors: [%s]", form.errors)

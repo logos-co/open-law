@@ -62,21 +62,51 @@ def test_create_book(client: FlaskClient):
     assert len(book.versions) == 1
 
 
-# def test_add_c(client: FlaskClient):
-#     login(client)
+def test_add_contributor(client: FlaskClient):
+    _, user = login(client)
+    user: m.User
 
+    moderator = m.User(username="Moderator", password="test").save()
 
-#     response: Response = client.post(
-#         "/book/create",
-#         data=dict(
-#             label=BOOK_NAME,
-#         ),
-#         follow_redirects=True,
-#     )
+    moderators_book = m.Book(label="Test Book", user_id=moderator.id).save()
+    response: Response = client.post(
+        f"/book/{moderators_book.id}/add_contributor",
+        data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
+        follow_redirects=True,
+    )
 
-#     assert response.status_code == 200
-#     assert b"Book added!" in response.data
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
 
-#     book = m.Book.query.filter_by(label=BOOK_NAME).first()
+    book = m.Book(label="Test Book", user_id=user.id).save()
 
-#     assert book
+    response: Response = client.post(
+        f"/book/{book.id}/add_contributor",
+        data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Contributor was added!" in response.data
+
+    contributor: m.BookContributor = m.BookContributor.query.filter_by(
+        user=moderator, book=book
+    ).first()
+    assert contributor.role == m.BookContributor.Roles.MODERATOR
+    assert len(book.contributors) == 1
+
+    editor = m.User(username="Editor", password="test").save()
+    response: Response = client.post(
+        f"/book/{book.id}/add_contributor",
+        data=dict(user_id=editor.id, role=m.BookContributor.Roles.EDITOR),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Contributor was added!" in response.data
+
+    contributor: m.BookContributor = m.BookContributor.query.filter_by(
+        user=editor, book=book
+    ).first()
+    assert contributor.role == m.BookContributor.Roles.EDITOR
+    assert len(book.contributors) == 2
