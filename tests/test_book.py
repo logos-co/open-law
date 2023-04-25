@@ -153,3 +153,43 @@ def test_delete_contributor(client: FlaskClient, runner: FlaskCliRunner):
 
     assert response.status_code == 200
     assert b"Does not exists!" in response.data
+
+
+def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
+    _, user = login(client)
+    user: m.User
+
+    # add dummmy data
+    runner.invoke(args=["db-populate"])
+
+    book = db.session.get(m.Book, 1)
+    book.user_id = user.id
+    book.save()
+
+    contributors_len = len(book.contributors)
+    assert contributors_len
+
+    contributor_edit = book.contributors[0]
+
+    assert contributor_edit.role == m.BookContributor.Roles.MODERATOR
+
+    response: Response = client.post(
+        f"/book/{book.id}/edit_contributor_role",
+        data=dict(
+            user_id=contributor_edit.user_id,
+            role=m.BookContributor.Roles.MODERATOR.value,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Success!" in response.data
+
+    # response: Response = client.post(
+    #     f"/book/{book.id}/delete_contributor",
+    #     data=dict(user_id=contributor_to_delete.user_id),
+    #     follow_redirects=True,
+    # )
+
+    # assert response.status_code == 200
+    # assert b"Does not exists!" in response.data

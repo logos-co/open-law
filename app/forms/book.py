@@ -27,3 +27,16 @@ class DeleteContributorForm(FlaskForm):
     user_id = StringField("User ID", [DataRequired()])
 
     submit = SubmitField("Delete Contributor")
+
+
+class EditContributorRoleForm(FlaskForm):
+    user_id = StringField("User ID", [DataRequired()])
+    role = SelectField(
+        "Role",
+        choices=[
+            (member.value, name.capitalize())
+            for name, member in m.BookContributor.Roles.__members__.items()
+        ],
+    )
+
+    submit = SubmitField("Edit Contributor")

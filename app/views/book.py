@@ -122,3 +122,36 @@ def delete_contributor(book_id):
             for error in errors:
                 flash(error.replace("Field", field_label), "danger")
         return redirect(url_for("book.settings", book_id=book_id))
+
+
+@bp.route("/<int:book_id>/edit_contributor_role", methods=["POST"])
+@login_required
+def edit_contributor_role(book_id):
+    book: m.Book = db.session.get(m.Book, book_id)
+    if book.owner != current_user:
+        flash("You are not owner of this book!", "danger")
+        return redirect(url_for("book.get_all"))
+
+    form = f.EditContributorRoleForm()
+
+    if form.validate_on_submit():
+        book_contributor = m.BookContributor.query.filter_by(
+            user_id=int(form.user_id.data), book_id=book.id
+        ).first()
+        if not book_contributor:
+            flash("Does not exists!", "success")
+            return redirect(url_for("book.settings", book_id=book_id))
+
+        role = m.BookContributor.Roles(int(form.role.data))
+        book_contributor.role = role
+        book_contributor.save()
+
+        flash("Success!", "success")
+        return redirect(url_for("book.settings", book_id=book_id))
+    else:
+        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(url_for("book.settings", book_id=book_id))

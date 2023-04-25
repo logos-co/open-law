@@ -33,7 +33,27 @@
         {% for contributor in book.contributors %}
         <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
           <td class="px-6 py-4">{{ contributor.user.username }}</td>
-          <td class="px-6 py-4">{{ contributor.role.name.title() }}</td>
+          <td class="px-6 py-4">
+            <form action="{{ url_for('book.edit_contributor_role', book_id=book.id) }}" method="post" class="mb-0 shadow flex space-x-2">
+              <input type="hidden" name="user_id" id="user_id" value="{{ contributor.user_id }}" />
+              <select
+                id="role"
+                name="role"
+                data-user-id="{{ contributor.user.id }}"
+                class="contributor-role-select block w-1/2 py-1.5 px-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+
+                {% for role in roles if role.value %}
+                  <option
+                    {% if contributor.role == role %} selected {% endif %}
+                    value="{{ role.value }}">
+                    {{ role.name.title() }}
+                  </option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-1 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
+            </form>
+          </td>
           <td class="px-6 py-4">
             <!-- prettier-ignore -->
             <form action="{{ url_for('book.delete_contributor', book_id=book.id) }}" method="post" class="mb-0 shadow">
