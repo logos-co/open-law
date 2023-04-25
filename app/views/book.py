@@ -78,7 +78,7 @@ def sub_collection_view(book_id, collection_id):
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection:
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Book not found", "danger")
+        flash("Collection not found", "danger")
         return redirect(url_for("book.get_all"))
     if collection.is_leaf:
         return render_template(
@@ -103,7 +103,7 @@ def about_collection(book_id, collection_id):
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection:
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Book not found", "danger")
+        flash("Collection not found", "danger")
         return redirect(url_for("book.get_all"))
     else:
         return render_template(
@@ -123,12 +123,12 @@ def about_sub_collection(book_id, collection_id, sub_collection_id):
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection:
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Book not found", "danger")
+        flash("Collection not found", "danger")
         return redirect(url_for("book.get_all"))
     sub_collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection:
         log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-        flash("Book not found", "danger")
+        flash("Sub_collection not found", "danger")
         return redirect(url_for("book.get_all"))
 
     else:
@@ -150,12 +150,12 @@ def section_view(book_id, collection_id, sub_collection_id):
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection:
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Book not found", "danger")
+        flash("Collection not found", "danger")
         return redirect(url_for("book.get_all"))
     sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
     if not collection:
         log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-        flash("Book not found", "danger")
+        flash("Sub_collection not found", "danger")
         return redirect(url_for("book.get_all"))
     else:
         return render_template(

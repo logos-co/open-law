@@ -1,4 +1,6 @@
 import './styles.css';
 import {initBooks} from './books';
 
-initBooks();
+document.addEventListener('DOMContentLoaded', () => {
+  initBooks();
+});
