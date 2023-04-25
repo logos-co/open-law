@@ -57,17 +57,6 @@ def collection_view(book_id):
         return render_template("book/collection_view.html", book=book)
 
 
-@bp.route("/<int:book_id>/about", methods=["GET"])
-def about(book_id):
-    book = db.session.get(m.Book, book_id)
-    if not book:
-        log(log.WARNING, "Book with id [%s] not found", book_id)
-        flash("Book not found", "danger")
-        return redirect(url_for("book.get_all"))
-    else:
-        return render_template("book/about_book.html", book=book)
-
-
 @bp.route("/<int:book_id>/<int:collection_id>", methods=["GET"])
 def sub_collection_view(book_id, collection_id):
     book = db.session.get(m.Book, book_id)
@@ -90,53 +79,6 @@ def sub_collection_view(book_id, collection_id):
     else:
         return render_template(
             "book/sub_collection_view.html", book=book, collection=collection
-        )
-
-
-@bp.route("/<int:book_id>/<int:collection_id>/about", methods=["GET"])
-def about_collection(book_id, collection_id):
-    book = db.session.get(m.Book, book_id)
-    if not book:
-        log(log.WARNING, "Book with id [%s] not found", book_id)
-        flash("Book not found", "danger")
-        return redirect(url_for("book.get_all"))
-    collection: m.Collection = db.session.get(m.Collection, collection_id)
-    if not collection:
-        log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Collection not found", "danger")
-        return redirect(url_for("book.get_all"))
-    else:
-        return render_template(
-            "book/about_collection.html", book=book, collection=collection
-        )
-
-
-@bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/about", methods=["GET"]
-)
-def about_sub_collection(book_id, collection_id, sub_collection_id):
-    book = db.session.get(m.Book, book_id)
-    if not book:
-        log(log.WARNING, "Book with id [%s] not found", book_id)
-        flash("Book not found", "danger")
-        return redirect(url_for("book.get_all"))
-    collection: m.Collection = db.session.get(m.Collection, collection_id)
-    if not collection:
-        log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Collection not found", "danger")
-        return redirect(url_for("book.get_all"))
-    sub_collection: m.Collection = db.session.get(m.Collection, collection_id)
-    if not collection:
-        log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-        flash("Sub_collection not found", "danger")
-        return redirect(url_for("book.get_all"))
-
-    else:
-        return render_template(
-            "book/about_sub_collection.html",
-            book=book,
-            collection=collection,
-            sub_collection=sub_collection,
         )
 
 
@@ -163,4 +105,39 @@ def section_view(book_id, collection_id, sub_collection_id):
             book=book,
             collection=collection,
             sub_collection=sub_collection,
+        )
+
+
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/<int:section_id>",
+    methods=["GET"],
+)
+def interpretation_view(book_id, collection_id, sub_collection_id, section_id):
+    book = db.session.get(m.Book, book_id)
+    if not book:
+        log(log.WARNING, "Book with id [%s] not found", book_id)
+        flash("Book not found", "danger")
+        return redirect(url_for("book.get_all"))
+    collection: m.Collection = db.session.get(m.Collection, collection_id)
+    if not collection:
+        log(log.WARNING, "Collection with id [%s] not found", collection_id)
+        flash("Collection not found", "danger")
+        return redirect(url_for("book.get_all"))
+    sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+    if not collection:
+        log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
+        flash("Sub_collection not found", "danger")
+        return redirect(url_for("book.get_all"))
+    section: m.Section = db.session.get(m.Section, section_id)
+    if not section:
+        log(log.WARNING, "Section with id [%s] not found", section_id)
+        flash("Section not found", "danger")
+        return redirect(url_for("book.get_all"))
+    else:
+        return render_template(
+            "book/interpretation_view.html",
+            book=book,
+            collection=collection,
+            sub_collection=sub_collection,
+            section=section,
         )
