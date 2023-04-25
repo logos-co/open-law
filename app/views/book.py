@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, redirect, url_for
+from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
 
 from app import models as m, db, forms as f
@@ -72,15 +72,22 @@ def add_contributor(book_id):
     form = f.AddContributorForm()
 
     if form.validate_on_submit():
+        book_contributor = m.BookContributor.query.filter_by(
+            user_id=form.user_id.data, book_id=book_id
+        ).first()
+        if book_contributor:
+            flash("Already exists!", "danger")
+            return redirect(url_for("book.settings", book_id=book_id))
+
         role = m.BookContributor.Roles(int(form.role.data))
         m.BookContributor(user_id=form.user_id.data, book_id=book_id, role=role).save()
 
         flash("Contributor was added!", "success")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.settings", book_id=book_id))
     else:
         log(log.ERROR, "Book create errors: [%s]", form.errors)
         for field, errors in form.errors.items():
             field_label = form._fields[field].label.text
             for error in errors:
                 flash(error.replace("Field", field_label), "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.settings", book_id=book_id))

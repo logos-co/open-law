@@ -88,6 +88,14 @@ def test_add_contributor(client: FlaskClient):
 
     assert response.status_code == 200
     assert b"Contributor was added!" in response.data
+    response: Response = client.post(
+        f"/book/{book.id}/add_contributor",
+        data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Already exists!" in response.data
 
     contributor: m.BookContributor = m.BookContributor.query.filter_by(
         user=moderator, book=book
