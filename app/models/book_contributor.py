@@ -23,4 +23,4 @@ class BookContributor(BaseModel):
     book = db.relationship("Book", viewonly=True)
 
     def __repr__(self):
-        return f"<{self.id}: {self.label}>"
+        return f"<{self.id}: u:{self.user_id} b:{self.book_id}>"

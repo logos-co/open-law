@@ -64,7 +64,8 @@ def settings(book_id):
 @login_required
 def add_contributor(book_id):
     book: m.Book = db.session.get(m.Book, book_id)
-    if book.owner != current_user:
+    if not book or book.owner != current_user:
+        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
         return redirect(url_for("book.get_all"))
 
@@ -75,11 +76,16 @@ def add_contributor(book_id):
             user_id=form.user_id.data, book_id=book_id
         ).first()
         if book_contributor:
+            log(log.INFO, "Contributor: [%s] already exists", book_contributor)
             flash("Already exists!", "danger")
             return redirect(url_for("book.settings", book_id=book_id))
 
         role = m.BookContributor.Roles(int(form.role.data))
-        m.BookContributor(user_id=form.user_id.data, book_id=book_id, role=role).save()
+        contributor = m.BookContributor(
+            user_id=form.user_id.data, book_id=book_id, role=role
+        )
+        log(log.INFO, "New contributor [%s]", contributor)
+        contributor.save()
 
         flash("Contributor was added!", "success")
         return redirect(url_for("book.settings", book_id=book_id))
@@ -96,7 +102,8 @@ def add_contributor(book_id):
 @login_required
 def delete_contributor(book_id):
     book: m.Book = db.session.get(m.Book, book_id)
-    if book.owner != current_user:
+    if not book or book.owner != current_user:
+        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
         return redirect(url_for("book.get_all"))
 
@@ -107,9 +114,16 @@ def delete_contributor(book_id):
             user_id=int(form.user_id.data), book_id=book.id
         ).first()
         if not book_contributor:
+            log(
+                log.INFO,
+                "BookContributor does not exists user: [%s], book: [%s]",
+                form.user_id.data,
+                book.id,
+            )
             flash("Does not exists!", "success")
             return redirect(url_for("book.settings", book_id=book_id))
 
+        log(log.INFO, "Delete BookContributor [%s]", book_contributor)
         db.session.delete(book_contributor)
         db.session.commit()
 
@@ -128,7 +142,8 @@ def delete_contributor(book_id):
 @login_required
 def edit_contributor_role(book_id):
     book: m.Book = db.session.get(m.Book, book_id)
-    if book.owner != current_user:
+    if not book or book.owner != current_user:
+        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
         return redirect(url_for("book.get_all"))
 
@@ -139,11 +154,24 @@ def edit_contributor_role(book_id):
             user_id=int(form.user_id.data), book_id=book.id
         ).first()
         if not book_contributor:
+            log(
+                log.INFO,
+                "BookContributor does not exists user: [%s], book: [%s]",
+                form.user_id.data,
+                book.id,
+            )
             flash("Does not exists!", "success")
             return redirect(url_for("book.settings", book_id=book_id))
 
         role = m.BookContributor.Roles(int(form.role.data))
         book_contributor.role = role
+
+        log(
+            log.INFO,
+            "Update contributor [%s] role: new role: [%s]",
+            book_contributor,
+            role,
+        )
         book_contributor.save()
 
         flash("Success!", "success")
