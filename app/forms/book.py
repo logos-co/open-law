@@ -21,3 +21,9 @@ class AddContributorForm(FlaskForm):
     )
 
     submit = SubmitField("Add Contributor")
+
+
+class DeleteContributorForm(FlaskForm):
+    user_id = StringField("User ID", [DataRequired()])
+
+    submit = SubmitField("Delete Contributor")

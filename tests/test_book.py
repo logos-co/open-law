@@ -1,7 +1,7 @@
 from flask import current_app as Response
-from flask.testing import FlaskClient
+from flask.testing import FlaskClient, FlaskCliRunner
 
-from app import models as m
+from app import models as m, db
 from tests.utils import login
 
 
@@ -118,3 +118,38 @@ def test_add_contributor(client: FlaskClient):
     ).first()
     assert contributor.role == m.BookContributor.Roles.EDITOR
     assert len(book.contributors) == 2
+
+
+def test_delete_contributor(client: FlaskClient, runner: FlaskCliRunner):
+    _, user = login(client)
+    user: m.User
+
+    # add dummmy data
+    runner.invoke(args=["db-populate"])
+
+    book = db.session.get(m.Book, 1)
+    book.user_id = user.id
+    book.save()
+
+    contributors_len = len(book.contributors)
+    assert contributors_len
+
+    contributor_to_delete = book.contributors[0]
+
+    response: Response = client.post(
+        f"/book/{book.id}/delete_contributor",
+        data=dict(user_id=contributor_to_delete.user_id),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Success!" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/delete_contributor",
+        data=dict(user_id=contributor_to_delete.user_id),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Does not exists!" in response.data
