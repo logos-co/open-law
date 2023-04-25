@@ -6,14 +6,21 @@ const searchAndShowResults = async (
   userSearchbar: any,
   searchResultsTbody: any,
   trExample: any,
+  userIdInput: any,
 ) => {
   searchResultsTbody.innerHTML = '';
 
+  const bookId = userSearchbar.getAttribute("data-book-id")
   const searchQuery = userSearchbar.value
   if (!searchQuery.length) {
     return;
   }
-  const res = await fetch('/user/search?q=' + searchQuery);
+
+  const urlParams = new URLSearchParams({
+    q: searchQuery,
+    book_id: bookId
+  });
+  const res = await fetch('/user/search?' + urlParams);
   const json = await res.json();
 
   json.users.forEach((user: any) => {
@@ -22,9 +29,16 @@ const searchAndShowResults = async (
     const selectUserBtn = clone.querySelector('.select-user-btn');
     selectUserBtn.setAttribute('data-user-id', user.id);
     selectUserBtn.addEventListener('click', (e: any) => {
-      console.log('e', e.target);
-      userSearchBtn.setAttribute('disabled', true);
-      userSearchbar.setAttribute('disabled', true);
+      const allSelectBtns = document.querySelectorAll('.select-user-btn')
+      allSelectBtns.forEach(btn => {
+        btn.innerHTML = "Select"
+      });
+
+
+      const userId = e.target.getAttribute("data-user-id")
+      userIdInput.value = userId
+
+      selectUserBtn.innerHTML = "Selected"
     });
 
     const usernameTh = clone.querySelector('.username-th');
@@ -39,16 +53,20 @@ const searchAndShowResults = async (
 export function initContributors() {
   const searchBtn: HTMLButtonElement = document.querySelector('#search-btn');
   const userSearchbar: HTMLInputElement = document.querySelector('#username');
+  const userIdInput: HTMLInputElement = document.querySelector('#user_id');
 
   const searchResultsTbody = document.querySelector('#search-results-tbody');
   const trExample: HTMLTableRowElement = document.querySelector('#tr-example');
 
   searchBtn.addEventListener('click', async e => {
+    e.preventDefault()
+    userIdInput.value = ""
     await searchAndShowResults(
       searchBtn,
       userSearchbar
       searchResultsTbody,
       trExample,
+      userIdInput
     );
   });
 }

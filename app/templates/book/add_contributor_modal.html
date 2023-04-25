@@ -3,9 +3,9 @@
 <div id="add-contributor-modal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
   <div class="relative w-full max-w-2xl max-h-full">
     <!-- Modal content -->
-    <form action="{{ url_for('book.settings', book_id=book.id) }}" method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+    <form action="{{ url_for('book.add_contributor', book_id=book.id) }}" method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
 
-      <input type="hidden" name="user_id" id="user-edit-id" value="0" />
+      <input type="hidden" name="user_id" id="user_id" value="0" />
       <input type="hidden" name="" id="user-edit-next_url" value="" />
       <!-- Modal header -->
       <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -21,8 +21,8 @@
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
               </div>
-              <input id="username" type="search" id="default-search" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Mockups, Logos..." required>
-              <input id="search-btn" class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</input>
+              <input id="username" data-book-id="{{ book.id }}" type="search" id="default-search" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search users..." required>
+              <button id="search-btn" class="cursor-pointer select-none text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
             </div>
           </div>
 
@@ -31,7 +31,7 @@
           <div class="col-span-6 sm:col-span-3 overflow-x-auto shadow-md sm:rounded-lg" id="search-results">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <tbody id="search-results-tbody">
-                <tr id="tr-example" class="hidden bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <tr id="tr-example" class="hidden bg-white border-b dark:bg-gray-800 dark:border-gray-700 ">
                   <th scope="row" class="username-th px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   </th>
                   <th scope="row" class="px-6 py-1.5 font-medium text-gray-900 whitespace-nowrap dark:text-white flex justify-end">
@@ -45,8 +45,9 @@
         </div>
 
         <div>
-          <label for="roles" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Select an option</label >
-          <select id="roles" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          <label for="role" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Select an option</label >
+          <select id="role" name="role" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option selected> Select a role </option>
             {% for role in roles if role.value %}
               <option value="{{ role.value }}">{{ role.name.title() }}</option>
             {% endfor %}
