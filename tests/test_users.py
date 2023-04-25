@@ -1,7 +1,8 @@
 from flask import current_app as app
 from flask.testing import FlaskClient, FlaskCliRunner
 from click.testing import Result
-from app import models as m
+
+from app import models as m, db
 from tests.utils import login
 
 
@@ -40,12 +41,12 @@ def test_delete_user(populate: FlaskClient):
     login(populate)
     users = m.User.query.all()
     uc = len(users)
-    response = populate.get("/user/delete/1")
+    response = populate.delete("/user/delete/1")
     assert m.User.query.count() < uc
     assert response.status_code == 200
 
 
-def test_search_user(populate: FlaskClient):
+def test_search_user(populate: FlaskClient, runner: FlaskCliRunner):
     login(populate)
     MAX_SEARCH_RESULTS = populate.application.config["MAX_SEARCH_RESULTS"]
 
@@ -84,3 +85,18 @@ def test_search_user(populate: FlaskClient):
 
     users = response.json.get("users")
     assert not users
+
+    # add dummmy data
+    runner.invoke(args=["db-populate"])
+
+    response = populate.get("/user/search?q=dummy&book_id=1")
+    assert response.json
+
+    book_1 = db.session.get(m.Book, 1)
+    contributors_ids = [contributor.user_id for contributor in book_1.contributors]
+
+    users = response.json.get("users")
+    assert users
+    for user in users:
+        user_id = user.get("id")
+        assert user_id not in contributors_ids
