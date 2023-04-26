@@ -1,5 +1,15 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
+
+
+{% include 'book/add_collection_modal.html' %}
+
+
+{% block right_sidebar %}
+  {% include 'book/right_sidebar.html' %}
+{% endblock %}
+
+
 {% block content %}
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 md:mr-64">
   <!-- prettier-ignore -->
@@ -75,10 +85,9 @@
       <p class="text-sm text-gray-500 dark:text-gray-400"> This is about {{book.label}} </p>
     </div>
   </div>
-
-  <!-- prettier-ignore -->
-  {% endblock %}
-  <!-- prettier-ignore -->
-  {% block scripts %}
-{% endblock %}
 </div>
+<!-- prettier-ignore -->
+{% endblock %}
+<!-- prettier-ignore -->
+{% block scripts %}
+{% endblock %}
