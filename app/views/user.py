@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
-from flask_login import login_required
+from flask_login import login_required, current_user
 from app.controllers import create_pagination
 from sqlalchemy import not_
 
@@ -102,6 +102,7 @@ def search():
     if book_id:
         book_contributors = m.BookContributor.query.filter_by(book_id=book_id).all()
         user_ids = [contributor.user_id for contributor in book_contributors]
+        user_ids.append(current_user.id)
         query_user = query_user.filter(not_(m.User.id.in_(user_ids)))
     query_user = query_user.limit(configuration.MAX_SEARCH_RESULTS)
 
