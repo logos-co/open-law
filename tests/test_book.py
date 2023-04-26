@@ -218,11 +218,14 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
     collection: m.Collection = m.Collection.query.filter_by(
         label="Test Collection #1 Label"
     ).first()
+    m.Collection(
+        label="Test Collection #2 Label", version_id=collection.version_id
+    ).save()
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/edit",
         data=dict(
-            label="Test Collection #1 Label",
+            label="Test Collection #2 Label",
         ),
         follow_redirects=True,
     )
