@@ -184,12 +184,3 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
 
     assert response.status_code == 200
     assert b"Success!" in response.data
-
-    # response: Response = client.post(
-    #     f"/book/{book.id}/delete_contributor",
-    #     data=dict(user_id=contributor_to_delete.user_id),
-    #     follow_redirects=True,
-    # )
-
-    # assert response.status_code == 200
-    # assert b"Does not exists!" in response.data
