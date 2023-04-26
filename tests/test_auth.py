@@ -12,11 +12,11 @@ def test_auth_pages(client):
 
 def test_login_and_logout(client):
     # Access to logout view before login should fail.
-    response = login(client)
+    response, _ = login(client)
     assert b"Login successful." in response.data
     # Incorrect login credentials should fail.
-    response = login(client, "sam", "wrongpassword")
+    response, _ = login(client, "sam", "wrongpassword")
     assert b"Wrong user ID or password." in response.data
     # Correct credentials should login
-    response = login(client)
+    response, _ = login(client)
     assert b"Login successful." in response.data

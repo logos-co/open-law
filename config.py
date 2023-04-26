@@ -23,6 +23,7 @@ class BaseConfig(BaseSettings):
     # Pagination
     DEFAULT_PAGE_SIZE: int
     PAGE_LINKS_NUMBER: int
+    MAX_SEARCH_RESULTS: int
 
     @staticmethod
     def configure(app: Flask):

@@ -6,11 +6,11 @@ from flask import (
     url_for,
     request,
 )
-from flask_login import login_required
+from flask_login import login_required, current_user
 
-from app import db, models as m, forms as f
-from app.logger import log
 from app.controllers import create_pagination
+from app import models as m, db, forms as f
+from app.logger import log
 
 bp = Blueprint("book", __name__, url_prefix="/book")
 
@@ -18,7 +18,7 @@ bp = Blueprint("book", __name__, url_prefix="/book")
 @bp.route("/", methods=["GET"])
 def get_all():
     q = request.args.get("q", type=str, default=None)
-    books = m.Book.query.order_by(m.Book.id)
+    books: m.Book = m.Book.query.order_by(m.Book.id)
     if q:
         books = books.filter(m.Book.label.like(f"{q}"))
 
@@ -35,19 +35,28 @@ def get_all():
 @bp.route("/create", methods=["POST"])
 @login_required
 def create():
-    form = f.NewBookForm()
+    form = f.CreateBookForm()
     if form.validate_on_submit():
-        book = m.Book(
+        book: m.Book = m.Book(
             label=form.label.data,
         )
-        log(log.INFO, "Form submitted. User: [%s]", book)
-        flash("Book added!", "success")
+        log(log.INFO, "Form submitted. Book: [%s]", book)
         book.save()
+        m.BookVersion(semver="1.0.0", book_id=book.id).save()
+
+        flash("Book added!", "success")
+        return redirect(url_for("book.get_all"))
+    else:
+        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
         return redirect(url_for("book.get_all"))
 
 
 @bp.route("/<int:book_id>", methods=["GET"])
-def collection_view(book_id):
+def collection_view(book_id: int):
     book = db.session.get(m.Book, book_id)
     if not book:
         log(log.WARNING, "Book with id [%s] not found", book_id)
@@ -58,17 +67,18 @@ def collection_view(book_id):
 
 
 @bp.route("/<int:book_id>/<int:collection_id>", methods=["GET"])
-def sub_collection_view(book_id, collection_id):
-    book = db.session.get(m.Book, book_id)
+def sub_collection_view(book_id: int, collection_id: int):
+    book: m.Book = db.session.get(m.Book, book_id)
     if not book:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.get_all"))
+
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection:
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
         flash("Collection not found", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.collection_view", book_id=book_id))
     if collection.is_leaf:
         return render_template(
             "book/section_view.html",
@@ -83,22 +93,28 @@ def sub_collection_view(book_id, collection_id):
 
 
 @bp.route("/<int:book_id>/<int:collection_id>/<int:sub_collection_id>", methods=["GET"])
-def section_view(book_id, collection_id, sub_collection_id):
-    book = db.session.get(m.Book, book_id)
+def section_view(book_id: int, collection_id: int, sub_collection_id: int):
+    book: m.Book = db.session.get(m.Book, book_id)
     if not book:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.get_all"))
+
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection:
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
         flash("Collection not found", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.collection_view", book_id=book_id))
+
     sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-    if not collection:
+    if not sub_collection:
         log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
         flash("Sub_collection not found", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(
+            url_for(
+                "book.sub_collection_view", book_id=book_id, collection_id=collection_id
+            )
+        )
     else:
         return render_template(
             "book/section_view.html",
@@ -112,27 +128,43 @@ def section_view(book_id, collection_id, sub_collection_id):
     "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/<int:section_id>",
     methods=["GET"],
 )
-def interpretation_view(book_id, collection_id, sub_collection_id, section_id):
-    book = db.session.get(m.Book, book_id)
+def interpretation_view(
+    book_id: int, collection_id: int, sub_collection_id: int, section_id: int
+):
+    book: m.Book = db.session.get(m.Book, book_id)
     if not book:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.get_all"))
+
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection:
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
         flash("Collection not found", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.collection_view", book_id=book_id))
+
     sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-    if not collection:
+    if not sub_collection:
         log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
         flash("Sub_collection not found", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(
+            url_for(
+                "book.sub_collection_view", book_id=book_id, collection_id=collection_id
+            )
+        )
+
     section: m.Section = db.session.get(m.Section, section_id)
     if not section:
         log(log.WARNING, "Section with id [%s] not found", section_id)
         flash("Section not found", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(
+            url_for(
+                "book.section_view",
+                book_id=book_id,
+                collection_id=collection_id,
+                sub_collection_id=sub_collection_id,
+            )
+        )
     else:
         return render_template(
             "book/interpretation_view.html",
@@ -141,3 +173,138 @@ def interpretation_view(book_id, collection_id, sub_collection_id, section_id):
             sub_collection=sub_collection,
             section=section,
         )
+
+
+@bp.route("/<int:book_id>/settings", methods=["GET"])
+@login_required
+def settings(book_id: int):
+    book: m.Book = db.session.get(m.Book, book_id)
+
+    return render_template(
+        "book/settings.html", book=book, roles=m.BookContributor.Roles
+    )
+
+
+@bp.route("/<int:book_id>/add_contributor", methods=["POST"])
+@login_required
+def add_contributor(book_id: int):
+    book: m.Book = db.session.get(m.Book, book_id)
+    if not book or book.owner != current_user:
+        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
+        flash("You are not owner of this book!", "danger")
+        return redirect(url_for("book.get_all"))
+
+    form = f.AddContributorForm()
+
+    if form.validate_on_submit():
+        book_contributor = m.BookContributor.query.filter_by(
+            user_id=form.user_id.data, book_id=book_id
+        ).first()
+        if book_contributor:
+            log(log.INFO, "Contributor: [%s] already exists", book_contributor)
+            flash("Already exists!", "danger")
+            return redirect(url_for("book.settings", book_id=book_id))
+
+        role = m.BookContributor.Roles(int(form.role.data))
+        contributor = m.BookContributor(
+            user_id=form.user_id.data, book_id=book_id, role=role
+        )
+        log(log.INFO, "New contributor [%s]", contributor)
+        contributor.save()
+
+        flash("Contributor was added!", "success")
+        return redirect(url_for("book.settings", book_id=book_id))
+    else:
+        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(url_for("book.settings", book_id=book_id))
+
+
+@bp.route("/<int:book_id>/delete_contributor", methods=["POST"])
+@login_required
+def delete_contributor(book_id: int):
+    book: m.Book = db.session.get(m.Book, book_id)
+    if not book or book.owner != current_user:
+        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
+        flash("You are not owner of this book!", "danger")
+        return redirect(url_for("book.get_all"))
+
+    form = f.DeleteContributorForm()
+
+    if form.validate_on_submit():
+        book_contributor = m.BookContributor.query.filter_by(
+            user_id=int(form.user_id.data), book_id=book.id
+        ).first()
+        if not book_contributor:
+            log(
+                log.INFO,
+                "BookContributor does not exists user: [%s], book: [%s]",
+                form.user_id.data,
+                book.id,
+            )
+            flash("Does not exists!", "success")
+            return redirect(url_for("book.settings", book_id=book_id))
+
+        log(log.INFO, "Delete BookContributor [%s]", book_contributor)
+        db.session.delete(book_contributor)
+        db.session.commit()
+
+        flash("Success!", "success")
+        return redirect(url_for("book.settings", book_id=book_id))
+    else:
+        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(url_for("book.settings", book_id=book_id))
+
+
+@bp.route("/<int:book_id>/edit_contributor_role", methods=["POST"])
+@login_required
+def edit_contributor_role(book_id: int):
+    book: m.Book = db.session.get(m.Book, book_id)
+    if not book or book.owner != current_user:
+        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
+        flash("You are not owner of this book!", "danger")
+        return redirect(url_for("book.get_all"))
+
+    form = f.EditContributorRoleForm()
+
+    if form.validate_on_submit():
+        book_contributor = m.BookContributor.query.filter_by(
+            user_id=int(form.user_id.data), book_id=book.id
+        ).first()
+        if not book_contributor:
+            log(
+                log.INFO,
+                "BookContributor does not exists user: [%s], book: [%s]",
+                form.user_id.data,
+                book.id,
+            )
+            flash("Does not exists!", "success")
+            return redirect(url_for("book.settings", book_id=book_id))
+
+        role = m.BookContributor.Roles(int(form.role.data))
+        book_contributor.role = role
+
+        log(
+            log.INFO,
+            "Update contributor [%s] role: new role: [%s]",
+            book_contributor,
+            role,
+        )
+        book_contributor.save()
+
+        flash("Success!", "success")
+        return redirect(url_for("book.settings", book_id=book_id))
+    else:
+        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(url_for("book.settings", book_id=book_id))

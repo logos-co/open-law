@@ -25,6 +25,9 @@
         document.documentElement.classList.remove('dark');
       }
     </script>
+
+    <!-- prettier-ignore -->
+    <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript"></script>
     <!-- prettier-ignore -->
     {% block links %}
     {% endblock %}
@@ -68,16 +71,18 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
-    
+
     {% block body %}
 
     <!-- SideBar -->
     <!-- prettier-ignore -->
     {% include 'sidebar.html' %}
-    {% include 'right_sidebar.html' %}
+
+    {% block right_sidebar %} {% include 'right_sidebar.html' %} {% endblock %}
+
     {% include 'book/add_book_modal.html' %}
 
-    <div class="sm:mx-64 p-0 mt-16 h-full overflow-x-scroll">
+    <div class="p-0 mt-16 h-full overflow-x-scroll md:ml-64">
       <!-- Main Content -->
       {% block content %}{% endblock %}
     </div>
