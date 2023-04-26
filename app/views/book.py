@@ -351,7 +351,7 @@ def collection_create(book_id: int):
     if form.validate_on_submit():
         label = form.label.data
         collection: m.Collection = m.Collection.query.filter_by(
-            is_deleted=False, label=label
+            is_deleted=False, label=label, version_id=book.versions[-1]
         ).first()
 
         if collection:
@@ -408,7 +408,7 @@ def collection_edit(book_id: int, collection_id: int):
         label = form.label.data
 
         if (
-            m.Collection.query.filter_by(label=label)
+            m.Collection.query.filter_by(label=label, version_id=book.versions[-1])
             .filter(m.Collection.id != collection_id)
             .first()
         ):

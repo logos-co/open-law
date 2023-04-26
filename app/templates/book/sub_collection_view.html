@@ -1,5 +1,20 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
+
+<!-- show edit collection btn on rightside bar -->
+{% set show_edit_collection = True %}
+<!-- show delete collection btn on rightside bar -->
+{% set show_delete_collection = True %}
+
+<!-- prettier-ignore -->
+{% include 'book/edit_collection_modal.html' %}
+{% include 'book/delete_collection_modal.html' %}
+
+
+{% block right_sidebar %}
+  {% include 'book/right_sidebar.html' %}
+{% endblock %}
+
 {% block content %}
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 md:mr-64">
   <!-- prettier-ignore -->
@@ -69,7 +84,7 @@
       role="tabpanel"
       aria-labelledby="about-tab">
       <p class="text-sm text-gray-500 dark:text-gray-400">
-        This is about of {{collection.label}}
+        This is about of {{collection.about}}
       </p>
     </div>
   </div>
