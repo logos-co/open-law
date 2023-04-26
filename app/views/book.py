@@ -407,7 +407,11 @@ def collection_edit(book_id: int, collection_id: int):
     if form.validate_on_submit():
         label = form.label.data
 
-        if m.Collection.query.filter_by(label=label).first():
+        if (
+            m.Collection.query.filter_by(label=label)
+            .filter(m.Collection.id != collection_id)
+            .first()
+        ):
             log(
                 log.INFO,
                 "Collection with similar label already exists. Book: [%s], Collection: [%s], Label: [%s]",
