@@ -8,7 +8,7 @@ class BookContributor(BaseModel):
     __tablename__ = "book_contributors"
 
     class Roles(IntEnum):
-        UNKNOWN = 10
+        UNKNOWN = 0
         MODERATOR = 1
         EDITOR = 2
 
@@ -23,4 +23,4 @@ class BookContributor(BaseModel):
     book = db.relationship("Book", viewonly=True)
 
     def __repr__(self):
-        return f"<{self.id}: {self.label}>"
+        return f"<{self.id}: u:{self.user_id} b:{self.book_id}>"

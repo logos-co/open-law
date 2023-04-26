@@ -6,6 +6,7 @@ class Book(BaseModel):
     __tablename__ = "books"
 
     label = db.Column(db.String(1024), unique=False, nullable=False)
+    about = db.Column(db.Text, unique=False, nullable=True)
 
     # Foreign keys
     user_id = db.Column(db.ForeignKey("users.id"))

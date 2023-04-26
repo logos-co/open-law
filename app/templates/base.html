@@ -12,7 +12,8 @@
 
     <!-- styles -->
     <!-- prettier-ignore -->
-    <!-- <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet"/> -->
+    <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript"></script>
+
     <script>
       // On page load or when changing themes, best to add inline in `head` to avoid FOUC
       if (
@@ -25,6 +26,7 @@
         document.documentElement.classList.remove('dark');
       }
     </script>
+
     <!-- prettier-ignore -->
     {% block links %}
     {% endblock %}
@@ -68,26 +70,24 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
-    
+
     {% block body %}
 
     <!-- SideBar -->
     <!-- prettier-ignore -->
     {% include 'sidebar.html' %}
-    {% include 'right_sidebar.html' %}
-    {% include 'books/add_book_modal.html' %}
 
-    <div class="sm:mx-64 p-0 mt-16 h-full overflow-x-scroll">
+    {% block right_sidebar %} {% include 'right_sidebar.html' %} {% endblock %}
+
+    {% include 'book/add_book_modal.html' %}
+
+    <div class="p-0 mt-16 h-full overflow-x-scroll md:ml-64">
       <!-- Main Content -->
       {% block content %}{% endblock %}
     </div>
     {% endblock %}
     <!-- scripts -->
 
-    <!-- prettier-ignore -->
-    <script src="{{ url_for('static', filename='js/flowbite.min.js') }}" defer></script>
-    <!-- prettier-ignore -->
-    <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript" defer></script>
     <!-- prettier-ignore -->
     {% block scripts %}
     {% endblock %}
