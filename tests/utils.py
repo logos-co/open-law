@@ -13,9 +13,11 @@ def create(username=TEST_ADMIN_NAME, password=TEST_ADMIN_PASSWORD):
 
 
 def login(client, username=TEST_ADMIN_NAME, password=TEST_ADMIN_PASSWORD):
-    return client.post(
+    user = User.query.filter_by(username=username).first()
+    response = client.post(
         "/login", data=dict(user_id=username, password=password), follow_redirects=True
     )
+    return response, user
 
 
 def logout(client):

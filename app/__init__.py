@@ -21,7 +21,7 @@ def create_app(environment="development"):
         main_blueprint,
         auth_blueprint,
         user_blueprint,
-        books_blueprint,
+        book_blueprint,
         home_blueprint,
     )
     from app.models import (
@@ -48,7 +48,7 @@ def create_app(environment="development"):
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(main_blueprint)
     app.register_blueprint(user_blueprint)
-    app.register_blueprint(books_blueprint)
+    app.register_blueprint(book_blueprint)
     app.register_blueprint(home_blueprint)
 
     # Set up flask login.
