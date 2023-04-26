@@ -47,12 +47,25 @@ def test_delete_user(populate: FlaskClient):
 
 
 def test_search_user(populate: FlaskClient, runner: FlaskCliRunner):
-    login(populate)
+    _, current_user = login(populate)
     MAX_SEARCH_RESULTS = populate.application.config["MAX_SEARCH_RESULTS"]
 
     response = populate.get("/user/search")
     assert response.status_code == 422
     assert response.json["message"] == "q parameter is required"
+
+    q = current_user.username
+
+    response = populate.get(f"/user/search?q={q}")
+    assert response.json
+
+    users = response.json.get("users")
+    assert users
+    assert len(users) <= MAX_SEARCH_RESULTS
+
+    for user in users:
+        assert q in user["username"]
+        assert user["username"] != current_user
 
     q = "user"
 

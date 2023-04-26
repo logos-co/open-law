@@ -1,7 +1,47 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
 {% block content %}
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5"></div>
+
+<div class="md:mr-64 relative overflow-x-auto shadow-md sm:rounded-lg mt-1">
+  <!-- prettier-ignore -->
+  <div class="p-5 flex border-b-2 border-gray-200 border-solid dark:border-gray-700 text-gray-900 dark:text-white dark:divide-gray-700">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
+    {% if all_books %}
+      <h1 class="text-2xl font-extrabold dark:text-white ml-4">Books</h1>
+    {% else %}
+      <h1 class="text-2xl font-extrabold dark:text-white ml-4">My books</h1>
+    {% endif %}
+  </div>
+
+  {% for book in books %}
+  <!-- prettier-ignore -->
+  <dl class="bg-white dark:bg-gray-900 max-w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+    <a class="flex flex-col pb-2" href="{{url_for('book.collection_view',book_id=book.id)}}">
+      <dt class="mb-2"> {{book.owner.username}}/{{book.label}} </dt>
+      <dd class="flex flex-col md:flex-row text-lg font-semibold  text-gray-500 md:text-lg dark:text-gray-400">
+        {% if book.versions %}
+        <p> Last updated on  {{book.versions[-1].updated_at.strftime('%B %d, %Y')}}</p>
+        {% endif %}
+
+        <div class="flex ml-auto align-center justify-center space-x-3">
+          <span class="space-x-0.5 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor" class="w-4 h-4 inline-flex mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg>
+            <p>{{ book.stars|length }}</p>
+          </span>
+          <span class="space-x-0.5 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor" class="w-4 h-4 inline-flex mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /> </svg>
+            <p>55</p>
+          </span>
+          <span class="space-x-0.5 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor" class="w-4 h-4 inline-flex mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /> </svg>
+            <p>55</p>
+          </span>
+        </div>
+      </dd>
+    </a>
+  </dl>
+  {% endfor %}
+</div>
 {% include 'user/add.html' %}
 <!-- prettier-ignore -->
 {% endblock %}

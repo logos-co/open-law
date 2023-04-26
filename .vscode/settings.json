@@ -18,6 +18,7 @@
     "pytest",
     "sqlalchemy",
     "tailwindcss",
+    "viewonly",
     "werkzeug",
     "wrongpassword",
     "wsgi",
