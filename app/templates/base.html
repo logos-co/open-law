@@ -13,6 +13,7 @@
     <!-- styles -->
     <!-- prettier-ignore -->
     <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript"></script>
+
     <script>
       // On page load or when changing themes, best to add inline in `head` to avoid FOUC
       if (
@@ -26,8 +27,6 @@
       }
     </script>
 
-    <!-- prettier-ignore -->
-    <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript"></script>
     <!-- prettier-ignore -->
     {% block links %}
     {% endblock %}
