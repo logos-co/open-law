@@ -1,8 +1,4 @@
-import {Modal} from 'flowbite';
-import type {ModalOptions, ModalInterface} from 'flowbite';
-
 const searchAndShowResults = async (
-  userSearchBtn: any,
   userSearchbar: any,
   searchResultsTbody: any,
   trExample: any,
@@ -10,15 +6,15 @@ const searchAndShowResults = async (
 ) => {
   searchResultsTbody.innerHTML = '';
 
-  const bookId = userSearchbar.getAttribute("data-book-id")
-  const searchQuery = userSearchbar.value
+  const bookId = userSearchbar.getAttribute('data-book-id');
+  const searchQuery = userSearchbar.value;
   if (!searchQuery.length) {
     return;
   }
 
   const urlParams = new URLSearchParams({
     q: searchQuery,
-    book_id: bookId
+    book_id: bookId,
   });
   const res = await fetch('/user/search?' + urlParams);
   const json = await res.json();
@@ -29,16 +25,15 @@ const searchAndShowResults = async (
     const selectUserBtn = clone.querySelector('.select-user-btn');
     selectUserBtn.setAttribute('data-user-id', user.id);
     selectUserBtn.addEventListener('click', (e: any) => {
-      const allSelectBtns = document.querySelectorAll('.select-user-btn')
+      const allSelectBtns = document.querySelectorAll('.select-user-btn');
       allSelectBtns.forEach(btn => {
-        btn.innerHTML = "Select"
+        btn.innerHTML = 'Select';
       });
 
+      const userId = e.target.getAttribute('data-user-id');
+      userIdInput.value = userId;
 
-      const userId = e.target.getAttribute("data-user-id")
-      userIdInput.value = userId
-
-      selectUserBtn.innerHTML = "Selected"
+      selectUserBtn.innerHTML = 'Selected';
     });
 
     const usernameTh = clone.querySelector('.username-th');
@@ -55,18 +50,21 @@ export function initContributors() {
   const userSearchbar: HTMLInputElement = document.querySelector('#username');
   const userIdInput: HTMLInputElement = document.querySelector('#user_id');
 
+  if (!searchBtn && !userSearchbar && !userIdInput) {
+    return;
+  }
+
   const searchResultsTbody = document.querySelector('#search-results-tbody');
   const trExample: HTMLTableRowElement = document.querySelector('#tr-example');
 
   searchBtn.addEventListener('click', async e => {
-    e.preventDefault()
-    userIdInput.value = ""
+    e.preventDefault();
+    userIdInput.value = '';
     await searchAndShowResults(
-      searchBtn,
-      userSearchbar
+      userSearchbar,
       searchResultsTbody,
       trExample,
-      userIdInput
+      userIdInput,
     );
   });
 }
