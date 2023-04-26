@@ -15,10 +15,29 @@ from app.logger import log
 bp = Blueprint("book", __name__, url_prefix="/book")
 
 
-@bp.route("/", methods=["GET"])
+@bp.route("/all", methods=["GET"])
 def get_all():
     q = request.args.get("q", type=str, default=None)
     books: m.Book = m.Book.query.order_by(m.Book.id)
+    if q:
+        books = books.filter(m.Book.label.like(f"{q}"))
+
+    pagination = create_pagination(total=books.count())
+
+    return render_template(
+        "book/index.html",
+        books=books.paginate(page=pagination.page, per_page=pagination.per_page),
+        page=pagination,
+        search_query=q,
+        all_books=True,
+    )
+
+
+@bp.route("/", methods=["GET"])
+def my_books():
+    q = request.args.get("q", type=str, default=None)
+    books: m.Book = m.Book.query.order_by(m.Book.id)
+    books = books.filter_by(user_id=current_user.id)
     if q:
         books = books.filter(m.Book.label.like(f"{q}"))
 
@@ -37,22 +56,20 @@ def get_all():
 def create():
     form = f.CreateBookForm()
     if form.validate_on_submit():
-        book: m.Book = m.Book(
-            label=form.label.data,
-        )
+        book: m.Book = m.Book(label=form.label.data, user_id=current_user.id)
         log(log.INFO, "Form submitted. Book: [%s]", book)
         book.save()
         m.BookVersion(semver="1.0.0", book_id=book.id).save()
 
         flash("Book added!", "success")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.my_books"))
     else:
         log(log.ERROR, "Book create errors: [%s]", form.errors)
         for field, errors in form.errors.items():
             field_label = form._fields[field].label.text
             for error in errors:
                 flash(error.replace("Field", field_label), "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.my_books"))
 
 
 @bp.route("/<int:book_id>", methods=["GET"])
@@ -61,7 +78,7 @@ def collection_view(book_id: int):
     if not book:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.my_books"))
     else:
         return render_template("book/collection_view.html", book=book)
 
@@ -72,7 +89,7 @@ def sub_collection_view(book_id: int, collection_id: int):
     if not book:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.my_books"))
 
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection:
@@ -98,7 +115,7 @@ def section_view(book_id: int, collection_id: int, sub_collection_id: int):
     if not book:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.my_books"))
 
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection:
@@ -135,7 +152,7 @@ def interpretation_view(
     if not book:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.my_books"))
 
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection:
@@ -192,7 +209,7 @@ def add_contributor(book_id: int):
     if not book or book.owner != current_user:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.my_books"))
 
     form = f.AddContributorForm()
 
@@ -230,7 +247,7 @@ def delete_contributor(book_id: int):
     if not book or book.owner != current_user:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.my_books"))
 
     form = f.DeleteContributorForm()
 
@@ -270,7 +287,7 @@ def edit_contributor_role(book_id: int):
     if not book or book.owner != current_user:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
-        return redirect(url_for("book.get_all"))
+        return redirect(url_for("book.my_books"))
 
     form = f.EditContributorRoleForm()
 

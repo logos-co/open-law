@@ -6,7 +6,11 @@
   <!-- prettier-ignore -->
   <div class="p-5 flex border-b-2 border-gray-200 border-solid dark:border-gray-700 text-gray-900 dark:text-white dark:divide-gray-700">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
-    <h1 class="text-2xl font-extrabold dark:text-white ml-4">My books</h1>
+    {% if all_books %}
+      <h1 class="text-2xl font-extrabold dark:text-white ml-4">Books</h1>
+    {% else %}
+      <h1 class="text-2xl font-extrabold dark:text-white ml-4">My books</h1>
+    {% endif %}
   </div>
 
   {% for book in books %}
@@ -15,7 +19,9 @@
     <a class="flex flex-col pb-2" href="{{url_for('book.collection_view',book_id=book.id)}}">
       <dt class="mb-2"> {{book.owner.username}}/{{book.label}} </dt>
       <dd class="flex flex-col md:flex-row text-lg font-semibold  text-gray-500 md:text-lg dark:text-gray-400">
+        {% if book.versions %}
         <p> Last updated on  {{book.versions[-1].updated_at.strftime('%B %d, %Y')}}</p>
+        {% endif %}
 
         <div class="flex ml-auto align-center justify-center space-x-3">
           <span class="space-x-0.5 flex items-center">
