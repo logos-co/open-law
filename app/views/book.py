@@ -34,6 +34,7 @@ def get_all():
 
 
 @bp.route("/", methods=["GET"])
+@login_required
 def my_books():
     q = request.args.get("q", type=str, default=None)
     books: m.Book = m.Book.query.order_by(m.Book.id)
