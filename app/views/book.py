@@ -50,9 +50,9 @@ def create():
         return redirect(url_for("book.get_all"))
 
 
-@bp.route("/<int:book_id>/settings", methods=["GET", "POST"])
+@bp.route("/<int:book_id>/settings", methods=["GET"])
 @login_required
-def settings(book_id):
+def settings(book_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
 
     return render_template(
@@ -62,7 +62,7 @@ def settings(book_id):
 
 @bp.route("/<int:book_id>/add_contributor", methods=["POST"])
 @login_required
-def add_contributor(book_id):
+def add_contributor(book_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.owner != current_user:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
@@ -100,7 +100,7 @@ def add_contributor(book_id):
 
 @bp.route("/<int:book_id>/delete_contributor", methods=["POST"])
 @login_required
-def delete_contributor(book_id):
+def delete_contributor(book_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.owner != current_user:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
@@ -140,7 +140,7 @@ def delete_contributor(book_id):
 
 @bp.route("/<int:book_id>/edit_contributor_role", methods=["POST"])
 @login_required
-def edit_contributor_role(book_id):
+def edit_contributor_role(book_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.owner != current_user:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
