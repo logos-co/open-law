@@ -184,3 +184,99 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
 
     assert response.status_code == 200
     assert b"Success!" in response.data
+
+
+def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
+    _, user = login(client)
+    user: m.User
+
+    # add dummmy data
+    runner.invoke(args=["db-populate"])
+
+    book = db.session.get(m.Book, 1)
+    book.user_id = user.id
+    book.save()
+
+    response: Response = client.post(
+        f"/book/{book.id}/create_collection",
+        data=dict(label="Test Collection #1 Label", about="Test Collection #1 About"),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Success!" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/create_collection",
+        data=dict(label="Test Collection #1 Label", about="Test Collection #1 About"),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Collection label must be unique!" in response.data
+
+    collection: m.Collection = m.Collection.query.filter_by(
+        label="Test Collection #1 Label"
+    ).first()
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/edit",
+        data=dict(
+            label="Test Collection #1 Label",
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Collection label must be unique!" in response.data
+
+    new_label = "Test Collection #1 Label(edited)"
+    new_about = "Test Collection #1 About(edited)"
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/edit",
+        data=dict(
+            label=new_label,
+            about=new_about,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Success!" in response.data
+
+    edited_collection: m.Collection = m.Collection.query.filter_by(
+        label=new_label, about=new_about
+    ).first()
+    assert edited_collection
+
+    response: Response = client.post(
+        f"/book/{book.id}/0/edit",
+        data=dict(
+            label=new_label,
+            about=new_about,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Collection not found" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/delete",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Success!" in response.data
+
+    deleted_collection: m.Collection = db.session.get(m.Collection, collection.id)
+    assert deleted_collection.is_deleted
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/delete",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Collection not found" in response.data
