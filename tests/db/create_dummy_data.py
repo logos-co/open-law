@@ -47,7 +47,7 @@ def create_dummy_data():
         label="Dummy Collection 1 Label",
         about="Dummy Collection 1 About",
         version_id=unexported_version.id,
-        parrent_id=rool_collection.id,
+        parent_id=rool_collection.id,
         is_leaf=True,
     ).save()
 
@@ -55,7 +55,7 @@ def create_dummy_data():
         label="Dummy Collection 2 Label",
         about="Dummy Collection 2 About",
         version_id=unexported_version.id,
-        parrent_id=rool_collection.id,
+        parent_id=rool_collection.id,
     ).save()
 
     subcollection_2_1 = m.Collection(
@@ -63,7 +63,7 @@ def create_dummy_data():
         about="Dummy SubCollection 2.1 About",
         is_leaf=True,
         version_id=unexported_version.id,
-        parrent_id=collection_2.id,
+        parent_id=collection_2.id,
     ).save()
 
     # sections
@@ -150,7 +150,7 @@ def create_dummy_data():
     #   - comment 2
     #   - comment 3
     #       - comment 3.1 (marked)
-    #       - comment 3.2 (included_with_interpreation)
+    #       - comment 3.2 (included_with_interpretation)
     #       - comment 3.3
 
     comment_1 = m.Comment(
@@ -162,14 +162,14 @@ def create_dummy_data():
     m.Comment(
         text="Dummy Comment 1.1 Text",
         user_id=user_3.id,
-        parrent_id=comment_1.id,
+        parent_id=comment_1.id,
         interpretation_id=interpretation_2.id,
     ).save()
 
     m.Comment(
         text="Dummy Comment 1.2 Text",
         user_id=user_2.id,
-        parrent_id=comment_1.id,
+        parent_id=comment_1.id,
         marked=True,
         interpretation_id=interpretation_2.id,
     ).save()
@@ -190,52 +190,52 @@ def create_dummy_data():
         text="Dummy Comment 3.1 Text",
         user_id=user.id,
         marked=True,
-        parrent_id=comment_3.id,
+        parent_id=comment_3.id,
         interpretation_id=interpretation_2.id,
     ).save()
 
     comment_3_2 = m.Comment(
         text="Dummy Comment 3.2 Text",
         user_id=user.id,
-        included_with_interpreation=True,
-        parrent_id=comment_3.id,
+        included_with_interpretation=True,
+        parent_id=comment_3.id,
         interpretation_id=interpretation_2.id,
     ).save()
 
     comment_3_3 = m.Comment(
         text="Dummy Comment 3.3 Text",
         user_id=user.id,
-        parrent_id=comment_3.id,
+        parent_id=comment_3.id,
         interpretation_id=interpretation_2.id,
     ).save()
 
-    # - comment 3.1 (2 possitive, 2 negative)
+    # - comment 3.1 (2 positive, 2 negative)
     # - comment 3.2 (1 negative)
-    # - comment 3.3 (1 possitive)
-    m.CommentVote(comment_id=comment_3_1.id, user_id=user.id, possitive=True).save()
-    m.CommentVote(comment_id=comment_3_1.id, user_id=user_2.id, possitive=True).save()
-    m.CommentVote(comment_id=comment_3_1.id, user_id=user_3.id, possitive=False).save()
-    m.CommentVote(comment_id=comment_3_1.id, user_id=user_4.id, possitive=False).save()
-    m.CommentVote(comment_id=comment_3_2.id, user_id=user_2.id, possitive=False).save()
-    m.CommentVote(comment_id=comment_3_3.id, user_id=user_3.id, possitive=True).save()
+    # - comment 3.3 (1 positive)
+    m.CommentVote(comment_id=comment_3_1.id, user_id=user.id, positive=True).save()
+    m.CommentVote(comment_id=comment_3_1.id, user_id=user_2.id, positive=True).save()
+    m.CommentVote(comment_id=comment_3_1.id, user_id=user_3.id, positive=False).save()
+    m.CommentVote(comment_id=comment_3_1.id, user_id=user_4.id, positive=False).save()
+    m.CommentVote(comment_id=comment_3_2.id, user_id=user_2.id, positive=False).save()
+    m.CommentVote(comment_id=comment_3_3.id, user_id=user_3.id, positive=True).save()
 
-    # - interpretation 1 (2 possitive, 1 negative)
+    # - interpretation 1 (2 positive, 1 negative)
     # - interpretation 2 (1 negative)
-    # - interpretation 3 (1 possitive)
+    # - interpretation 3 (1 positive)
     m.InterpretationVote(
-        interpretation_id=interpretation_1.id, user_id=user.id, possitive=True
+        interpretation_id=interpretation_1.id, user_id=user.id, positive=True
     ).save()
     m.InterpretationVote(
-        interpretation_id=interpretation_1.id, user_id=user_2.id, possitive=True
+        interpretation_id=interpretation_1.id, user_id=user_2.id, positive=True
     ).save()
     m.InterpretationVote(
-        interpretation_id=interpretation_1.id, user_id=user_3.id, possitive=False
+        interpretation_id=interpretation_1.id, user_id=user_3.id, positive=False
     ).save()
     m.InterpretationVote(
-        interpretation_id=interpretation_2.id, user_id=user_2.id, possitive=False
+        interpretation_id=interpretation_2.id, user_id=user_2.id, positive=False
     ).save()
     m.InterpretationVote(
-        interpretation_id=interpretation_3.id, user_id=user_3.id, possitive=True
+        interpretation_id=interpretation_3.id, user_id=user_3.id, positive=True
     ).save()
 
     # tags

@@ -20,14 +20,14 @@ def test_create_book(client: FlaskClient):
     )
 
     assert response.status_code == 200
-    assert b"Label must be between 6 and 1024 characters long." in response.data
+    assert b"Label must be between 6 and 256 characters long." in response.data
 
     book = m.Book.query.filter_by(label=BOOK_NAME).first()
 
     assert not book
     assert not m.Book.query.count()
 
-    # label len > 1024
+    # label len > 256
     response: Response = client.post(
         "/book/create",
         data=dict(
@@ -37,7 +37,7 @@ def test_create_book(client: FlaskClient):
     )
 
     assert response.status_code == 200
-    assert b"Label must be between 6 and 1024 characters long." in response.data
+    assert b"Label must be between 6 and 256 characters long." in response.data
 
     book = m.Book.query.filter_by(label=BOOK_NAME).first()
 
