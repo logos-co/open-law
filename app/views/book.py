@@ -332,19 +332,42 @@ def edit_contributor_role(book_id: int):
         return redirect(url_for("book.settings", book_id=book_id))
 
 
-#################
-# Collection CRUD
-#################
+###############################
+# Collection/SubCollection CRUD
+###############################
 
 
 @bp.route("/<int:book_id>/create_collection", methods=["POST"])
+@bp.route("/<int:book_id>/<int:collection_id>/create_sub_collection", methods=["POST"])
 @login_required
-def collection_create(book_id: int):
+def collection_create(book_id: int, collection_id: int | None = None):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.owner != current_user or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
         return redirect(url_for("book.my_books"))
+    if collection_id:
+        collection: m.Collection = db.session.get(m.Collection, collection_id)
+        if not collection or collection.is_deleted:
+            log(log.WARNING, "Collection with id [%s] not found", collection_id)
+            flash("Collection not found", "danger")
+            return redirect(url_for("book.collection_view", book_id=book_id))
+        elif collection.is_leaf:
+            log(log.WARNING, "Collection with id [%s] is leaf", collection_id)
+            flash("You can't create subcollection for this collection", "danger")
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
+            )
+
+    redirect_url = url_for("book.collection_view", book_id=book_id)
+    if collection_id:
+        redirect_url = url_for(
+            "book.sub_collection_view", book_id=book_id, collection_id=collection_id
+        )
 
     form = f.CreateCollectionForm()
 
@@ -363,23 +386,27 @@ def collection_create(book_id: int):
                 label,
             )
             flash("Collection label must be unique!", "danger")
-            return redirect(url_for("book.collection_view", book_id=book_id))
+            return redirect(redirect_url)
 
         collection: m.Collection = m.Collection(
             label=label, about=form.about.data, version_id=book.versions[-1].id
         )
+        if collection_id:
+            collection.parrent_id = collection_id
+            collection.is_leaf = True
+
         log(log.INFO, "Create collection [%s]. Book: [%s]", collection, book.id)
         collection.save()
 
         flash("Success!", "success")
-        return redirect(url_for("book.collection_view", book_id=book_id))
+        return redirect(redirect_url)
     else:
-        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        log(log.ERROR, "Collection/Subcollection create errors: [%s]", form.errors)
         for field, errors in form.errors.items():
             field_label = form._fields[field].label.text
             for error in errors:
                 flash(error.replace("Field", field_label), "danger")
-        return redirect(url_for("book.settings", book_id=book_id))
+        return redirect(redirect_url)
 
 
 @bp.route("/<int:book_id>/<int:collection_id>/edit", methods=["POST"])
