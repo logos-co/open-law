@@ -25,3 +25,13 @@ class BookVersion(BaseModel):
 
     def __repr__(self):
         return f"<{self.id}: {self.semver}>"
+
+    @property
+    def root_collection(self):
+        for collection in self.collections:
+            if collection.is_root:
+                return collection
+
+    @property
+    def children_collections(self):
+        return self.root_collection.children
