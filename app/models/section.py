@@ -20,5 +20,17 @@ class Section(BaseModel):
     version = db.relationship("BookVersion", viewonly=True)
     interpretations = db.relationship("Interpretation", viewonly=True)
 
+    @property
+    def path(self):
+        parent = self.collection
+        grand_parent = parent.parent
+        path = f"{self.version.book.label} / "
+        if grand_parent.is_root:
+            path += f"{parent.label} / "
+        else:
+            path += f"{grand_parent.label} / {parent.label} / "
+        path += self.label
+        return path
+
     def __repr__(self):
         return f"<{self.id}: {self.label}>"
