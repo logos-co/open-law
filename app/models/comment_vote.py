@@ -8,11 +8,11 @@ class CommentVote(BaseModel):
     # Foreign keys
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     comment_id = db.Column(db.Integer, db.ForeignKey("comments.id"))
-    possitive = db.Column(db.Boolean, default=True)
+    positive = db.Column(db.Boolean, default=True)
 
     # Relationships
     user = db.relationship("User", viewonly=True)
     comment = db.relationship("Comment", viewonly=True)
 
     def __repr__(self):
-        return f"<{self.user} to {self.comment} Positive:{self.possitive}>"
+        return f"<{self.user} to {self.comment} Positive:{self.positive}>"

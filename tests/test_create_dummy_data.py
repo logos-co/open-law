@@ -190,14 +190,14 @@ def test_dummy_data(runner: FlaskCliRunner):
     #   - comment 2
     #   - comment 3
     #       - comment 3.1 (marked)
-    #       - comment 3.2 (included_with_interpreation)
+    #       - comment 3.2 (included_with_interpretation)
     #       - comment 3.3
 
     comment_1: m.Comment = m.Comment.query.filter_by(
         text="Dummy Comment 1 Text"
     ).first()
 
-    assert not comment_1.parrent
+    assert not comment_1.parent
 
     comment_1_1: m.Comment = m.Comment.query.filter_by(
         text="Dummy Comment 1.1 Text"
@@ -209,22 +209,22 @@ def test_dummy_data(runner: FlaskCliRunner):
 
     assert comment_1_1 in comment_1.children
     assert comment_1_1 in comment_1.children
-    assert comment_1_2.parrent == comment_1
-    assert comment_1_2.parrent == comment_1
+    assert comment_1_2.parent == comment_1
+    assert comment_1_2.parent == comment_1
     assert comment_1_2.marked
 
     comment_2: m.Comment = m.Comment.query.filter_by(
         text="Dummy Comment 2 Text"
     ).first()
 
-    assert not comment_2.parrent
+    assert not comment_2.parent
     assert not comment_2.children
 
     comment_3: m.Comment = m.Comment.query.filter_by(
         text="Dummy Comment 3 Text"
     ).first()
 
-    assert not comment_3.parrent
+    assert not comment_3.parent
     assert comment_3.children
 
     comment_3_1: m.Comment = m.Comment.query.filter_by(
@@ -243,23 +243,23 @@ def test_dummy_data(runner: FlaskCliRunner):
     assert comment_3_2 in comment_3.children
     assert comment_3_3 in comment_3.children
     assert comment_3_1.marked
-    assert comment_3_2.included_with_interpreation
+    assert comment_3_2.included_with_interpretation
 
     assert comment_1 in interpretation_2.comments
     assert comment_2 in interpretation_2.comments
     assert comment_3 in interpretation_2.comments
 
-    # - comment 3.1 (2 possitive, 2 negative)
+    # - comment 3.1 (2 positive, 2 negative)
     # - comment 3.2 (1 negative)
-    # - comment 3.3 (1 possitive)
+    # - comment 3.3 (1 positive)
 
     assert len(comment_3_1.votes) == 4
     assert len(comment_3_2.votes) == 1
     assert len(comment_3_3.votes) == 1
 
-    # - interpretation 1 (2 possitive, 1 negative)
+    # - interpretation 1 (2 positive, 1 negative)
     # - interpretation 2 (1 negative)
-    # - interpretation 3 (1 possitive)
+    # - interpretation 3 (1 positive)
     assert len(interpretation_1.votes) == 3
     assert len(interpretation_2.votes) == 1
     assert len(interpretation_3.votes) == 1

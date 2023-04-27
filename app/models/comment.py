@@ -5,20 +5,19 @@ from app.models.utils import BaseModel
 class Comment(BaseModel):
     __tablename__ = "comments"
 
-    # need to redeclare id to use it in the parrent relationship
+    # need to redeclare id to use it in the parent relationship
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, unique=False, nullable=False)
     marked = db.Column(db.Boolean, default=False)
-    included_with_interpreation = db.Column(db.Boolean, default=False)
+    included_with_interpretation = db.Column(db.Boolean, default=False)
 
     # Foreign keys
     user_id = db.Column(db.ForeignKey("users.id"))
-    parrent_id = db.Column(db.ForeignKey("comments.id"))
+    parent_id = db.Column(db.ForeignKey("comments.id"))
     interpretation_id = db.Column(db.ForeignKey("interpretations.id"))
 
     # Relationships
     user = db.relationship("User")
-    parrent = db.relationship("Comment", remote_side=[id])
     children = db.relationship(
         "Comment", backref=db.backref("parent", remote_side=[id]), viewonly=True
     )
