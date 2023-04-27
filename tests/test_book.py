@@ -254,7 +254,7 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
     assert edited_collection
 
     response: Response = client.post(
-        f"/book/{book.id}/0/edit",
+        f"/book/{book.id}/999/edit",
         data=dict(
             label=new_label,
             about=new_about,
@@ -343,68 +343,70 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     assert sub_collection.is_leaf
     assert sub_collection.parrent_id == collection.id
 
-    # m.Collection(
-    #     label="Test Collection #2 Label", version_id=collection.version_id
-    # ).save()
+    m.Collection(
+        label="Test SubCollection #2 Label",
+        version_id=collection.version_id,
+        parrent_id=collection.id,
+    ).save()
 
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{collection.id}/edit",
-    #     data=dict(
-    #         label="Test Collection #2 Label",
-    #     ),
-    #     follow_redirects=True,
-    # )
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/edit",
+        data=dict(
+            label="Test SubCollection #2 Label",
+        ),
+        follow_redirects=True,
+    )
 
-    # assert response.status_code == 200
-    # assert b"Collection label must be unique!" in response.data
+    assert response.status_code == 200
+    assert b"Collection label must be unique!" in response.data
 
-    # new_label = "Test Collection #1 Label(edited)"
-    # new_about = "Test Collection #1 About(edited)"
+    new_label = "Test SubCollection #1 Label(edited)"
+    new_about = "Test SubCollection #1 About(edited)"
 
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{collection.id}/edit",
-    #     data=dict(
-    #         label=new_label,
-    #         about=new_about,
-    #     ),
-    #     follow_redirects=True,
-    # )
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/edit",
+        data=dict(
+            label=new_label,
+            about=new_about,
+        ),
+        follow_redirects=True,
+    )
 
-    # assert response.status_code == 200
-    # assert b"Success!" in response.data
+    assert response.status_code == 200
+    assert b"Success!" in response.data
 
-    # edited_collection: m.Collection = m.Collection.query.filter_by(
-    #     label=new_label, about=new_about
-    # ).first()
-    # assert edited_collection
+    edited_collection: m.Collection = m.Collection.query.filter_by(
+        label=new_label, about=new_about
+    ).first()
+    assert edited_collection
 
-    # response: Response = client.post(
-    #     f"/book/{book.id}/0/edit",
-    #     data=dict(
-    #         label=new_label,
-    #         about=new_about,
-    #     ),
-    #     follow_redirects=True,
-    # )
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/9999/edit",
+        data=dict(
+            label=new_label,
+            about=new_about,
+        ),
+        follow_redirects=True,
+    )
 
-    # assert response.status_code == 200
-    # assert b"Collection not found" in response.data
+    assert response.status_code == 200
+    assert b"SubCollection not found" in response.data
 
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{collection.id}/delete",
-    #     follow_redirects=True,
-    # )
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/delete",
+        follow_redirects=True,
+    )
 
-    # assert response.status_code == 200
-    # assert b"Success!" in response.data
+    assert response.status_code == 200
+    assert b"Success!" in response.data
 
-    # deleted_collection: m.Collection = db.session.get(m.Collection, collection.id)
-    # assert deleted_collection.is_deleted
+    deleted_collection: m.Collection = db.session.get(m.Collection, collection.id)
+    assert deleted_collection.is_deleted
 
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{collection.id}/delete",
-    #     follow_redirects=True,
-    # )
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/delete",
+        follow_redirects=True,
+    )
 
-    # assert response.status_code == 200
-    # assert b"Collection not found" in response.data
+    assert response.status_code == 200
+    assert b"Collection not found" in response.data

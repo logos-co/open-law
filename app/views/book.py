@@ -410,8 +410,13 @@ def collection_create(book_id: int, collection_id: int | None = None):
 
 
 @bp.route("/<int:book_id>/<int:collection_id>/edit", methods=["POST"])
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/edit", methods=["POST"]
+)
 @login_required
-def collection_edit(book_id: int, collection_id: int):
+def collection_edit(
+    book_id: int, collection_id: int, sub_collection_id: int | None = None
+):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.owner != current_user or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
@@ -423,6 +428,18 @@ def collection_edit(book_id: int, collection_id: int):
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
         flash("Collection not found", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
+    if sub_collection_id:
+        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+        if not sub_collection or sub_collection.is_deleted:
+            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
+            flash("SubCollection not found", "danger")
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
+            )
 
     form = f.EditCollectionForm()
     redirect_url = url_for(
@@ -462,7 +479,7 @@ def collection_edit(book_id: int, collection_id: int):
         flash("Success!", "success")
         return redirect(redirect_url)
     else:
-        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        log(log.ERROR, "Collection edit errors: [%s]", form.errors)
         for field, errors in form.errors.items():
             field_label = form._fields[field].label.text
             for error in errors:
@@ -471,8 +488,14 @@ def collection_edit(book_id: int, collection_id: int):
 
 
 @bp.route("/<int:book_id>/<int:collection_id>/delete", methods=["POST"])
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/delete",
+    methods=["POST"],
+)
 @login_required
-def collection_delete(book_id: int, collection_id: int):
+def collection_delete(
+    book_id: int, collection_id: int, sub_collection_id: int | None = None
+):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.owner != current_user:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
@@ -484,6 +507,18 @@ def collection_delete(book_id: int, collection_id: int):
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
         flash("Collection not found", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
+    if sub_collection_id:
+        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+        if not sub_collection or sub_collection.is_deleted:
+            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
+            flash("SubCollection not found", "danger")
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
+            )
 
     collection.is_deleted = True
 
