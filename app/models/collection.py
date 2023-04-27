@@ -8,7 +8,7 @@ class Collection(BaseModel):
     # need to redeclare id to use it in the parrent relationship
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(1024), unique=False, nullable=False)
-    about = db.Column(db.Text, unique=False, nullable=False)
+    about = db.Column(db.Text, unique=False, nullable=True)
     is_root = db.Column(db.Boolean, default=False)
     is_leaf = db.Column(db.Boolean, default=False)
 

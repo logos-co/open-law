@@ -81,6 +81,9 @@
 
     {% include 'book/add_book_modal.html' %}
 
+    <!-- prettier-ignore -->
+    <script src="{{ url_for('static', filename='js/flowbite.min.js') }}" defer></script>
+
     <div class="p-0 mt-16 h-full overflow-x-scroll md:ml-64">
       <!-- Main Content -->
       {% block content %}{% endblock %}

@@ -1,5 +1,18 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
+
+<!-- show create collection btn on rightside bar -->
+{% set show_create_collection = True %}
+
+<!-- prettier-ignore -->
+{% include 'book/add_collection_modal.html' %}
+
+
+{% block right_sidebar %}
+  {% include 'book/right_sidebar.html' %}
+{% endblock %}
+
+
 {% block content %}
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 md:mr-64">
   <!-- prettier-ignore -->
@@ -7,9 +20,6 @@
     <div>
       <h1 class="text-l font-extrabold dark:text-white ml-4"> {{ book.owner.username }} </h1>
       <h1 class="text-2xl font-extrabold dark:text-white ml-4">{{ book.label }}</h1>
-    </div>
-    <div class="ml-auto">
-      {% include 'book/components/settings_btn.html' %}
     </div>
   </div>
   <!-- prettier-ignore -->
@@ -39,7 +49,7 @@
         class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
         <!-- prettier-ignore -->
         {% if book.versions %}
-        {% for collection in book.versions[-1].collections if not collection.is_root %}
+        {% for collection in book.versions[-1].collections if not collection.is_root and not collection.is_deleted %}
 
         <!-- prettier-ignore -->
         <a href="{{url_for('book.sub_collection_view',book_id=book.id,collection_id=collection.id)}}" >
@@ -75,10 +85,9 @@
       <p class="text-sm text-gray-500 dark:text-gray-400"> This is about {{book.label}} </p>
     </div>
   </div>
-
-  <!-- prettier-ignore -->
-  {% endblock %}
-  <!-- prettier-ignore -->
-  {% block scripts %}
-{% endblock %}
 </div>
+<!-- prettier-ignore -->
+{% endblock %}
+<!-- prettier-ignore -->
+{% block scripts %}
+{% endblock %}
