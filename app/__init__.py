@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from werkzeug.exceptions import HTTPException
 from flask_migrate import Migrate
+from flask_wtf import FlaskForm
 
 from app.logger import log
 
@@ -59,6 +60,12 @@ def create_app(environment="development"):
     login_manager.login_view = "auth.login"
     login_manager.login_message_category = "info"
     login_manager.anonymous_user = AnonymousUser
+
+    # Jinja globals
+
+    # Using: {{ flask_form.hidden_tag() }}
+    with app.app_context():
+        app.jinja_env.globals["flask_form"] = FlaskForm()
 
     # Error handlers.
     @app.errorhandler(HTTPException)
