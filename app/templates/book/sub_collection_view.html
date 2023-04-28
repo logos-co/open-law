@@ -1,6 +1,7 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
 
+{% if book.owner.id == current_user.id %}
 <!-- show edit collection btn on rightside bar -->
 {% set show_edit_collection = True %}
 <!-- show delete collection btn on rightside bar -->
@@ -12,6 +13,7 @@
 {% include 'book/edit_collection_modal.html' %}
 {% include 'book/delete_collection_modal.html' %}
 {% include 'book/add_collection_modal.html' %}
+{% endif %}
 
 
 {% block right_sidebar %}
