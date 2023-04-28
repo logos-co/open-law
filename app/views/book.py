@@ -381,10 +381,10 @@ def collection_create(book_id: int, collection_id: int | None = None):
             label=label,
         )
         if collection_id:
-            collection = collection.filter_by(parrent_id=collection_id)
+            collection = collection.filter_by(parent_id=collection_id)
         else:
             collection = collection.filter_by(
-                parrent_id=book.versions[-1].root_collection.id
+                parent_id=book.versions[-1].root_collection.id
             )
         collection = collection.first()
 
@@ -402,10 +402,10 @@ def collection_create(book_id: int, collection_id: int | None = None):
         collection: m.Collection = m.Collection(
             label=label,
             about=form.about.data,
-            parrent_id=book.versions[-1].root_collection.id,
+            parent_id=book.versions[-1].root_collection.id,
         )
         if collection_id:
-            collection.parrent_id = collection_id
+            collection.parent_id = collection_id
             collection.is_leaf = True
 
         log(log.INFO, "Create collection [%s]. Book: [%s]", collection, book.id)
@@ -475,10 +475,10 @@ def collection_edit(
         ).filter(m.Collection.id != collection_to_edit.id)
 
         if sub_collection_id:
-            collection_query = collection_query.filter_by(parrent_id=collection_id)
+            collection_query = collection_query.filter_by(parent_id=collection_id)
         else:
             collection_query = collection_query.filter_by(
-                parrent_id=collection_to_edit.parrent.id
+                parent_id=collection_to_edit.parent.id
             )
 
         if collection_query.first():

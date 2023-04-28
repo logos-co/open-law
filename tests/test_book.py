@@ -221,7 +221,7 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
     m.Collection(
         label="Test Collection #2 Label",
         version_id=collection.version_id,
-        parrent_id=collection.parrent_id,
+        parent_id=collection.parent_id,
     ).save()
 
     response: Response = client.post(
@@ -302,7 +302,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
         label="Test Leaf Collection #1 Label",
         version_id=book.versions[-1].id,
         is_leaf=True,
-        parrent_id=book.versions[-1].root_collection.id,
+        parent_id=book.versions[-1].root_collection.id,
     ).save()
     collection: m.Collection = m.Collection(
         label="Test Collection #1 Label", version_id=book.versions[-1].id
@@ -346,12 +346,12 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     ).first()
     assert sub_collection
     assert sub_collection.is_leaf
-    assert sub_collection.parrent_id == collection.id
+    assert sub_collection.parent_id == collection.id
 
     m.Collection(
         label="Test SubCollection #2 Label",
         version_id=collection.version_id,
-        parrent_id=collection.id,
+        parent_id=collection.id,
     ).save()
 
     response: Response = client.post(
