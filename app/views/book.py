@@ -25,7 +25,7 @@ def get_all():
     pagination = create_pagination(total=books.count())
 
     return render_template(
-        "book/index.html",
+        "book/all.html",
         books=books.paginate(page=pagination.page, per_page=pagination.per_page),
         page=pagination,
         search_query=q,
