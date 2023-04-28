@@ -219,7 +219,9 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
         label="Test Collection #1 Label"
     ).first()
     m.Collection(
-        label="Test Collection #2 Label", version_id=collection.version_id
+        label="Test Collection #2 Label",
+        version_id=collection.version_id,
+        parent_id=collection.parent_id,
     ).save()
 
     response: Response = client.post(
@@ -254,7 +256,7 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
     assert edited_collection
 
     response: Response = client.post(
-        f"/book/{book.id}/0/edit",
+        f"/book/{book.id}/999/edit",
         data=dict(
             label=new_label,
             about=new_about,
@@ -278,6 +280,136 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/delete",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Collection not found" in response.data
+
+
+def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
+    _, user = login(client)
+    user: m.User
+
+    # add dummmy data
+    runner.invoke(args=["db-populate"])
+
+    book: m.Book = db.session.get(m.Book, 1)
+    book.user_id = user.id
+    book.save()
+
+    leaf_collection: m.Collection = m.Collection(
+        label="Test Leaf Collection #1 Label",
+        version_id=book.versions[-1].id,
+        is_leaf=True,
+        parent_id=book.versions[-1].root_collection.id,
+    ).save()
+    collection: m.Collection = m.Collection(
+        label="Test Collection #1 Label", version_id=book.versions[-1].id
+    ).save()
+
+    response: Response = client.post(
+        f"/book/{book.id}/{leaf_collection.id}/create_sub_collection",
+        data=dict(
+            label="Test SubCollection #1 Label", about="Test SubCollection #1 About"
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You can't create subcollection for this collection" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/create_sub_collection",
+        data=dict(
+            label="Test SubCollection #1 Label", about="Test SubCollection #1 About"
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Success!" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/create_sub_collection",
+        data=dict(
+            label="Test SubCollection #1 Label", about="Test SubCollection #1 About"
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Collection label must be unique!" in response.data
+
+    sub_collection: m.Collection = m.Collection.query.filter_by(
+        label="Test SubCollection #1 Label"
+    ).first()
+    assert sub_collection
+    assert sub_collection.is_leaf
+    assert sub_collection.parent_id == collection.id
+
+    m.Collection(
+        label="Test SubCollection #2 Label",
+        version_id=collection.version_id,
+        parent_id=collection.id,
+    ).save()
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/edit",
+        data=dict(
+            label="Test SubCollection #2 Label",
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Collection label must be unique!" in response.data
+
+    new_label = "Test SubCollection #1 Label(edited)"
+    new_about = "Test SubCollection #1 About(edited)"
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/edit",
+        data=dict(
+            label=new_label,
+            about=new_about,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Success!" in response.data
+
+    edited_collection: m.Collection = m.Collection.query.filter_by(
+        label=new_label, about=new_about
+    ).first()
+    assert edited_collection
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/9999/edit",
+        data=dict(
+            label=new_label,
+            about=new_about,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"SubCollection not found" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/delete",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Success!" in response.data
+
+    deleted_collection: m.Collection = db.session.get(m.Collection, sub_collection.id)
+    assert deleted_collection.is_deleted
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/delete",
         follow_redirects=True,
     )
 
