@@ -5,10 +5,13 @@
 {% set show_edit_collection = True %}
 <!-- show delete collection btn on rightside bar -->
 {% set show_delete_collection = True %}
+<!-- show create collection btn on rightside bar -->
+{% set show_create_collection = True %}
 
 <!-- prettier-ignore -->
 {% include 'book/edit_collection_modal.html' %}
 {% include 'book/delete_collection_modal.html' %}
+{% include 'book/add_collection_modal.html' %}
 
 
 {% block right_sidebar %}

@@ -48,8 +48,7 @@
       <dl
         class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
         <!-- prettier-ignore -->
-        {% if book.versions %}
-        {% for collection in book.versions[-1].collections if not collection.is_root and not collection.is_deleted %}
+        {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
 
         <!-- prettier-ignore -->
         <a href="{{url_for('book.sub_collection_view',book_id=book.id,collection_id=collection.id)}}" >
@@ -74,8 +73,6 @@
           </a >
 
         {% endfor %}
-        <!-- prettier-ignore -->
-        {% endif %}
       </dl>
     </div>
     <!-- prettier-ignore -->
