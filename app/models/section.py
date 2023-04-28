@@ -5,7 +5,7 @@ from app.models.utils import BaseModel
 class Section(BaseModel):
     __tablename__ = "sections"
 
-    label = db.Column(db.String(1024), unique=False, nullable=False)
+    label = db.Column(db.String(256), unique=False, nullable=False)
     about = db.Column(db.Text, unique=False, nullable=True)
 
     # Foreign keys
@@ -19,6 +19,18 @@ class Section(BaseModel):
     user = db.relationship("User", viewonly=True)
     version = db.relationship("BookVersion", viewonly=True)
     interpretations = db.relationship("Interpretation", viewonly=True)
+
+    @property
+    def path(self):
+        parent = self.collection
+        grand_parent = parent.parent
+        path = f"{self.version.book.label} / "
+        if grand_parent.is_root:
+            path += f"{parent.label} / "
+        else:
+            path += f"{grand_parent.label} / {parent.label} / "
+        path += self.label
+        return path
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"

@@ -5,7 +5,7 @@ from app.models.utils import BaseModel
 class Interpretation(BaseModel):
     __tablename__ = "interpretations"
 
-    label = db.Column(db.String(1024), unique=False, nullable=False)
+    label = db.Column(db.String(256), unique=False, nullable=False)
     text = db.Column(db.Text, unique=False, nullable=False)
     marked = db.Column(db.Boolean, default=False)
 
