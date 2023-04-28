@@ -176,20 +176,12 @@ def interpretation_view(
         if not sub_collection:
             log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
             flash("Sub_collection not found", "danger")
-            return redirect(
-                url_for(
-                    "book.sub_collection_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                )
+            return redirect(url_for("book.collection_view", book_id=book_id))
     sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
     if not sub_collection or sub_collection.is_deleted:
         log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
         flash("Sub_collection not found", "danger")
-        return redirect(
-            url_for(
-                "book.sub_collection_view", book_id=book_id, collection_id=collection_id
-            )
+        return redirect(url_for("book.collection_view", book_id=book_id))
 
     section: m.Section = db.session.get(m.Section, section_id)
     if not section:
