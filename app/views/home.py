@@ -14,6 +14,7 @@ bp = Blueprint("home", __name__, url_prefix="/home")
 def get_all():
     books: m.Book = m.Book.query.order_by(m.Book.id).limit(5)
     sections: m.Section = m.Section.query.order_by(m.Section.id).limit(5)
+    last_user_sections = []
     if current_user.is_authenticated:
         last_user_sections: m.Section = m.Section.query.order_by(
             m.Section.created_at
