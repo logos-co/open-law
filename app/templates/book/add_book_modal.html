@@ -4,7 +4,7 @@
   <div class="relative w-full max-w-2xl max-h-full">
     <!-- Modal content -->
     <form action="{{ url_for('book.create') }}" method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-      {{ flask_form.hidden_tag() }}
+      {{ form_hidden_tag() }}
       <input type="hidden" name="user_id" id="user-edit-id" value="0" />
       <input type="hidden" name="next_url" id="user-edit-next_url" value="" />
       <!-- Modal header -->
