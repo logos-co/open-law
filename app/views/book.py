@@ -377,8 +377,16 @@ def collection_create(book_id: int, collection_id: int | None = None):
     if form.validate_on_submit():
         label = form.label.data
         collection: m.Collection = m.Collection.query.filter_by(
-            is_deleted=False, label=label, version_id=book.versions[-1].id
-        ).first()
+            is_deleted=False,
+            label=label,
+        )
+        if collection_id:
+            collection = collection.filter_by(parrent_id=collection_id)
+        else:
+            collection = collection.filter_by(
+                parrent_id=book.versions[-1].root_collection.id
+            )
+        collection = collection.first()
 
         if collection:
             log(
@@ -461,12 +469,19 @@ def collection_edit(
 
     if form.validate_on_submit():
         label = form.label.data
+        collection_query: m.Collection = m.Collection.query.filter_by(
+            is_deleted=False,
+            label=label,
+        ).filter(m.Collection.id != collection_to_edit.id)
 
-        if (
-            m.Collection.query.filter_by(label=label, version_id=book.versions[-1].id)
-            .filter(m.Collection.id != collection_to_edit.id)
-            .first()
-        ):
+        if sub_collection_id:
+            collection_query = collection_query.filter_by(parrent_id=collection_id)
+        else:
+            collection_query = collection_query.filter_by(
+                parrent_id=collection_to_edit.parrent.id
+            )
+
+        if collection_query.first():
             log(
                 log.INFO,
                 "Collection with similar label already exists. Book: [%s], Collection: [%s], Label: [%s]",

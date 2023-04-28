@@ -219,7 +219,9 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
         label="Test Collection #1 Label"
     ).first()
     m.Collection(
-        label="Test Collection #2 Label", version_id=collection.version_id
+        label="Test Collection #2 Label",
+        version_id=collection.version_id,
+        parrent_id=collection.parrent_id,
     ).save()
 
     response: Response = client.post(
@@ -300,6 +302,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
         label="Test Leaf Collection #1 Label",
         version_id=book.versions[-1].id,
         is_leaf=True,
+        parrent_id=book.versions[-1].root_collection.id,
     ).save()
     collection: m.Collection = m.Collection(
         label="Test Collection #1 Label", version_id=book.versions[-1].id
@@ -329,7 +332,9 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/create_sub_collection",
-        data=dict(label="Test Collection #1 Label", about="Test Collection #1 About"),
+        data=dict(
+            label="Test SubCollection #1 Label", about="Test SubCollection #1 About"
+        ),
         follow_redirects=True,
     )
 
@@ -400,7 +405,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     assert response.status_code == 200
     assert b"Success!" in response.data
 
-    deleted_collection: m.Collection = db.session.get(m.Collection, collection.id)
+    deleted_collection: m.Collection = db.session.get(m.Collection, sub_collection.id)
     assert deleted_collection.is_deleted
 
     response: Response = client.post(
