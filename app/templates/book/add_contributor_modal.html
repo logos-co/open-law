@@ -4,7 +4,7 @@
   <div class="relative w-full max-w-2xl max-h-full">
     <!-- Modal content -->
     <form action="{{ url_for('book.add_contributor', book_id=book.id) }}" method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-
+      {{ form_hidden_tag() }}
       <input type="hidden" name="user_id" id="user_id" value="0" />
       <input type="hidden" name="" id="user-edit-next_url" value="" />
       <!-- Modal header -->
