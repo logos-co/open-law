@@ -9,7 +9,7 @@
         {{ book.owner.username }}/{{ book.label }}
       </h1>
       <h1 class="text-2xl font-extrabold dark:text-white ml-4">
-        {{collection.label}}/{{sub_collection.label}}/{{section.label}}
+        {{collection.label}} {% if sub_collection %}/ {{sub_collection.label}} {% endif %} /{{section.label}}
       </h1>
     </div>
   </div>
@@ -32,7 +32,11 @@
       <dl class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
         <!-- prettier-ignore -->
         {% for interpretation in section.interpretations %}
-        <a href="{{url_for('book.interpretation_view',book_id=book.id,collection_id=collection.id,sub_collection_id=sub_collection.id, section_id=section.id)}}" >
+          {% if sub_collection %}
+            <a href="{{url_for('book.interpretation_view', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id, section_id=section.id)}}" >
+          {% else %}
+            <a href="{{url_for('book.interpretation_view', book_id=book.id, collection_id=collection.id, section_id=section.id)}}" >
+          {% endif %}
           <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
             <div class="flex flex-col pb-3 p-3 w-full">
               <!-- prettier-ignore -->
