@@ -18,27 +18,7 @@
 
 {% block content %}
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 md:mr-64">
-  <!-- prettier-ignore -->
-  <nav class="flex mt-5 mb-3" aria-label="Breadcrumb">
-  <ol class="inline-flex items-center space-x-1 md:space-x-3 ml-5">
-    {% for breadcrumb in breadcrumbs %}
-    <li class="inline-flex items-center">
-      <a href="{{ breadcrumb.url }}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-        <!-- prettier-ignore -->
-        <!--svg for all types of breadcrumb-->
-        {% if breadcrumb.type == "MyBookList" or breadcrumb.type == "AuthorBookList" %}
-          <svg aria-hidden="true" class="flex-shrink-0 w-4 h-4 mr-2 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-        {% else %}
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="flex-shrink-0 w-4 h-4 mr-2 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /> </svg>
-        {% endif %}  
-        <!-- prettier-ignore -->
-         {{ breadcrumb.label }}
-      </a>
-      <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path> </svg>
-    </li>
-    {% endfor %}
-  </ol>
-</nav>
+  {% include 'book/breadcrumbs_navigation.html'%}
   <h1 class="text-l font-extrabold dark:text-white ml-4">Collections page</h1>
   <!-- prettier-ignore -->
   <div class="mb-1 border-b border-gray-200 dark:border-gray-700">
