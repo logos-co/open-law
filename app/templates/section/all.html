@@ -13,8 +13,6 @@
     class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
     {% for section in sections %}
     <!-- prettier-ignore -->
-    <!-- book.id=section.version.book.id -->
-
     <a
       href="{{url_for('book.interpretation_view',book_id=section.book_id,collection_id=section.collection_id,sub_collection_id=section.sub_collection_id, section_id=section.id)}}">
       <dl
