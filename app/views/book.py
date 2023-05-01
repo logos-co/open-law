@@ -76,7 +76,7 @@ def create():
         return redirect(url_for("book.my_books"))
 
 
-@bp.route("/<int:book_id>", methods=["GET"])
+@bp.route("/<int:book_id>/collections", methods=["GET"])
 def collection_view(book_id: int):
     book = db.session.get(m.Book, book_id)
     if not book or book.is_deleted:
@@ -87,7 +87,7 @@ def collection_view(book_id: int):
         return render_template("book/collection_view.html", book=book)
 
 
-@bp.route("/<int:book_id>/<int:collection_id>", methods=["GET"])
+@bp.route("/<int:book_id>/<int:collection_id>/subcollections", methods=["GET"])
 def sub_collection_view(book_id: int, collection_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.is_deleted:
@@ -101,11 +101,8 @@ def sub_collection_view(book_id: int, collection_id: int):
         flash("Collection not found", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
     if collection.is_leaf:
-        return render_template(
-            "book/section_view.html",
-            book=book,
-            collection=collection,
-            sub_collection=collection,
+        return redirect(
+            url_for("book.section_view", book_id=book.id, collection_id=collection.id)
         )
     else:
         return render_template(
@@ -113,8 +110,14 @@ def sub_collection_view(book_id: int, collection_id: int):
         )
 
 
-@bp.route("/<int:book_id>/<int:collection_id>/<int:sub_collection_id>", methods=["GET"])
-def section_view(book_id: int, collection_id: int, sub_collection_id: int):
+@bp.route("/<int:book_id>/<int:collection_id>/sections", methods=["GET"])
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/sections",
+    methods=["GET"],
+)
+def section_view(
+    book_id: int, collection_id: int, sub_collection_id: int | None = None
+):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.is_deleted:
         log(log.WARNING, "Book with id [%s] not found", book_id)
@@ -127,30 +130,40 @@ def section_view(book_id: int, collection_id: int, sub_collection_id: int):
         flash("Collection not found", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
 
-    sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-    if not sub_collection or sub_collection.is_deleted:
-        log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-        flash("Sub_collection not found", "danger")
-        return redirect(
-            url_for(
-                "book.sub_collection_view", book_id=book_id, collection_id=collection_id
+    sub_collection = None
+    if sub_collection_id:
+        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+        if not sub_collection or sub_collection.is_deleted:
+            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
+            flash("Sub_collection not found", "danger")
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
             )
-        )
+
+    if sub_collection:
+        sections = sub_collection.sections
     else:
-        return render_template(
-            "book/section_view.html",
-            book=book,
-            collection=collection,
-            sub_collection=sub_collection,
-        )
+        sections = collection.sections
+
+    return render_template(
+        "book/section_view.html",
+        book=book,
+        collection=collection,
+        sections=sections,
+        sub_collection=sub_collection,
+    )
 
 
 @bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/<int:section_id>/interpretation",
+    "/<int:book_id>/<int:collection_id>/<int:section_id>/interpretations",
     methods=["GET"],
 )
 @bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:section_id>/interpretation",
+    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/<int:section_id>/interpretations",
     methods=["GET"],
 )
 def interpretation_view(
@@ -173,15 +186,16 @@ def interpretation_view(
 
     if sub_collection_id:
         sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-        if not sub_collection:
+        if not sub_collection or sub_collection.is_deleted:
             log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
             flash("Sub_collection not found", "danger")
-            return redirect(url_for("book.collection_view", book_id=book_id))
-    sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-    if not sub_collection or sub_collection.is_deleted:
-        log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-        flash("Sub_collection not found", "danger")
-        return redirect(url_for("book.collection_view", book_id=book_id))
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
+            )
 
     section: m.Section = db.session.get(m.Section, section_id)
     if not section:
@@ -200,7 +214,7 @@ def interpretation_view(
             "book/interpretation_view.html",
             book=book,
             collection=collection,
-            sub_collection=sub_collection,
+            sub_collection=sub_collection if sub_collection_id else None,
             section=section,
         )
 
