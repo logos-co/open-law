@@ -10,6 +10,7 @@ from flask_login import login_required, current_user
 
 from app.controllers import create_pagination
 from app import models as m, db, forms as f
+from app.controllers.breadcrumbs import create_breadcrumbs
 from app.logger import log
 
 bp = Blueprint("book", __name__, url_prefix="/book")
@@ -79,12 +80,15 @@ def create():
 @bp.route("/<int:book_id>", methods=["GET"])
 def collection_view(book_id: int):
     book = db.session.get(m.Book, book_id)
+    breadcrumbs = create_breadcrumbs(book_id=book_id, collection_path=())
     if not book or book.is_deleted:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.my_books"))
     else:
-        return render_template("book/collection_view.html", book=book)
+        return render_template(
+            "book/collection_view.html", book=book, breadcrumbs=breadcrumbs
+        )
 
 
 @bp.route("/<int:book_id>/<int:collection_id>", methods=["GET"])
@@ -94,22 +98,26 @@ def sub_collection_view(book_id: int, collection_id: int):
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.my_books"))
-
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection or collection.is_deleted:
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
         flash("Collection not found", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
+    breadcrumbs = create_breadcrumbs(book_id=book_id, collection_path=(collection.id,))
     if collection.is_leaf:
         return render_template(
             "book/section_view.html",
             book=book,
             collection=collection,
             sub_collection=collection,
+            breadcrumbs=breadcrumbs,
         )
     else:
         return render_template(
-            "book/sub_collection_view.html", book=book, collection=collection
+            "book/sub_collection_view.html",
+            book=book,
+            collection=collection,
+            breadcrumbs=breadcrumbs,
         )
 
 
@@ -137,11 +145,19 @@ def section_view(book_id: int, collection_id: int, sub_collection_id: int):
             )
         )
     else:
+        breadcrumbs = create_breadcrumbs(
+            book_id=book_id,
+            collection_path=(
+                collection_id,
+                sub_collection_id,
+            ),
+        )
         return render_template(
             "book/section_view.html",
             book=book,
             collection=collection,
             sub_collection=sub_collection,
+            breadcrumbs=breadcrumbs,
         )
 
 
@@ -187,12 +203,21 @@ def interpretation_view(
             )
         )
     else:
+        breadcrumbs = create_breadcrumbs(
+            book_id=book_id,
+            collection_path=(
+                collection_id,
+                sub_collection_id,
+            ),
+            section_id=section_id,
+        )
         return render_template(
             "book/interpretation_view.html",
             book=book,
             collection=collection,
             sub_collection=sub_collection,
             section=section,
+            breadcrumbs=breadcrumbs,
         )
 
 

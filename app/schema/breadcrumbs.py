@@ -1,18 +1,30 @@
+import enum
+
 from pydantic import BaseModel
 
 
-class Breadcrumbs(BaseModel):
-    """Breadcrumbs for navigation"""
+class BreadCrumbType(enum.StrEnum):
+    """Bread Crumb Type"""
 
-    book_owner: str  # book owner name
-    route_for_all_owners_books: str  # route for all book of this book owner
-    current_user_is_owner: bool  # if current_user is owner of book
-    book_name: str  # book label
+    MyBookList = "MyBookList"
+    AuthorBookList = "AuthorBookList"
+    Collection = "Collection"
+    Section = "Section"
+    Interpretation = "Interpretation"
+
+
+class BreadCrumb(BaseModel):
+    """Bread Crumb for navigation"""
+
+    label: str
+    url: str
+    type: BreadCrumbType
 
     # How breadcrumbs must look like
+    # Book List    > Book Name  > Top Level Collection > SubCollection > Section        > Interpretation
 
     # if im not owner of a book
-    # Home > Owner_name/All his books > This_book_name > Collection_name > Sub_collection_name > Section_name
+    # John's books > Book Name  > Top Level Collection > SubCollection > Section        > Interpretation
 
     # if i owner
-    # Home > My_books > This_book_name > Collection_name > Sub_collection_name > Section_name
+    # My Books     > Book Title > Part I               > Chapter X     > Paragraph 1.7  > By John
