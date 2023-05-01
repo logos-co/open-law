@@ -67,6 +67,7 @@
         </a>
       </li>
 
+      {% if current_user.is_authenticated %}
       <li>
         <a
           href="{{ url_for('auth.logout') }}"
@@ -85,6 +86,7 @@
           <span class="flex-1 ml-3 whitespace-nowrap">Sign Out</span>
         </a>
       </li>
+      {% endif %}
     </ul>
   </div>
 </aside>
