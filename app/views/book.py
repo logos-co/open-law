@@ -8,9 +8,8 @@ from flask import (
 )
 from flask_login import login_required, current_user
 
-from app.controllers import create_pagination
+from app.controllers import create_pagination, create_breadcrumbs
 from app import models as m, db, forms as f
-from app.controllers.breadcrumbs import create_breadcrumbs
 from app.logger import log
 
 bp = Blueprint("book", __name__, url_prefix="/book")

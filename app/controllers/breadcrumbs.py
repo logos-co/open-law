@@ -1,5 +1,6 @@
 from flask import url_for
 from flask_login import current_user
+
 from app import models as m, db
 from app import schema as s
 
@@ -52,7 +53,7 @@ def create_breadcrumbs(
                 label=collection.label,
             )
         ]
-    if section_id != 0 and collection_path:
+    if section_id and collection_path:
         section: m.Section = db.session.get(m.Section, section_id)
         if len(collection_path) == 2:
             crumples += [
@@ -80,7 +81,7 @@ def create_breadcrumbs(
                     label=section.label,
                 )
             ]
-        if interpretation_id != 0:
+        if interpretation_id:
             interpretation: m.Interpretation = db.session.get(
                 m.Interpretation, interpretation_id
             )
