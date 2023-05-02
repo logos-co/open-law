@@ -2,19 +2,11 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 md:mr-64">
+  {% include 'book/breadcrumbs_navigation.html'%}
+  <h1 class="text-l font-extrabold dark:text-white ml-4">
+    Interpretations page
+  </h1>
   <!-- prettier-ignore -->
-  <div class="flex p-2">
-   <div>
-      <h1 class="text-l font-extrabold dark:text-white ml-4">
-        {{ book.owner.username }}/{{ book.label }}
-      </h1>
-      <h1 class="text-2xl font-extrabold dark:text-white ml-4">
-        {{collection.label}}/{{sub_collection.label}}/{{section.label}}
-      </h1>
-    </div>
-  </div>
-  <!-- prettier-ignore -->
-
   <div class="mb-1 border-b border-gray-200 dark:border-gray-700">
     <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
         <li class="mr-2" role="presentation">
@@ -32,7 +24,11 @@
       <dl class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
         <!-- prettier-ignore -->
         {% for interpretation in section.interpretations %}
-        <a href="{{url_for('book.interpretation_view',book_id=book.id,collection_id=collection.id,sub_collection_id=sub_collection.id, section_id=section.id)}}" >
+          {% if sub_collection %}
+            <a href="{{url_for('book.interpretation_view', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id, section_id=section.id)}}" >
+          {% else %}
+            <a href="{{url_for('book.interpretation_view', book_id=book.id, collection_id=collection.id, section_id=section.id)}}" >
+          {% endif %}
           <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
             <div class="flex flex-col pb-3 p-3 w-full">
               <!-- prettier-ignore -->
