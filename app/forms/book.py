@@ -1,11 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, ValidationError
 from wtforms.validators import DataRequired, Length
-from flask import (
-    flash,
-    redirect,
-    url_for,
-)
 
 from app import models as m, db
 from app.logger import log
@@ -42,5 +37,4 @@ class EditBookForm(BaseBookForm):
             log(
                 log.WARNING, "Book with label [%s] already exists: [%s]", label, book_id
             )
-            flash("Book label must be unique!", "danger")
             raise ValidationError("Book label must be unique!")
