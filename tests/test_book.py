@@ -62,9 +62,10 @@ def test_create_edit_book(client: FlaskClient):
     assert len(book.versions) == 1
 
     response: Response = client.post(
-        "/book/9999/edit",
+        "/book/999/edit",
         data=dict(
-            label=BOOK_NAME,
+            book_id=999,
+            label="Book 1",
         ),
         follow_redirects=True,
     )
@@ -75,6 +76,7 @@ def test_create_edit_book(client: FlaskClient):
     response: Response = client.post(
         f"/book/{book.id}/edit",
         data=dict(
+            book_id=book.id,
             label=BOOK_NAME,
         ),
         follow_redirects=True,
@@ -86,6 +88,7 @@ def test_create_edit_book(client: FlaskClient):
     response: Response = client.post(
         f"/book/{book.id}/edit",
         data=dict(
+            book_id=book.id,
             label=BOOK_NAME + " EDITED",
         ),
         follow_redirects=True,

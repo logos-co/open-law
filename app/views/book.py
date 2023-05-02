@@ -82,32 +82,20 @@ def edit(book_id: int):
     form = f.EditBookForm()
     if form.validate_on_submit():
         book: m.Book = db.session.get(m.Book, book_id)
-        if not book or book.is_deleted:
-            log(log.WARNING, "Book with id [%s] not found", book_id)
-            flash("Book not found", "danger")
-            return redirect(url_for("book.my_books"))
         label = form.label.data
-        existing_book: m.Book = m.Book.query.filter_by(
-            is_deleted=False,
-            label=label,
-        ).first()
-        if existing_book:
-            log(log.WARNING, "Book with id [%s] not found", book_id)
-            flash("Book label must be unique!", "danger")
-            return redirect(url_for("book.my_books"))
 
         book.label = label
         log(log.INFO, "Update Book: [%s]", book)
         book.save()
         flash("Success!", "success")
-        return redirect(url_for("book.my_books"))
+        return redirect(url_for("book.collection_view", book_id=book_id))
     else:
         log(log.ERROR, "Book create errors: [%s]", form.errors)
         for field, errors in form.errors.items():
             field_label = form._fields[field].label.text
             for error in errors:
                 flash(error.replace("Field", field_label), "danger")
-        return redirect(url_for("book.collection_view", book_id=book_id))
+        return redirect(url_for("book.settings", book_id=book_id))
 
 
 @bp.route("/<int:book_id>/collections", methods=["GET"])
