@@ -76,6 +76,28 @@ def create():
         return redirect(url_for("book.my_books"))
 
 
+@bp.route("/<int:book_id>/edit", methods=["POST"])
+@login_required
+def edit(book_id: int):
+    form = f.EditBookForm()
+    if form.validate_on_submit():
+        book: m.Book = db.session.get(m.Book, book_id)
+        label = form.label.data
+
+        book.label = label
+        log(log.INFO, "Update Book: [%s]", book)
+        book.save()
+        flash("Success!", "success")
+        return redirect(url_for("book.collection_view", book_id=book_id))
+    else:
+        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(url_for("book.settings", book_id=book_id))
+
+
 @bp.route("/<int:book_id>/collections", methods=["GET"])
 def collection_view(book_id: int):
     book = db.session.get(m.Book, book_id)
