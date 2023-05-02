@@ -485,9 +485,9 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     leaf_collection.is_leaf = False
     leaf_collection.save()
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/create_section",
+        f"/book/{book.id}/{collection.id}/create_section",
         data=dict(
-            collection_id=leaf_collection.id,
+            collection_id=collection.id,
             label="Test Section",
             about="Test Section #1 About",
         ),

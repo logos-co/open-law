@@ -19,7 +19,9 @@ class CreateSectionForm(BaseSectionForm):
         collection_id = field.data
         collection: m.Collection = db.session.get(m.Collection, collection_id)
 
-        if collection and not collection.is_leaf:
+        if not collection or [
+            child for child in collection.children if not child.is_deleted
+        ]:
             log(log.WARNING, "Collection [%s] it not leaf", collection)
 
             raise ValidationError("You can't create section for this collection")

@@ -8,11 +8,14 @@
 {% set show_delete_collection = True %}
 <!-- show create collection btn on rightside bar -->
 {% set show_create_collection = True %}
+<!-- show create section btn on rightside bar -->
+{% set show_create_section = collection.is_leaf or not collection.children %}
 
 <!-- prettier-ignore -->
 {% include 'book/edit_collection_modal.html' %}
 {% include 'book/delete_collection_modal.html' %}
 {% include 'book/add_collection_modal.html' %}
+{% include 'book/add_section_modal.html' %}
 {% endif %}
 
 

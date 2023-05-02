@@ -681,7 +681,7 @@ def section_create(
     redirect_url = url_for("book.collection_view", book_id=book_id)
     if collection_id:
         redirect_url = url_for(
-            "book.sub_collection_view",
+            "book.section_view",
             book_id=book_id,
             collection_id=collection_id,
             sub_collection_id=sub_collection_id,
@@ -696,6 +696,10 @@ def section_create(
             collection_id=sub_collection_id or collection_id,
             version_id=book.last_version.id,
         )
+        if sub_collection:
+            sub_collection.is_leaf = True
+        else:
+            collection.is_leaf = True
         log(log.INFO, "Create section [%s]. Collection: [%s]", section, collection_id)
         section.save()
 
