@@ -11,6 +11,18 @@ def create_breadcrumbs(
     section_id: int = 0,
     interpretation_id: int = 0,
 ) -> list[s.BreadCrumb]:
+    """
+    How breadcrumbs look like:
+
+    Book List -> Book Name -> Top Level Collection -> SubCollection -> Section -> Interpretation
+
+    - If i am not owner of a book
+    John's books -> Book Name -> Top Level Collection -> SubCollection -> Section -> Interpretation
+
+    - If i am owner
+    My Books -> Book Title -> Part I -> Chapter X -> Paragraph 1.7 -> By John
+    """
+
     crumples: list[s.BreadCrumb] = []
     book: m.Book = db.session.get(m.Book, book_id)
     if current_user.is_authenticated and book.user_id == current_user.id:

@@ -19,12 +19,3 @@ class BreadCrumb(BaseModel):
     label: str
     url: str
     type: BreadCrumbType
-
-    # How breadcrumbs must look like
-    # Book List    > Book Name  > Top Level Collection > SubCollection > Section        > Interpretation
-
-    # if im not owner of a book
-    # John's books > Book Name  > Top Level Collection > SubCollection > Section        > Interpretation
-
-    # if i owner
-    # My Books     > Book Title > Part I               > Chapter X     > Paragraph 1.7  > By John
