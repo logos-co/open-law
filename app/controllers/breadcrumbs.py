@@ -41,6 +41,8 @@ def create_breadcrumbs(
     ]
 
     for collection_id in collection_path:
+        if collection_id is None:
+            continue
         collection: m.Collection = db.session.get(m.Collection, collection_id)
         crumples += [
             s.BreadCrumb(
