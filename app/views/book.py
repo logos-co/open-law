@@ -8,7 +8,7 @@ from flask import (
 )
 from flask_login import login_required, current_user
 
-from app.controllers import create_pagination
+from app.controllers import create_pagination, create_breadcrumbs
 from app import models as m, db, forms as f
 from app.logger import log
 
@@ -76,15 +76,40 @@ def create():
         return redirect(url_for("book.my_books"))
 
 
+@bp.route("/<int:book_id>/edit", methods=["POST"])
+@login_required
+def edit(book_id: int):
+    form = f.EditBookForm()
+    if form.validate_on_submit():
+        book: m.Book = db.session.get(m.Book, book_id)
+        label = form.label.data
+
+        book.label = label
+        log(log.INFO, "Update Book: [%s]", book)
+        book.save()
+        flash("Success!", "success")
+        return redirect(url_for("book.collection_view", book_id=book_id))
+    else:
+        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(url_for("book.settings", book_id=book_id))
+
+
 @bp.route("/<int:book_id>/collections", methods=["GET"])
 def collection_view(book_id: int):
     book = db.session.get(m.Book, book_id)
+    breadcrumbs = create_breadcrumbs(book_id=book_id, collection_path=())
     if not book or book.is_deleted:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.my_books"))
     else:
-        return render_template("book/collection_view.html", book=book)
+        return render_template(
+            "book/collection_view.html", book=book, breadcrumbs=breadcrumbs
+        )
 
 
 @bp.route("/<int:book_id>/<int:collection_id>/subcollections", methods=["GET"])
@@ -94,19 +119,22 @@ def sub_collection_view(book_id: int, collection_id: int):
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.my_books"))
-
     collection: m.Collection = db.session.get(m.Collection, collection_id)
     if not collection or collection.is_deleted:
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
         flash("Collection not found", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
+    breadcrumbs = create_breadcrumbs(book_id=book_id, collection_path=(collection.id,))
     if collection.is_leaf:
         return redirect(
             url_for("book.section_view", book_id=book.id, collection_id=collection.id)
         )
     else:
         return render_template(
-            "book/sub_collection_view.html", book=book, collection=collection
+            "book/sub_collection_view.html",
+            book=book,
+            collection=collection,
+            breadcrumbs=breadcrumbs,
         )
 
 
@@ -149,12 +177,21 @@ def section_view(
     else:
         sections = collection.sections
 
+    breadcrumbs = create_breadcrumbs(
+        book_id=book_id,
+        collection_path=(
+            collection_id,
+            sub_collection_id,
+        ),
+    )
+
     return render_template(
         "book/section_view.html",
         book=book,
         collection=collection,
         sections=sections,
         sub_collection=sub_collection,
+        breadcrumbs=breadcrumbs,
     )
 
 
@@ -210,12 +247,21 @@ def interpretation_view(
             )
         )
     else:
+        breadcrumbs = create_breadcrumbs(
+            book_id=book_id,
+            collection_path=(
+                collection_id,
+                sub_collection_id,
+            ),
+            section_id=section_id,
+        )
         return render_template(
             "book/interpretation_view.html",
             book=book,
             collection=collection,
             sub_collection=sub_collection if sub_collection_id else None,
             section=section,
+            breadcrumbs=breadcrumbs,
         )
 
 
