@@ -5,7 +5,7 @@ from app import models as m, db
 from tests.utils import login
 
 
-def test_create_book(client: FlaskClient):
+def test_create_edit_book(client: FlaskClient):
     login(client)
 
     BOOK_NAME = "Test Book"
@@ -60,6 +60,44 @@ def test_create_book(client: FlaskClient):
     assert book
     assert book.versions
     assert len(book.versions) == 1
+
+    response: Response = client.post(
+        "/book/999/edit",
+        data=dict(
+            book_id=999,
+            label="Book 1",
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Book not found" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/edit",
+        data=dict(
+            book_id=book.id,
+            label=BOOK_NAME,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Book label must be unique!" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/edit",
+        data=dict(
+            book_id=book.id,
+            label=BOOK_NAME + " EDITED",
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Success!" in response.data
+    book = db.session.get(m.Book, book.id)
+    assert book.label != BOOK_NAME
 
 
 def test_add_contributor(client: FlaskClient):

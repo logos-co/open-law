@@ -76,7 +76,29 @@ def create():
         return redirect(url_for("book.my_books"))
 
 
-@bp.route("/<int:book_id>", methods=["GET"])
+@bp.route("/<int:book_id>/edit", methods=["POST"])
+@login_required
+def edit(book_id: int):
+    form = f.EditBookForm()
+    if form.validate_on_submit():
+        book: m.Book = db.session.get(m.Book, book_id)
+        label = form.label.data
+
+        book.label = label
+        log(log.INFO, "Update Book: [%s]", book)
+        book.save()
+        flash("Success!", "success")
+        return redirect(url_for("book.collection_view", book_id=book_id))
+    else:
+        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(url_for("book.settings", book_id=book_id))
+
+
+@bp.route("/<int:book_id>/collections", methods=["GET"])
 def collection_view(book_id: int):
     book = db.session.get(m.Book, book_id)
     breadcrumbs = create_breadcrumbs(book_id=book_id, collection_path=())
@@ -90,7 +112,7 @@ def collection_view(book_id: int):
         )
 
 
-@bp.route("/<int:book_id>/<int:collection_id>", methods=["GET"])
+@bp.route("/<int:book_id>/<int:collection_id>/subcollections", methods=["GET"])
 def sub_collection_view(book_id: int, collection_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.is_deleted:
@@ -104,12 +126,8 @@ def sub_collection_view(book_id: int, collection_id: int):
         return redirect(url_for("book.collection_view", book_id=book_id))
     breadcrumbs = create_breadcrumbs(book_id=book_id, collection_path=(collection.id,))
     if collection.is_leaf:
-        return render_template(
-            "book/section_view.html",
-            book=book,
-            collection=collection,
-            sub_collection=collection,
-            breadcrumbs=breadcrumbs,
+        return redirect(
+            url_for("book.section_view", book_id=book.id, collection_id=collection.id)
         )
     else:
         return render_template(
@@ -120,52 +138,13 @@ def sub_collection_view(book_id: int, collection_id: int):
         )
 
 
-@bp.route("/<int:book_id>/<int:collection_id>/<int:sub_collection_id>", methods=["GET"])
-def section_view(book_id: int, collection_id: int, sub_collection_id: int):
-    book: m.Book = db.session.get(m.Book, book_id)
-    if not book or book.is_deleted:
-        log(log.WARNING, "Book with id [%s] not found", book_id)
-        flash("Book not found", "danger")
-        return redirect(url_for("book.my_books"))
-
-    collection: m.Collection = db.session.get(m.Collection, collection_id)
-    if not collection or collection.is_deleted:
-        log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Collection not found", "danger")
-        return redirect(url_for("book.collection_view", book_id=book_id))
-
-    sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-    if not sub_collection or sub_collection.is_deleted:
-        log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-        flash("Sub_collection not found", "danger")
-        return redirect(
-            url_for(
-                "book.sub_collection_view", book_id=book_id, collection_id=collection_id
-            )
-        )
-    else:
-        breadcrumbs = create_breadcrumbs(
-            book_id=book_id,
-            collection_path=(
-                collection_id,
-                sub_collection_id,
-            ),
-        )
-        return render_template(
-            "book/section_view.html",
-            book=book,
-            collection=collection,
-            sub_collection=sub_collection,
-            breadcrumbs=breadcrumbs,
-        )
-
-
+@bp.route("/<int:book_id>/<int:collection_id>/sections", methods=["GET"])
 @bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/<int:section_id>",
+    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/sections",
     methods=["GET"],
 )
-def interpretation_view(
-    book_id: int, collection_id: int, sub_collection_id: int, section_id: int
+def section_view(
+    book_id: int, collection_id: int, sub_collection_id: int | None = None
 ):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.is_deleted:
@@ -179,15 +158,81 @@ def interpretation_view(
         flash("Collection not found", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
 
-    sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-    if not sub_collection or sub_collection.is_deleted:
-        log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-        flash("Sub_collection not found", "danger")
-        return redirect(
-            url_for(
-                "book.sub_collection_view", book_id=book_id, collection_id=collection_id
+    sub_collection = None
+    if sub_collection_id:
+        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+        if not sub_collection or sub_collection.is_deleted:
+            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
+            flash("Sub_collection not found", "danger")
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
             )
-        )
+
+    if sub_collection:
+        sections = sub_collection.sections
+    else:
+        sections = collection.sections
+
+    breadcrumbs = create_breadcrumbs(
+        book_id=book_id,
+        collection_path=(
+            collection_id,
+            sub_collection_id,
+        ),
+    )
+
+    return render_template(
+        "book/section_view.html",
+        book=book,
+        collection=collection,
+        sections=sections,
+        sub_collection=sub_collection,
+        breadcrumbs=breadcrumbs,
+    )
+
+
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:section_id>/interpretations",
+    methods=["GET"],
+)
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/<int:section_id>/interpretations",
+    methods=["GET"],
+)
+def interpretation_view(
+    book_id: int,
+    collection_id: int,
+    section_id: int,
+    sub_collection_id: int | None = None,
+):
+    book: m.Book = db.session.get(m.Book, book_id)
+    if not book or book.is_deleted:
+        log(log.WARNING, "Book with id [%s] not found", book_id)
+        flash("Book not found", "danger")
+        return redirect(url_for("book.my_books"))
+
+    collection: m.Collection = db.session.get(m.Collection, collection_id)
+    if not collection or collection.is_deleted:
+        log(log.WARNING, "Collection with id [%s] not found", collection_id)
+        flash("Collection not found", "danger")
+        return redirect(url_for("book.collection_view", book_id=book_id))
+
+    if sub_collection_id:
+        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+        if not sub_collection or sub_collection.is_deleted:
+            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
+            flash("Sub_collection not found", "danger")
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
+            )
 
     section: m.Section = db.session.get(m.Section, section_id)
     if not section:
@@ -214,7 +259,7 @@ def interpretation_view(
             "book/interpretation_view.html",
             book=book,
             collection=collection,
-            sub_collection=sub_collection,
+            sub_collection=sub_collection if sub_collection_id else None,
             section=section,
             breadcrumbs=breadcrumbs,
         )
