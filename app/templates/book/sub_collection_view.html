@@ -2,14 +2,10 @@
 {% extends 'base.html' %}
 
 {% if book.owner.id == current_user.id %}
-<!-- show edit collection btn on rightside bar -->
 {% set show_edit_collection = True %}
-<!-- show delete collection btn on rightside bar -->
 {% set show_delete_collection = True %}
-<!-- show create collection btn on rightside bar -->
 {% set show_create_collection = True %}
-<!-- show create section btn on rightside bar -->
-{% set show_create_section = collection.is_leaf or not collection.children %}
+{% set show_create_section = not collection.sub_collections or collection.is_leaf or not collection.children %}
 
 <!-- prettier-ignore -->
 {% include 'book/edit_collection_modal.html' %}
@@ -56,7 +52,7 @@
       <!-- prettier-ignore -->
       <dl class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
         <!-- prettier-ignore -->
-        {% for sub_collection in collection.children %}
+        {% for sub_collection in collection.sub_collections %}
         <!-- prettier-ignore -->
         <a href="{{url_for('book.section_view',book_id=book.id,collection_id=collection.id,sub_collection_id=sub_collection.id)}}">
           <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">

@@ -1,18 +1,17 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
 {% if book.owner.id == current_user.id %}
-<!-- show edit collection btn on rightside bar -->
 {% set show_edit_collection = True %}
-<!-- show delete collection btn on rightside bar -->
 {% set show_delete_collection = True %}
-<!-- show create section btn on rightside bar -->
 {% set show_create_section = True %}
+{% set show_create_collection = not collection.sub_collections and not collection.is_leaf %}
 
 
 <!-- prettier-ignore -->
 {% include 'book/edit_collection_modal.html' %}
 {% include 'book/delete_collection_modal.html' %}
 {% include 'book/add_section_modal.html' %}
+{% include 'book/add_collection_modal.html' %}
 {% endif %}
 
 <!-- prettier-ignore -->

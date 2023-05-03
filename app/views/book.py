@@ -173,9 +173,9 @@ def section_view(
             )
 
     if sub_collection:
-        sections = sub_collection.sections
+        sections = sub_collection.active_sections
     else:
-        sections = collection.sections
+        sections = collection.active_sections
 
     breadcrumbs = create_breadcrumbs(
         book_id=book_id,
@@ -823,6 +823,8 @@ def section_delete(
         log(log.WARNING, "Collection with id [%s] not found", collection_id)
         flash("Collection not found", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
+
+    collection_to_edit = collection
     if sub_collection_id:
         sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
         if not sub_collection or sub_collection.is_deleted:
@@ -835,6 +837,7 @@ def section_delete(
                     collection_id=collection_id,
                 )
             )
+        collection_to_edit = sub_collection
 
     redirect_url = url_for(
         "book.section_view",
@@ -849,6 +852,13 @@ def section_delete(
         return redirect(redirect_url)
 
     section.is_deleted = True
+    if not collection_to_edit.active_sections:
+        log(
+            log.INFO,
+            "Section [%s] has no active section. Set is_leaf = False",
+            section.id,
+        )
+        collection_to_edit.is_leaf = False
 
     log(log.INFO, "Delete section [%s]", section.id)
     section.save()
