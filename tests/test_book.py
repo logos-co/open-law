@@ -698,3 +698,250 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
 
     assert response.status_code == 200
     assert b"Section not found" in response.data
+
+
+def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
+    _, user = login(client)
+    user: m.User
+
+    # add dummmy data
+    runner.invoke(args=["db-populate"])
+
+    book: m.Book = db.session.get(m.Book, 1)
+    book.user_id = user.id
+    book.save()
+
+    leaf_collection: m.Collection = m.Collection(
+        label="Test Leaf Collection #1 Label",
+        version_id=book.last_version.id,
+        is_leaf=True,
+        parent_id=book.last_version.root_collection.id,
+    ).save()
+    section_in_collection: m.Section = m.Section(
+        label="Test Section in Collection #1 Label",
+        about="Test Section in Collection #1 About",
+        collection_id=leaf_collection.id,
+        version_id=book.last_version.id,
+    ).save()
+
+    collection: m.Collection = m.Collection(
+        label="Test Collection #1 Label", version_id=book.last_version.id
+    ).save()
+    sub_collection: m.Collection = m.Collection(
+        label="Test SubCollection #1 Label",
+        version_id=book.last_version.id,
+        parent_id=collection.id,
+        is_leaf=True,
+    ).save()
+    section_in_subcollection: m.Section = m.Section(
+        label="Test Section in Subcollection #1 Label",
+        about="Test Section in Subcollection #1 About",
+        collection_id=sub_collection.id,
+        version_id=book.last_version.id,
+    ).save()
+
+    label_1 = "Test Interpretation #1 Label"
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/create_interpretation",
+        data=dict(
+            section_id=section_in_subcollection.id,
+            label=label_1,
+            text="Test Interpretation #1 Label",
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    interpretation: m.Interpretation = m.Interpretation.query.filter_by(
+        label=label_1, section_id=section_in_subcollection.id
+    ).first()
+    assert interpretation
+    assert interpretation.collection_id == section_in_subcollection.id
+    assert interpretation.version_id == book.last_version.id
+    assert not interpretation.comments
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/create_interpretation",
+        data=dict(
+            section_id=section_in_subcollection.id,
+            label=label_1,
+            text="Test Interpretation #1 Label",
+        ),
+        follow_redirects=True,
+    )
+
+    assert b"Interpretation label must be unique!" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/create_interpretation",
+        data=dict(
+            section_id=section_in_collection.id,
+            label=label_1,
+            text="Test Interpretation #1 Label",
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    interpretation: m.Interpretation = m.Interpretation.query.filter_by(
+        label=label_1, section_id=section_in_collection.id
+    ).first()
+    assert interpretation
+    assert interpretation.collection_id == section_in_subcollection.id
+    assert interpretation.version_id == book.last_version.id
+    assert not interpretation.comments
+
+    response: Response = client.post(
+        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/create_interpretation",
+        data=dict(
+            section_id=section_in_collection.id,
+            label=label_1,
+            text="Test Interpretation #1 Label",
+        ),
+        follow_redirects=True,
+    )
+
+    assert b"Interpretation label must be unique!" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/999/create_section",
+        data=dict(collection_id=999, label=label_1, about="Test Section #1 About"),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Subcollection not found" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/{leaf_collection.id}/999/create_interpretation",
+        data=dict(collection_id=999, label=label_1, about="Test Section #1 About"),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Section not found" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/888/create_interpretation",
+        data=dict(collection_id=999, label=label_1, about="Test Section #1 About"),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Section not found" in response.data
+
+    # # edit
+
+    # m.Section(
+    #     label="Test",
+    #     about="Test",
+    #     collection_id=leaf_collection.id,
+    #     version_id=book.last_version.id,
+    # ).save()
+
+    # m.Section(
+    #     label="Test",
+    #     about="Test",
+    #     collection_id=sub_collection.id,
+    #     version_id=book.last_version.id,
+    # ).save()
+
+    # section: m.Section = m.Section.query.filter_by(
+    #     label=label_1, collection_id=leaf_collection.id
+    # ).first()
+
+    # response: Response = client.post(
+    #     f"/book/{book.id}/{leaf_collection.id}/{section.id}/edit_section",
+    #     data=dict(
+    #         section_id=section.id,
+    #         label="Test",
+    #     ),
+    #     follow_redirects=True,
+    # )
+
+    # assert response.status_code == 200
+    # assert b"Section label must be unique!" in response.data
+
+    # new_label = "Test Section #1 Label(edited)"
+    # new_about = "Test Section #1 About(edited)"
+
+    # response: Response = client.post(
+    #     f"/book/{book.id}/{leaf_collection.id}/{section.id}/edit_section",
+    #     data=dict(section_id=section.id, label=new_label, about=new_about),
+    #     follow_redirects=True,
+    # )
+    # assert response.status_code == 200
+    # assert b"Success!" in response.data
+
+    # edited_section: m.Section = m.Section.query.filter_by(
+    #     label=new_label, about=new_about, id=section.id
+    # ).first()
+    # assert edited_section
+
+    # #
+    # section_2: m.Section = m.Section.query.filter_by(
+    #     label=label_1, collection_id=sub_collection.id
+    # ).first()
+    # response: Response = client.post(
+    #     f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_2.id}/edit_section",
+    #     data=dict(
+    #         section_id=section_2.id,
+    #         label="Test",
+    #     ),
+    #     follow_redirects=True,
+    # )
+
+    # assert response.status_code == 200
+    # assert b"Section label must be unique!" in response.data
+
+    # response: Response = client.post(
+    #     f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_2.id}/edit_section",
+    #     data=dict(section_id=section_2.id, label=new_label, about=new_about),
+    #     follow_redirects=True,
+    # )
+    # assert response.status_code == 200
+    # assert b"Success!" in response.data
+
+    # edited_section: m.Section = m.Section.query.filter_by(
+    #     label=new_label, about=new_about, id=section_2.id
+    # ).first()
+    # assert edited_section
+
+    # response: Response = client.post(
+    #     f"/book/{book.id}/{collection.id}/{sub_collection.id}/999/edit_section",
+    #     data=dict(section_id=section_2.id, label=new_label, about=new_about),
+    #     follow_redirects=True,
+    # )
+
+    # assert response.status_code == 200
+    # assert b"Section not found" in response.data
+
+    # response: Response = client.post(
+    #     f"/book/{book.id}/{collection.id}/{leaf_collection.id}/{section.id}/delete_section",
+    #     follow_redirects=True,
+    # )
+
+    # assert response.status_code == 200
+    # assert b"Success!" in response.data
+
+    # deleted_section: m.Section = db.session.get(m.Section, section.id)
+    # assert deleted_section.is_deleted
+
+    # response: Response = client.post(
+    #     f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_2.id}/delete_section",
+    #     follow_redirects=True,
+    # )
+
+    # assert response.status_code == 200
+    # assert b"Success!" in response.data
+
+    # deleted_section: m.Section = db.session.get(m.Section, section_2.id)
+    # assert deleted_section.is_deleted
+
+    # response: Response = client.post(
+    #     f"/book/{book.id}/{collection.id}/{sub_collection.id}/999/delete_section",
+    #     follow_redirects=True,
+    # )
+
+    # assert response.status_code == 200
+    # assert b"Section not found" in response.data
