@@ -877,32 +877,42 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert response.status_code == 200
     assert b"Interpretation not found" in response.data
 
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{collection.id}/{leaf_collection.id}/{section.id}/delete_section",
-    #     follow_redirects=True,
-    # )
+    response: Response = client.post(
+        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/999/delete_interpretation",
+        follow_redirects=True,
+    )
 
-    # assert response.status_code == 200
-    # assert b"Success!" in response.data
+    assert response.status_code == 200
+    assert b"Interpretation not found" in response.data
 
-    # deleted_section: m.Section = db.session.get(m.Section, section.id)
-    # assert deleted_section.is_deleted
+    response: Response = client.post(
+        (
+            f"/book/{book.id}/{collection.id}/{sub_collection.id}/"
+            f"{section_in_subcollection.id}/{section_in_subcollection.interpretations[0].id}/delete_interpretation"
+        ),
+        follow_redirects=True,
+    )
 
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_2.id}/delete_section",
-    #     follow_redirects=True,
-    # )
+    assert response.status_code == 200
+    assert b"Success!" in response.data
 
-    # assert response.status_code == 200
-    # assert b"Success!" in response.data
+    deleted_interpretation: m.Interpretation = db.session.get(
+        m.Interpretation, section_in_subcollection.interpretations[0].id
+    )
+    assert deleted_interpretation.is_deleted
 
-    # deleted_section: m.Section = db.session.get(m.Section, section_2.id)
-    # assert deleted_section.is_deleted
+    response: Response = client.post(
+        (
+            f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/"
+            f"{section_in_collection.interpretations[0].id}/delete_interpretation"
+        ),
+        follow_redirects=True,
+    )
 
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{collection.id}/{sub_collection.id}/999/delete_section",
-    #     follow_redirects=True,
-    # )
+    assert response.status_code == 200
+    assert b"Success!" in response.data
 
-    # assert response.status_code == 200
-    # assert b"Section not found" in response.data
+    deleted_interpretation: m.Interpretation = db.session.get(
+        m.Interpretation, section_in_collection.interpretations[0].id
+    )
+    assert deleted_interpretation.is_deleted
