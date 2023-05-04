@@ -3,7 +3,7 @@ const searchAndShowResults = async (
   searchResultsTbody: any,
   trExample: any,
   userIdInput: any,
-) => {
+): Promise<undefined> => {
   searchResultsTbody.innerHTML = '';
 
   const bookId = userSearchbar.getAttribute('data-book-id');
