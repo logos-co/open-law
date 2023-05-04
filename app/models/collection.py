@@ -25,3 +25,15 @@ class Collection(BaseModel):
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"
+
+    @property
+    def active_sections(self):
+        return [section for section in self.sections if not section.is_deleted]
+
+    @property
+    def sub_collections(self):
+        return [
+            sub_collection
+            for sub_collection in self.children
+            if not sub_collection.is_deleted
+        ]

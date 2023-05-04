@@ -32,5 +32,20 @@ class Section(BaseModel):
         path += self.label
         return path
 
+    @property
+    def book_id(self):
+        _book_id = self.version.book_id
+        return _book_id
+
+    @property
+    def sub_collection_id(self):
+        parent = self.collection
+        grand_parent = parent.parent
+        if grand_parent.is_root:
+            _sub_collection_id = parent.id
+        else:
+            _sub_collection_id = grand_parent.id
+        return _sub_collection_id
+
     def __repr__(self):
         return f"<{self.id}: {self.label}>"
