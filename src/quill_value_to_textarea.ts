@@ -3,13 +3,10 @@ const quill_value_to_textarea = (): undefined => {
   const qlEditor: HTMLButtonElement = document.querySelector('.ql-editor');
   const editorContent = qlEditor.innerHTML;
   aboutInput.value = editorContent;
-
-  console.log(editorContent);
-
   return undefined;
 };
 
-export function initQuill() {
+export function initQuillValueToTextArea() {
   const qlEditor: HTMLButtonElement = document.querySelector('.ql-editor');
 
   if (!qlEditor) {

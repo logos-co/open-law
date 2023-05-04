@@ -93,29 +93,6 @@
     {% endblock %}
     <!-- scripts -->
 
-    <!-- prettier-ignore -->
-    <script src="{{ url_for('static', filename='js/quill.js') }}"></script>
-
-    <script>
-      var toolbarOptions = [
-        ['bold', 'italic', 'underline'],
-        [{list: 'ordered'}, {list: 'bullet'}],
-        [{header: [1, 2, 3, 4, 5, 6, false]}],
-        [{indent: '-1'}, {indent: '+1'}],
-        [{align: []}],
-        ['clean'],
-      ];
-      const editorElement = document.querySelector('#editor');
-      if (editorElement) {
-        var quill = new Quill('#editor', {
-          theme: 'snow',
-          modules: {
-            toolbar: toolbarOptions,
-          },
-        });
-      }
-    </script>
-
     {% block scripts %} {% endblock %}
   </body>
 </html>
