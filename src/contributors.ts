@@ -50,7 +50,7 @@ export function initContributors() {
   const userSearchbar: HTMLInputElement = document.querySelector('#username');
   const userIdInput: HTMLInputElement = document.querySelector('#user_id');
 
-  if (!searchBtn && !userSearchbar && !userIdInput) {
+  if (!searchBtn || !userSearchbar || !userIdInput) {
     return;
   }
 

@@ -16,6 +16,7 @@
     "jsonify",
     "pydantic",
     "pytest",
+    "siwe",
     "sqlalchemy",
     "tailwindcss",
     "viewonly",

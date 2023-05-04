@@ -1,12 +1,14 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
+    FileField,
     PasswordField,
     SubmitField,
     ValidationError,
     BooleanField,
 )
 from wtforms.validators import DataRequired, Length, EqualTo
+from flask_login import current_user
 
 from app import models as m
 
@@ -51,4 +53,18 @@ class NewUserForm(FlaskForm):
 
     def validate_username(self, field):
         if m.User.query.filter_by(username=field.data).first() is not None:
+            raise ValidationError("This username is taken.")
+
+
+class EditUserForm(FlaskForm):
+    name = StringField("Name", [DataRequired()])
+    avatar_img = FileField("Avatar file (max 200x200px)")
+    submit = SubmitField("Save")
+
+    def validate_username(self, field):
+        if (
+            m.User.query.filter_by(username=field.data)
+            .filter(m.User.id != current_user.id)
+            .first()
+        ):
             raise ValidationError("This username is taken.")
