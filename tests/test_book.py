@@ -814,91 +814,68 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert response.status_code == 200
     assert b"Section not found" in response.data
 
-    # # edit
+    # edit
 
-    # m.Section(
-    #     label="Test",
-    #     about="Test",
-    #     collection_id=leaf_collection.id,
-    #     version_id=book.last_version.id,
-    # ).save()
+    m.Interpretation(
+        label="Test",
+        text="Test",
+        section_id=section_in_collection.id,
+    ).save()
 
-    # m.Section(
-    #     label="Test",
-    #     about="Test",
-    #     collection_id=sub_collection.id,
-    #     version_id=book.last_version.id,
-    # ).save()
+    m.Interpretation(
+        label="Test",
+        text="Test",
+        section_id=section_in_subcollection.id,
+    ).save()
 
-    # section: m.Section = m.Section.query.filter_by(
-    #     label=label_1, collection_id=leaf_collection.id
-    # ).first()
+    interpretation: m.Interpretation = m.Interpretation.query.filter_by(
+        label=label_1, section_id=section_in_collection.id
+    ).first()
 
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{leaf_collection.id}/{section.id}/edit_section",
-    #     data=dict(
-    #         section_id=section.id,
-    #         label="Test",
-    #     ),
-    #     follow_redirects=True,
-    # )
+    response: Response = client.post(
+        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/{interpretation.id}/edit_interpretation",
+        data=dict(
+            interpretation_id=interpretation.id,
+            label="Test",
+            text="Test",
+        ),
+        follow_redirects=True,
+    )
 
-    # assert response.status_code == 200
-    # assert b"Section label must be unique!" in response.data
+    assert response.status_code == 200
+    assert b"Interpretation label must be unique!" in response.data
 
-    # new_label = "Test Section #1 Label(edited)"
-    # new_about = "Test Section #1 About(edited)"
+    new_label = "Test Interpretation #1 Label(edited)"
+    new_text = "Test Interpretation #1 Text(edited)"
 
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{leaf_collection.id}/{section.id}/edit_section",
-    #     data=dict(section_id=section.id, label=new_label, about=new_about),
-    #     follow_redirects=True,
-    # )
-    # assert response.status_code == 200
-    # assert b"Success!" in response.data
+    response: Response = client.post(
+        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/{interpretation.id}/edit_interpretation",
+        data=dict(
+            label=new_label,
+            interpretation_id=interpretation.id,
+            text=new_text,
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Success!" in response.data
 
-    # edited_section: m.Section = m.Section.query.filter_by(
-    #     label=new_label, about=new_about, id=section.id
-    # ).first()
-    # assert edited_section
+    edited_interpretation: m.Interpretation = m.Interpretation.query.filter_by(
+        label=new_label, text=new_text, id=interpretation.id
+    ).first()
+    assert edited_interpretation
 
-    # #
-    # section_2: m.Section = m.Section.query.filter_by(
-    #     label=label_1, collection_id=sub_collection.id
-    # ).first()
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_2.id}/edit_section",
-    #     data=dict(
-    #         section_id=section_2.id,
-    #         label="Test",
-    #     ),
-    #     follow_redirects=True,
-    # )
-
-    # assert response.status_code == 200
-    # assert b"Section label must be unique!" in response.data
-
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_2.id}/edit_section",
-    #     data=dict(section_id=section_2.id, label=new_label, about=new_about),
-    #     follow_redirects=True,
-    # )
-    # assert response.status_code == 200
-    # assert b"Success!" in response.data
-
-    # edited_section: m.Section = m.Section.query.filter_by(
-    #     label=new_label, about=new_about, id=section_2.id
-    # ).first()
-    # assert edited_section
-
-    # response: Response = client.post(
-    #     f"/book/{book.id}/{collection.id}/{sub_collection.id}/999/edit_section",
-    #     data=dict(section_id=section_2.id, label=new_label, about=new_about),
-    #     follow_redirects=True,
-    # )
-
-    # assert response.status_code == 200
-    # assert b"Section not found" in response.data
+    response: Response = client.post(
+        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/999/edit_interpretation",
+        data=dict(
+            interpretation_id=interpretation.id,
+            label=new_label,
+            text=new_text,
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Interpretation not found" in response.data
 
     # response: Response = client.post(
     #     f"/book/{book.id}/{collection.id}/{leaf_collection.id}/{section.id}/delete_section",

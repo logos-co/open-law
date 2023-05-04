@@ -9,4 +9,4 @@ from .contributor import (
 )
 from .collection import CreateCollectionForm, EditCollectionForm
 from .section import CreateSectionForm, EditSectionForm
-from .interpretation import CreateInterpretationForm
+from .interpretation import CreateInterpretationForm, EditInterpretationForm
