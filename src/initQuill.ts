@@ -17,4 +17,15 @@ export function initQuill() {
       },
     });
   }
+  const interpretationEditorElement = document.querySelector(
+    '#interpretation-editor',
+  );
+  if (interpretationEditorElement) {
+    var quill = new Quill('#interpretation-editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: toolbarOptions,
+      },
+    });
+  }
 }
