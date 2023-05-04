@@ -864,3 +864,254 @@ def section_delete(
             book_id=book_id,
         )
     )
+
+
+#####################
+# Interpretation CRUD
+#####################
+
+
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:section_id>/create_interpretation",
+    methods=["POST"],
+)
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/<int:section_id>/create_interpretation",
+    methods=["POST"],
+)
+@login_required
+def interpretation_create(
+    book_id: int,
+    collection_id: int,
+    section_id: int,
+    sub_collection_id: int | None = None,
+):
+    book: m.Book = db.session.get(m.Book, book_id)
+    if not book or book.is_deleted:
+        log(log.WARNING, "Book with id [%s] not found", book_id)
+        flash("Book not found", "danger")
+        return redirect(url_for("book.my_books"))
+
+    collection: m.Collection = db.session.get(m.Collection, collection_id)
+    if not collection or collection.is_deleted:
+        log(log.WARNING, "Collection with id [%s] not found", collection_id)
+        flash("Collection not found", "danger")
+        return redirect(url_for("book.collection_view", book_id=book_id))
+
+    sub_collection = None
+    if sub_collection_id:
+        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+        if not sub_collection or sub_collection.is_deleted:
+            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
+            flash("Subcollection not found", "danger")
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
+            )
+
+    redirect_url = url_for(
+        "book.section_view",
+        book_id=book_id,
+        collection_id=collection_id,
+        sub_collection_id=sub_collection_id,
+    )
+    section: m.Section = db.session.get(m.Section, section_id)
+    if not section or collection.is_deleted:
+        log(log.WARNING, "Section with id [%s] not found", section)
+        flash("Section not found", "danger")
+        return redirect(redirect_url)
+
+    form = f.CreateInterpretationForm()
+
+    if form.validate_on_submit():
+        interpretation: m.Interpretation = m.Interpretation(
+            label=form.label.data,
+            text=form.text.data,
+            section_id=section_id,
+        )
+        log(
+            log.INFO,
+            "Create interpretation [%s]. Section: [%s]",
+            interpretation,
+            section,
+        )
+        interpretation.save()
+
+        flash("Success!", "success")
+        return redirect(redirect_url)
+    else:
+        log(log.ERROR, "Interpretation create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(redirect_url)
+
+
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:section_id>/<int:interpretation_id>/edit_interpretation",
+    methods=["POST"],
+)
+@bp.route(
+    (
+        "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/"
+        "<int:section_id>/<int:interpretation_id>/edit_interpretation"
+    ),
+    methods=["POST"],
+)
+@login_required
+def interpretation_edit(
+    book_id: int,
+    collection_id: int,
+    section_id: int,
+    interpretation_id: int,
+    sub_collection_id: int | None = None,
+):
+    book: m.Book = db.session.get(m.Book, book_id)
+    if not book or book.owner != current_user or book.is_deleted:
+        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
+        flash("You are not owner of this book!", "danger")
+        return redirect(url_for("book.my_books"))
+
+    collection: m.Collection = db.session.get(m.Collection, collection_id)
+    if not collection or collection.is_deleted:
+        log(log.WARNING, "Collection with id [%s] not found", collection_id)
+        flash("Collection not found", "danger")
+        return redirect(url_for("book.collection_view", book_id=book_id))
+
+    if sub_collection_id:
+        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+        if not sub_collection or sub_collection.is_deleted:
+            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
+            flash("SubCollection not found", "danger")
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
+            )
+
+    redirect_url = url_for(
+        "book.interpretation_view",
+        book_id=book_id,
+        collection_id=collection_id,
+        sub_collection_id=sub_collection_id,
+        section_id=section_id,
+    )
+    section: m.Section = db.session.get(m.Section, section_id)
+    if not section or section.is_deleted:
+        log(log.WARNING, "Section with id [%s] not found", section_id)
+        flash("Section not found", "danger")
+        return redirect(redirect_url)
+
+    interpretation: m.Interpretation = db.session.get(
+        m.Interpretation, interpretation_id
+    )
+    if not interpretation or interpretation.is_deleted:
+        log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
+        flash("Interpretation not found", "danger")
+        return redirect(redirect_url)
+
+    form = f.EditInterpretationForm()
+
+    if form.validate_on_submit():
+        label = form.label.data
+        if label:
+            interpretation.label = label
+
+        interpretation.text = form.text.data
+
+        log(log.INFO, "Edit interpretation [%s]", interpretation.id)
+        interpretation.save()
+
+        flash("Success!", "success")
+        return redirect(redirect_url)
+    else:
+        log(log.ERROR, "Interpretation edit errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(redirect_url)
+
+
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:section_id>/<int:interpretation_id>/delete_interpretation",
+    methods=["POST"],
+)
+@bp.route(
+    (
+        "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/"
+        "<int:section_id>/<int:interpretation_id>/delete_interpretation"
+    ),
+    methods=["POST"],
+)
+@login_required
+def interpretation_delete(
+    book_id: int,
+    collection_id: int,
+    section_id: int,
+    interpretation_id: int,
+    sub_collection_id: int | None = None,
+):
+    book: m.Book = db.session.get(m.Book, book_id)
+    if not book or book.owner != current_user or book.is_deleted:
+        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
+        flash("You are not owner of this book!", "danger")
+        return redirect(url_for("book.my_books"))
+
+    collection: m.Collection = db.session.get(m.Collection, collection_id)
+    if not collection or collection.is_deleted:
+        log(log.WARNING, "Collection with id [%s] not found", collection_id)
+        flash("Collection not found", "danger")
+        return redirect(url_for("book.collection_view", book_id=book_id))
+
+    if sub_collection_id:
+        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+        if not sub_collection or sub_collection.is_deleted:
+            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
+            flash("SubCollection not found", "danger")
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
+            )
+
+    redirect_url = url_for(
+        "book.interpretation_view",
+        book_id=book_id,
+        collection_id=collection_id,
+        sub_collection_id=sub_collection_id,
+        section_id=section_id,
+    )
+    section: m.Section = db.session.get(m.Section, section_id)
+    if not section or section.is_deleted:
+        log(log.WARNING, "Section with id [%s] not found", section_id)
+        flash("Section not found", "danger")
+        return redirect(redirect_url)
+
+    interpretation: m.Interpretation = db.session.get(
+        m.Interpretation, interpretation_id
+    )
+    if not interpretation or interpretation.is_deleted:
+        log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
+        flash("Interpretation not found", "danger")
+        return redirect(redirect_url)
+
+    interpretation.is_deleted = True
+    log(log.INFO, "Delete interpretation [%s]", interpretation)
+    interpretation.save()
+
+    flash("Success!", "success")
+    return redirect(
+        url_for(
+            "book.collection_view",
+            book_id=book_id,
+        )
+    )
