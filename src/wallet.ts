@@ -14,9 +14,13 @@ export function initWallet() {
   const origin = window.location.origin;
   // connect to ethereum network and sign transactions with Metamask
   if (!window.hasOwnProperty('ethereum')) {
-    console.error("You don't have needed extension!");
+    let result = confirm(
+      "You don't have needed extension! Do you want to install it?",
+    );
+    if (result) {
+      window.open('https://metamask.io/', '_blank');
+    }
     return;
-    // TODO: redirect to install
   }
   const eOwner: IEthereumOwner = window as any;
   const provider = new ethers.providers.Web3Provider(eOwner.ethereum);
