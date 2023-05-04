@@ -754,10 +754,11 @@ def section_edit(
             )
 
     redirect_url = url_for(
-        "book.section_view",
+        "book.interpretation_view",
         book_id=book_id,
         collection_id=collection_id,
         sub_collection_id=sub_collection_id,
+        section_id=section_id,
     )
     section: m.Section = db.session.get(m.Section, section_id)
     if not section or section.is_deleted:
@@ -780,13 +781,6 @@ def section_edit(
         section.save()
 
         flash("Success!", "success")
-        if sub_collection_id:
-            redirect_url = url_for(
-                "book.section_view",
-                book_id=book_id,
-                collection_id=collection_id,
-                sub_collection_id=sub_collection_id,
-            )
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Section edit errors: [%s]", form.errors)
