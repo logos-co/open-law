@@ -19,3 +19,7 @@ class Book(BaseModel):
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"
+
+    @property
+    def last_version(self):
+        return self.versions[-1]

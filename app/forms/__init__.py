@@ -8,3 +8,4 @@ from .contributor import (
     EditContributorRoleForm,
 )
 from .collection import CreateCollectionForm, EditCollectionForm
+from .section import CreateSectionForm, EditSectionForm
