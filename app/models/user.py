@@ -11,16 +11,19 @@ from app.logger import log
 from app import schema as s
 
 
-def gen_password_reset_id() -> str:
+def gen_uniq_id() -> str:
     return str(uuid4())
 
 
 class User(BaseModel, UserMixin):
     __tablename__ = "users"
 
-    username = db.Column(db.String(60), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), default="")
-
+    username = db.Column(db.String(64), unique=True, default=gen_uniq_id)
+    password_hash = db.Column(db.String(256), default="")
+    is_activated = db.Column(db.Boolean, default=False)
+    # TODO: fix string length for wallet_id
+    wallet_id = db.Column(db.String(256), nullable=True)
+    avatar_img = db.Column(db.Text, nullable=True)
     # Relationships
     stars = db.relationship("Book", secondary="books_stars", back_populates="stars")
     books = db.relationship("Book")
