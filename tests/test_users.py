@@ -1,6 +1,7 @@
 from flask import current_app as app
 from flask.testing import FlaskClient, FlaskCliRunner
 from click.testing import Result
+from werkzeug.datastructures import FileStorage
 
 from app import models as m, db
 from tests.utils import login
@@ -113,3 +114,40 @@ def test_search_user(populate: FlaskClient, runner: FlaskCliRunner):
     for user in users:
         user_id = user.get("id")
         assert user_id not in contributors_ids
+
+
+def test_profile(client):
+    user: m.User = m.User(
+        wallet_id="nsagqklfhqwef84r23hr34r35jfn", password="password"
+    ).save()
+    assert user
+
+    # assert default values
+    assert user.username
+    assert not user.is_activated
+    assert not user.avatar_img
+
+    avatar_img = FileStorage(
+        stream=open("tests/testing_data/1.jpg", "rb"),
+        filename="1.jpg",
+        content_type="img/jpg",
+    )
+    login(client, username=user.username, password="password")
+
+    res = client.post(
+        "/user/profile",
+        data={
+            "name": "Some other name",
+            "avatar_img": avatar_img,
+        },
+        follow_redirects=True,
+    )
+    assert res.status_code == 200
+    assert user.username == "Some other name"
+    assert user.is_activated
+    assert user.avatar_img
+    res2 = client.post(
+        "/user/profile",
+        follow_redirects=True,
+    )
+    assert b"This field is required." in res2.data
