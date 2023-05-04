@@ -741,13 +741,11 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     ).save()
 
     label_1 = "Test Interpretation #1 Label"
+    text_1 = "Test Interpretation #1 Text"
+
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/create_interpretation",
-        data=dict(
-            section_id=section_in_subcollection.id,
-            label=label_1,
-            text="Test Interpretation #1 Label",
-        ),
+        data=dict(section_id=section_in_subcollection.id, label=label_1, text=text_1),
         follow_redirects=True,
     )
 
@@ -756,17 +754,12 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
         label=label_1, section_id=section_in_subcollection.id
     ).first()
     assert interpretation
-    assert interpretation.collection_id == section_in_subcollection.id
-    assert interpretation.version_id == book.last_version.id
+    assert interpretation.section_id == section_in_subcollection.id
     assert not interpretation.comments
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/create_interpretation",
-        data=dict(
-            section_id=section_in_subcollection.id,
-            label=label_1,
-            text="Test Interpretation #1 Label",
-        ),
+        data=dict(section_id=section_in_subcollection.id, label=label_1, text=text_1),
         follow_redirects=True,
     )
 
@@ -774,11 +767,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/create_interpretation",
-        data=dict(
-            section_id=section_in_collection.id,
-            label=label_1,
-            text="Test Interpretation #1 Label",
-        ),
+        data=dict(section_id=section_in_collection.id, label=label_1, text=text_1),
         follow_redirects=True,
     )
 
@@ -787,17 +776,12 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
         label=label_1, section_id=section_in_collection.id
     ).first()
     assert interpretation
-    assert interpretation.collection_id == section_in_subcollection.id
-    assert interpretation.version_id == book.last_version.id
+    assert interpretation.section_id == section_in_collection.id
     assert not interpretation.comments
 
     response: Response = client.post(
         f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/create_interpretation",
-        data=dict(
-            section_id=section_in_collection.id,
-            label=label_1,
-            text="Test Interpretation #1 Label",
-        ),
+        data=dict(section_id=section_in_collection.id, label=label_1, text=text_1),
         follow_redirects=True,
     )
 
@@ -805,7 +789,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/999/create_section",
-        data=dict(collection_id=999, label=label_1, about="Test Section #1 About"),
+        data=dict(collection_id=999, label=label_1, text=text_1),
         follow_redirects=True,
     )
 
@@ -814,7 +798,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         f"/book/{book.id}/{leaf_collection.id}/999/create_interpretation",
-        data=dict(collection_id=999, label=label_1, about="Test Section #1 About"),
+        data=dict(collection_id=999, label=label_1, text=text_1),
         follow_redirects=True,
     )
 
@@ -823,7 +807,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{sub_collection.id}/888/create_interpretation",
-        data=dict(collection_id=999, label=label_1, about="Test Section #1 About"),
+        data=dict(collection_id=999, label=label_1, text=text_1),
         follow_redirects=True,
     )
 
