@@ -66,7 +66,7 @@
       <input type="hidden" name="section_id" id="section_id" value="{{section.id}}" />
       <input type="hidden" name="label" id="label" value="{{section.label}}" />
       
-      <input type="hidden" name="interpretation-text" id="interpretation-text" />
+      <input type="hidden" name="text" id="interpretation-text" />
       <!-- Form body -->
       <div class="p-6 space-y-6">
         <div class="grid gap-6">
@@ -89,20 +89,21 @@
     </form>
     <dl class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
         <!-- prettier-ignore -->
-        {% for interpretation in section.interpretations %}
+        {% for interpretation in section.active_interpretations %}
           {% if sub_collection %}
             <a href="{{url_for('book.interpretation_view', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id, section_id=section.id)}}" >
           {% else %}
             <a href="{{url_for('book.interpretation_view', book_id=book.id, collection_id=collection.id, section_id=section.id)}}" >
           {% endif %}
-          <h1>Other</h1>
             <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
               <div class="flex flex-col pb-3 p-3 w-full">
                 <!-- prettier-ignore -->
                 <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
                   <div>
                     <h1>{{ section.label }}</h1>
-                    <p>{{ interpretation.text }}</p>
+                    <div id="editor" class="dark:text-white h-80">
+                      <p>{{ interpretation.text|safe }}</p>
+                    </div>
                   </div>
                   <div class="flex ml-auto align-center justify-center space-x-3">
                     <span class="space-x-0.5 flex items-center">

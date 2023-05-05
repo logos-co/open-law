@@ -47,5 +47,13 @@ class Section(BaseModel):
             _sub_collection_id = grand_parent.id
         return _sub_collection_id
 
+    @property
+    def active_interpretations(self):
+        return [
+            interpretation
+            for interpretation in self.interpretations
+            if not interpretation.is_deleted
+        ]
+
     def __repr__(self):
         return f"<{self.id}: {self.label}>"

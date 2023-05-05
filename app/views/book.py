@@ -912,17 +912,25 @@ def interpretation_create(
                 )
             )
 
-    redirect_url = url_for(
-        "book.section_view",
-        book_id=book_id,
-        collection_id=collection_id,
-        sub_collection_id=sub_collection_id,
-    )
     section: m.Section = db.session.get(m.Section, section_id)
     if not section or collection.is_deleted:
         log(log.WARNING, "Section with id [%s] not found", section)
         flash("Section not found", "danger")
-        return redirect(redirect_url)
+        return redirect(
+            url_for(
+                "book.section_view",
+                book_id=book_id,
+                collection_id=collection_id,
+                sub_collection_id=sub_collection_id,
+            )
+        )
+    redirect_url = url_for(
+        "book.interpretation_view",
+        book_id=book_id,
+        collection_id=collection_id,
+        sub_collection_id=sub_collection_id,
+        section_id=section.id,
+    )
 
     form = f.CreateInterpretationForm()
 
