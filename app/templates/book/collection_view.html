@@ -18,8 +18,9 @@
 
 {% block content %}
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 md:mr-64">
-  {% include 'book/breadcrumbs_navigation.html'%}
-  <h1 class="text-l font-extrabold dark:text-white ml-4">Collections page</h1>
+  <h1 class="font-extrabold text-lg dark:text-white ml-4 mt-10">
+    {{book.label}}
+  </h1>
   <!-- prettier-ignore -->
   <div class="mb-1 border-b border-gray-200 dark:border-gray-700">
     <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
