@@ -1,0 +1,25 @@
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+
+{% include 'book/delete_interpretation_modal.html' %}
+{% include 'book/edit_interpretation_modal.html' %}
+
+<!-- show delete section btn on rightside bar -->
+{% set show_edit_interpretation = True %}
+<!-- prettier-ignore -->
+{% set show_delete_interpretation = True %}
+
+<!-- prettier-ignore -->
+{% block right_sidebar %}
+  {% include 'book/right_sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 md:mr-64">
+  {% include 'book/breadcrumbs_navigation.html'%}
+  <h1 class="text-l font-extrabold dark:text-white ml-4">
+    {{ interpretation.label }}
+  </h1>
+</div>
+<!-- prettier-ignore -->
+{% endblock %}
