@@ -44,7 +44,7 @@
           <!-- prettier-ignore -->
           <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
             <div class="ql-snow">
-              <div class="ql-interpretation-editor">
+              <div class="ql-interpretation-editor ql-editor">
                 {{ section.about|safe }}
               </div>
             </div>
@@ -99,9 +99,9 @@
               <div class="flex flex-col pb-3 p-3 w-full">
                 <!-- prettier-ignore -->
                 <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
-                  <div>
+                  <div class="ql-snow">
                     <h1>{{ section.label }}</h1>
-                    <div id="editor" class="dark:text-white h-80">
+                    <div  class="dark:text-white h-80 ql-editor">
                       <p>{{ interpretation.text|safe }}</p>
                     </div>
                   </div>
