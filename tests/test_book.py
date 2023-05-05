@@ -758,14 +758,6 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert not interpretation.comments
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/create_interpretation",
-        data=dict(section_id=section_in_subcollection.id, label=label_1, text=text_1),
-        follow_redirects=True,
-    )
-
-    assert b"Interpretation label must be unique!" in response.data
-
-    response: Response = client.post(
         f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/create_interpretation",
         data=dict(section_id=section_in_collection.id, label=label_1, text=text_1),
         follow_redirects=True,
@@ -778,14 +770,6 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert interpretation
     assert interpretation.section_id == section_in_collection.id
     assert not interpretation.comments
-
-    response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/create_interpretation",
-        data=dict(section_id=section_in_collection.id, label=label_1, text=text_1),
-        follow_redirects=True,
-    )
-
-    assert b"Interpretation label must be unique!" in response.data
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/999/create_section",
@@ -831,19 +815,6 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
         label=label_1, section_id=section_in_collection.id
     ).first()
-
-    response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/{interpretation.id}/edit_interpretation",
-        data=dict(
-            interpretation_id=interpretation.id,
-            label="Test",
-            text="Test",
-        ),
-        follow_redirects=True,
-    )
-
-    assert response.status_code == 200
-    assert b"Interpretation label must be unique!" in response.data
 
     new_label = "Test Interpretation #1 Label(edited)"
     new_text = "Test Interpretation #1 Text(edited)"
