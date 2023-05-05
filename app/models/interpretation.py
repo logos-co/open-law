@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app import db
 from app.models.utils import BaseModel
 
@@ -8,6 +10,7 @@ class Interpretation(BaseModel):
     label = db.Column(db.String(256), unique=False, nullable=False)
     text = db.Column(db.Text, unique=False, nullable=False)
     marked = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
     # Foreign keys
     user_id = db.Column(db.ForeignKey("users.id"))
