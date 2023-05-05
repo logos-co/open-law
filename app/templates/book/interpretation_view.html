@@ -44,7 +44,7 @@
           <!-- prettier-ignore -->
           <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
             <div class="ql-snow">
-              <div class="ql-interpretation-editor">
+              <div class="ql-interpretation-editor ql-editor">
                 {{ section.about|safe }}
               </div>
             </div>
@@ -78,7 +78,7 @@
       <div class="p-6 pt-0 space-y-6">
         <div class="w-full max-w-6xl mx-auto rounded-xl bg-gray-50 dark:bg-gray-600 shadow-lg text-white-900">
           <div class="overflow-hidden rounded-md bg-gray-50 [&>*]:dark:bg-gray-600 text-black [&>*]:!border-none [&>*]:!stroke-black dark:text-white dark:[&>*]:!stroke-white">
-            <div id="interpretation-editor" class="dark:text-white h-20"></div>
+            <div id="interpretation-editor" class="dark:text-white h-80"></div>
           </div>
         </div>
       </div>
@@ -99,9 +99,9 @@
               <div class="flex flex-col pb-3 p-3 w-full">
                 <!-- prettier-ignore -->
                 <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
-                  <div>
+                  <div class="ql-snow">
                     <h1>{{ section.label }}</h1>
-                    <div id="editor" class="dark:text-white h-80">
+                    <div  class="dark:text-white h-80 ql-editor">
                       <p>{{ interpretation.text|safe }}</p>
                     </div>
                   </div>
