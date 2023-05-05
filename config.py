@@ -25,6 +25,9 @@ class BaseConfig(BaseSettings):
     PAGE_LINKS_NUMBER: int
     MAX_SEARCH_RESULTS: int
 
+    # HTTPProvider for SIWE
+    HTTP_PROVIDER_URL: str
+
     @staticmethod
     def configure(app: Flask):
         # Implement this method to do further configuration on your app.

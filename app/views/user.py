@@ -1,3 +1,5 @@
+import base64
+
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from app.controllers import create_pagination
@@ -28,6 +30,32 @@ def get_all():
         page=pagination,
         search_query=q,
     )
+
+
+@bp.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+    form = f.EditUserForm()
+    if form.validate_on_submit():
+        user: m.User = current_user
+        user.username = form.name.data
+        if form.avatar_img.data:
+            img_data = form.avatar_img.data.read()
+            img_data = base64.b64encode(img_data)
+            current_user.avatar_img = img_data.decode("utf-8")
+        user.is_activated = True
+        user.save()
+        return redirect(url_for("main.index"))
+    elif form.is_submitted:
+        log(log.ERROR, "Update user errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+
+    if current_user.is_activated:
+        form.name.data = current_user.username
+    return render_template("user/profile.html", form=form)
 
 
 @bp.route("/save", methods=["POST"])

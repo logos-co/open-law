@@ -5,25 +5,34 @@
   <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
     <!-- prettier-ignore -->
     <ul class="space-y-2 font-medium">
-      <li class="md:hidden">
-        <!-- prettier-ignore -->
-        <span class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-200 dark:bg-gray-700" >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
-          <p class="ml-2">{{ current_user.username }}</p>
-        </span>
-      </li>
-      <li>
-      <li class="md:hidden" id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification" >
-        <!-- prettier-ignore -->
-        <span class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" >
-          <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path> </svg>
-          <div class="relative flex">
-            <div
-              class="relative inline-flex w-3 h-3 bg-red-500 border-2 border-white rounded-full -top-2 right-3 dark:border-gray-900"></div>
-          </div>
-          <p class="ml-2">Notifications</p>
-        </span>
-      </li>
+      {% if current_user.is_authenticated %}
+        <li class="md:hidden">
+          <!-- prettier-ignore -->
+          <span class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-200 dark:bg-gray-700" >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
+            <p class="ml-2">{{ current_user.username }}</p>
+        </li>
+        <li>
+          <a
+            href="{{ url_for('user.profile') }}"
+            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+            <!-- prettier-ignore -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /> </svg>
+            <span class="ml-3">Edit profile</span>
+          </a>
+        </li>
+        <li class="md:hidden" id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification" >
+          <!-- prettier-ignore -->
+          <span class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" >
+            <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path> </svg>
+            <div class="relative flex">
+              <div
+                class="relative inline-flex w-3 h-3 bg-red-500 border-2 border-white rounded-full -top-2 right-3 dark:border-gray-900"></div>
+            </div>
+            <p class="ml-2">Notifications</p>
+          </span>
+        </li>
+      {% endif %}
       <li>
         <a
           href="{{ url_for('home.get_all') }}"
@@ -35,13 +44,23 @@
       </li>
       <li>
         <a
-          href="{{ url_for('book.my_books') }}"
+          href="{{ url_for('book.get_all') }}"
           class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
           <!-- prettier-ignore -->
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
-          <span class="ml-3">My Books</span>
+          <span class="ml-3">Books</span>
         </a>
       </li>
+      {% if current_user.is_authenticated %}
+        <li>
+          <a
+            href="{{ url_for('book.my_books') }}"
+            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+            <!-- prettier-ignore -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
+            <span class="ml-3">My Books</span>
+          </a>
+        </li>
       <li>
         <a
           href="#"
@@ -60,6 +79,7 @@
           <span class="flex-1 ml-3 whitespace-nowrap">Users</span>
         </a>
       </li>
+      {% endif %}
       <li>
         <a
           href="https://github.com/Simple2B/open_law"
