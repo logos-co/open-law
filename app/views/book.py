@@ -939,6 +939,7 @@ def interpretation_create(
             label=form.label.data,
             text=form.text.data,
             section_id=section_id,
+            user_id=current_user.id,
         )
         log(
             log.INFO,
