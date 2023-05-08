@@ -17,12 +17,13 @@
 
 
 {% block content %}
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 md:mr-64">
-  <h1 class="font-extrabold text-lg dark:text-white ml-4 mt-10">
-    {{book.label}}
-  </h1>
+<div class="overflow-x-auto shadow-md sm:rounded-lg md:mr-64">
   <!-- prettier-ignore -->
-  <div class="mb-1 border-b border-gray-200 dark:border-gray-700">
+  <div class="fixed z-49 w-4/5 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <!-- prettier-ignore -->
+    <h1 class="font-extrabold text-lg dark:text-white ml-4 mt-5"> {{book.label}} </h1>
+    <!-- prettier-ignore -->
+    <div class="mb-1">
     <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
       <li class="mr-2" role="presentation">
         <button class="flex items-center space-x-2 p-4 border-b-2 rounded-t-lg" id="files-tab" data-tabs-target="#files" type="button" role="tab" aria-controls="files" aria-selected="false">
@@ -37,8 +38,9 @@
         </button>
       </li>
     </ul>
-</div>
-  <div id="myTabContent">
+  </div>
+  </div>
+  <div id="myTabContent" class="overflow-y-auto mt-24">
     <!-- prettier-ignore -->
     <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="files" role="tabpanel" aria-labelledby="files-tab">
       <dl class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">

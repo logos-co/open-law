@@ -15,11 +15,14 @@
 {% endblock %}
 
 {% block content %}
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5 md:mr-64">
-  {% include 'book/breadcrumbs_navigation.html'%}
-  <h1 class="text-l font-extrabold dark:text-white ml-4">
-    {{ interpretation.label }}
-  </h1>
+{% include 'book/breadcrumbs_navigation.html'%}
+<div class="overflow-x-auto shadow-md mt-5 md:mr-64">
+  <div class="ql-snow mt-20">
+    <h1 class="text-l font-extrabold dark:text-white ml-4">
+      {{ interpretation.label }}
+    </h1>
+    <div class="quill-editor dark:text-white">{{interpretation.text|safe}}</div>
+  </div>
 </div>
 <!-- prettier-ignore -->
 {% endblock %}
