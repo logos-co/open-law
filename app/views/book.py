@@ -903,7 +903,7 @@ def interpretation_create(
         sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
         if not sub_collection or sub_collection.is_deleted:
             log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-            flash("Subcollection not found", "danger")
+            flash("SubCollection not found", "danger")
             return redirect(
                 url_for(
                     "book.sub_collection_view",
@@ -1210,3 +1210,109 @@ def qa_view(
         interpretation=interpretation,
         breadcrumbs=breadcrumbs,
     )
+
+
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:section_id>/<int:interpretation_id>/preview/create_comment",
+    methods=["POST"],
+)
+@bp.route(
+    (
+        "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/"
+        "<int:section_id>/<int:interpretation_id>/preview/create_comment"
+    ),
+    methods=["POST"],
+)
+@login_required
+def create_comment(
+    book_id: int,
+    collection_id: int,
+    section_id: int,
+    interpretation_id: int,
+    sub_collection_id: int | None = None,
+):
+    book: m.Book = db.session.get(m.Book, book_id)
+    if not book or book.owner != current_user or book.is_deleted:
+        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
+        flash("You are not owner of this book!", "danger")
+        return redirect(url_for("book.my_books"))
+
+    collection: m.Collection = db.session.get(m.Collection, collection_id)
+    if not collection or collection.is_deleted:
+        log(log.WARNING, "Collection with id [%s] not found", collection_id)
+        flash("Collection not found", "danger")
+        return redirect(url_for("book.collection_view", book_id=book_id))
+
+    sub_collection = None
+    if sub_collection_id:
+        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+        if not sub_collection or sub_collection.is_deleted:
+            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
+            flash("SubCollection not found", "danger")
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
+            )
+
+    breadcrumbs = create_breadcrumbs(
+        book_id=book_id,
+        collection_path=(
+            collection_id,
+            sub_collection_id,
+        ),
+        section_id=section_id,
+        interpretation_id=interpretation_id,
+    )
+
+    redirect_url = url_for(
+        "book.qa_view",
+        book_id=book_id,
+        collection_id=collection_id,
+        sub_collection_id=sub_collection_id,
+        section_id=section_id,
+        interpretation_id=interpretation_id,
+        breadcrumbs=breadcrumbs,
+    )
+    section: m.Section = db.session.get(m.Section, section_id)
+    if not section or section.is_deleted:
+        log(log.WARNING, "Section with id [%s] not found", section_id)
+        flash("Section not found", "danger")
+        return redirect(redirect_url)
+
+    interpretation: m.Interpretation = db.session.get(
+        m.Interpretation, interpretation_id
+    )
+    if not interpretation or interpretation.is_deleted:
+        log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
+        flash("Interpretation not found", "danger")
+        return redirect(redirect_url)
+
+    form = f.CreateCommentForm()
+
+    if form.validate_on_submit():
+        comment: m.Comment = m.Comment(
+            text=form.text.data,
+            user_id=current_user.id,
+            interpretation_id=interpretation_id,
+        )
+        log(
+            log.INFO,
+            "Create comment for interpretation [%s]. Section: [%s]",
+            interpretation,
+            section,
+        )
+        comment.save()
+
+        flash("Success!", "success")
+        return redirect(redirect_url)
+    else:
+        log(log.ERROR, "Comment create errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.lower().replace("field", field_label).title(), "danger")
+
+        return redirect(redirect_url)

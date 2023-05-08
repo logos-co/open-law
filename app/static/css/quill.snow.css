@@ -31,7 +31,6 @@
 .ql-editor {
   box-sizing: border-box;
   line-height: 1.42;
-  height: 100%;
   outline: none;
   overflow-y: auto;
   padding: 12px 15px;
@@ -39,6 +38,8 @@
   -moz-tab-size: 4;
   text-align: left;
   word-wrap: break-word;
+  max-width: 100%;
+  overflow-x:hidden;
 }
 .ql-editor > * {
   cursor: text;
