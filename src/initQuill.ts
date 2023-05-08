@@ -8,24 +8,21 @@ export function initQuill() {
     [{indent: '-1'}, {indent: '+1'}],
     ['clean'],
   ];
-  const editorElement = document.querySelector('#editor');
-  if (editorElement) {
-    var quill = new Quill('#editor', {
+  const qlEditors: NodeListOf<HTMLElement> =
+    document.querySelectorAll('.quill-editor');
+  qlEditors.forEach(el => {
+    const quillElementId = el.id;
+    if (!quillElementId) {
+      console.error(
+        'Please set attribute id to element with class .quill-editor',
+      );
+      return;
+    }
+    new Quill('#' + quillElementId, {
       theme: 'snow',
       modules: {
         toolbar: toolbarOptions,
       },
     });
-  }
-  const interpretationEditorElement = document.querySelector(
-    '#interpretation-editor',
-  );
-  if (interpretationEditorElement) {
-    var quill = new Quill('#interpretation-editor', {
-      theme: 'snow',
-      modules: {
-        toolbar: toolbarOptions,
-      },
-    });
-  }
+  });
 }

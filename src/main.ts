@@ -3,12 +3,12 @@ import {initBooks} from './books';
 import {initContributors} from './contributors';
 import {initWallet} from './wallet';
 import {initQuill} from './initQuill';
-import {initQuillValueToTextArea} from './quill_value_to_textarea';
+import {initQuillValueToInput} from './quillValueToInput';
 
 document.addEventListener('DOMContentLoaded', () => {
   initBooks();
   initContributors();
   initQuill();
-  initQuillValueToTextArea();
+  initQuillValueToInput();
   initWallet();
 });
