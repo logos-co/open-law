@@ -19,7 +19,7 @@
 {% block content %}
 <div class="overflow-x-auto shadow-md sm:rounded-lg md:mr-64">
   <!-- prettier-ignore -->
-  <div class="fixed z-49 w-4/5 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+  <div class="fixed z-40 w-full md:w-4/5 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
     <!-- prettier-ignore -->
     <h1 class="font-extrabold text-lg dark:text-white ml-4 mt-5"> {{book.label}} </h1>
     <!-- prettier-ignore -->
@@ -51,7 +51,7 @@
             <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
               <div class="flex flex-col pb-3 p-3 w-full">
                 <!-- prettier-ignore -->
-                <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
+                <dt class="flex w-full truncate mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
                   <p>{{ collection.label }}</p>
                   <div class="flex ml-auto align-center justify-center space-x-3">
                     <span class="space-x-0.5 flex items-center">

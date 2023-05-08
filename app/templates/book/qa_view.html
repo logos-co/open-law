@@ -21,7 +21,7 @@
     <h1 class="text-l font-extrabold dark:text-white ml-4 truncate">
       {{ interpretation.label }}
     </h1>
-    <div class="quill-editor dark:text-white">{{interpretation.text|safe}}</div>
+    <div class="quill-editor text-lg dark:text-white p-3">{{interpretation.text|safe}}</div>
   </div>
   <div class="p-1">
     <!-- prettier-ignore -->
@@ -42,9 +42,61 @@
       <button type="submit" class="ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"> Leave comment </button>
     </form>
   </div>
-  {% for comment in interpretation.comments %}
-  <p>{{comment.text}}</p>
-  {% endfor %}
+  <dl
+    class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
+    <!-- prettier-ignore -->
+    {% for comment in interpretation.comments %}
+    <!-- prettier-ignore -->
+    <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+            <div class="flex flex-row pb-3 p-3 w-2/3 md:w-full">
+              <div class="flex flex-col m-5 justify-center items-center">
+                <div>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /> </svg>
+                </div>
+                <span class="text-3xl">35</span>
+                <div>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /> </svg>
+                </div>
+              </div>
+              <!-- prettier-ignore -->
+              <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col md:max-w-xl">
+                <div class="ql-snow">
+                  <div class="dark:text-white h-30 ql-editor">
+                    <p>{{ comment.text }}</p>
+                  </div>
+                </div>
+                <div id="accordion-collapse" data-accordion="collapse" class="flex mt-auto align-center justify-between space-x-3">
+                  <div>Commented by {{comment.user.username}} on {{comment.created_at.strftime('%B %d, %Y')}}</div>
+                  <div class="flex ml-auto justify-between w-24">
+                    <button type="button" data-accordion-target="#accordion-collapse-body-{{loop.index}}" aria-expanded="false" aria-controls="accordion-collapse-body-1" class="space-x-0.5 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6  shrink-0"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /> </svg>
+                    </button>
+                  </div>
+              </dt>
+            </div>
+            <div id="accordion-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-1">
+              <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+                    <form {% if sub_collection %}
+                        action="{{ url_for('book.create_comment', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id,section_id=section.id,interpretation_id=interpretation.id) }}"
+                      {% else %}
+                        action="{{ url_for('book.create_comment', book_id=book.id, collection_id=collection.id,section_id=section.id,interpretation_id=interpretation.id) }}"
+                      {% endif %}
+                      method="post" class="flex flex-col bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+                      {{ form_hidden_tag() }}
+                      <div class="relative z-0 w-full mb-6 group">
+                        <!-- prettier-ignore -->
+                        <input autocomplete="off" type="text" name="text" id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                        <!-- prettier-ignore -->
+                        <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6" >Comment</label >
+                      </div>
+                      <!-- prettier-ignore -->
+                      <button type="submit" class="ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"> Leave comment </button>
+                    </form>
+              </div>
+            </div>
+      </dl>
+    {% endfor %}
+  </dl>
 </div>
 
 <!-- prettier-ignore -->
