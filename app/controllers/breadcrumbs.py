@@ -52,24 +52,23 @@ def create_breadcrumbs(
         )
     ]
 
-    for collection_id in collection_path:
+    for index, collection_id in enumerate(collection_path):
         if collection_id is None:
             continue
         collection: m.Collection = db.session.get(m.Collection, collection_id)
-        crumples += [
-            s.BreadCrumb(
-                type=s.BreadCrumbType.Collection,
-                url=url_for(
-                    "book.sub_collection_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                ),
-                label=collection.label,
-            )
-        ]
-    if section_id and collection_path:
-        section: m.Section = db.session.get(m.Section, section_id)
-        if len(collection_path) == 2:
+        if index == 0:
+            crumples += [
+                s.BreadCrumb(
+                    type=s.BreadCrumbType.Collection,
+                    url=url_for(
+                        "book.sub_collection_view",
+                        book_id=book_id,
+                        collection_id=collection_id,
+                    ),
+                    label=collection.label,
+                )
+            ]
+        elif index == 1:
             crumples += [
                 s.BreadCrumb(
                     type=s.BreadCrumbType.Section,
@@ -79,53 +78,46 @@ def create_breadcrumbs(
                         collection_id=collection_path[0],
                         sub_collection_id=collection_path[-1],
                     ),
-                    label=section.label,
+                    label=collection.label,
                 )
             ]
-        else:
-            crumples += [
-                s.BreadCrumb(
-                    type=s.BreadCrumbType.Section,
-                    url=url_for(
-                        "book.section_view",
-                        book_id=book_id,
-                        collection_id=collection_path[0],
-                        sub_collection_id=collection_path[0],
-                    ),
-                    label=section.label,
-                )
-            ]
+
+    if section_id and collection_path:
+        section: m.Section = db.session.get(m.Section, section_id)
+        crumples += [
+            s.BreadCrumb(
+                type=s.BreadCrumbType.Section,
+                url=url_for(
+                    "book.interpretation_view",
+                    book_id=book_id,
+                    collection_id=collection_path[0],
+                    sub_collection_id=collection_path[-1]
+                    if len(collection_path) == 2
+                    else collection_path[0],
+                    section_id=section_id,
+                ),
+                label=section.label,
+            )
+        ]
         if interpretation_id:
             interpretation: m.Interpretation = db.session.get(
                 m.Interpretation, interpretation_id
             )
-            if len(collection_path) == 2:
-                crumples += [
-                    s.BreadCrumb(
-                        type=s.BreadCrumbType.Interpretation,
-                        url=url_for(
-                            "book.interpretation_view",
-                            book_id=book_id,
-                            collection_id=collection_path[0],
-                            sub_collection_id=collection_path[-1],
-                            section_id=section_id,
-                        ),
-                        label=interpretation.label,
-                    )
-                ]
-            else:
-                crumples += [
-                    s.BreadCrumb(
-                        type=s.BreadCrumbType.Interpretation,
-                        url=url_for(
-                            "book.interpretation_view",
-                            book_id=book_id,
-                            collection_id=collection_path[0],
-                            sub_collection_id=collection_path[0],
-                            section_id=section_id,
-                        ),
-                        label=interpretation.label,
-                    )
-                ]
+            crumples += [
+                s.BreadCrumb(
+                    type=s.BreadCrumbType.Interpretation,
+                    url=url_for(
+                        "book.qa_view",
+                        book_id=book_id,
+                        collection_id=collection_path[0],
+                        sub_collection_id=collection_path[-1]
+                        if len(collection_path) == 2
+                        else collection_path[0],
+                        section_id=section_id,
+                        interpretation_id=interpretation_id,
+                    ),
+                    label=interpretation.label,
+                )
+            ]
 
     return crumples
