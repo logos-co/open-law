@@ -7,7 +7,13 @@ class BaseCommentForm(FlaskForm):
     text = StringField("Text", [DataRequired(), Length(3, 256)])
     marked = BooleanField("Marked")
     included_with_interpretation = BooleanField("Included")
+    parent_id = StringField("Text")
 
 
 class CreateCommentForm(BaseCommentForm):
     submit = SubmitField("Create")
+
+
+class DeleteCommentForm(FlaskForm):
+    comment_id = StringField("Text")
+    submit = SubmitField("Delete")
