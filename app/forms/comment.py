@@ -17,3 +17,9 @@ class CreateCommentForm(BaseCommentForm):
 class DeleteCommentForm(FlaskForm):
     comment_id = StringField("Text")
     submit = SubmitField("Delete")
+
+
+class EditCommentForm(FlaskForm):
+    comment_id = StringField("Text")
+    text = StringField("Text", [DataRequired(), Length(3, 256)])
+    submit = SubmitField("Edit")

@@ -967,6 +967,26 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
     comment: m.Comment = m.Comment.query.filter_by(text=comment_text).first()
     assert comment
 
+    new_text = "Some new text"
+
+    # edit
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/{interpretation.id}/comment_edit",
+        data=dict(
+            section_id=section_in_subcollection.id,
+            text=new_text,
+            interpretation_id=interpretation.id,
+            comment_id=comment.id,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response
+    assert response.status_code == 200
+    assert b"Success" in response.data
+    assert str.encode(new_text) in response.data
+    assert str.encode(comment_text) not in response.data
+
     # delete
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/{interpretation.id}/comment_delete",
