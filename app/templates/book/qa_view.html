@@ -68,6 +68,7 @@
                 </div>
                 <div id="accordion-collapse" data-accordion="collapse" class="flex mt-auto align-center justify-between space-x-3">
                   <div>Commented by <span class="text-blue-500">{{comment.user.username}}</span> on {{comment.created_at.strftime('%B %d, %Y')}}{% if comment.edited %}<i class="text-green-200"> edited</i>{% endif %}</div>
+                  {% if comment.user_id == current_user.id %}
                   <div class="flex ml-auto justify-between w-24">
                     <div class="relative">
                      <button id="edit_comment_btn" data-popover-target="popover-edit" data-edit-comment-id="{{comment.id}}" data-edit-comment-text="{{comment.text}}" type="button" data-modal-target="edit_comment_modal" data-modal-toggle="edit_comment_modal" class="space-x-0.5 flex items-center">
@@ -100,6 +101,7 @@
                         <div data-popper-arrow></div>
                       </div>
                     </div></div>
+                    {% endif %}
               </dt>
               
             </div>

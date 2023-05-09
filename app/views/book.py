@@ -1129,14 +1129,14 @@ def interpretation_delete(
 
 @bp.route(
     "/<int:book_id>/<int:collection_id>/<int:section_id>/<int:interpretation_id>/preview",
-    methods=["GET", "POST"],
+    methods=["GET"],
 )
 @bp.route(
     (
         "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/"
         "<int:section_id>/<int:interpretation_id>/preview"
     ),
-    methods=["GET", "POST"],
+    methods=["GET"],
 )
 @login_required
 def qa_view(
@@ -1147,7 +1147,7 @@ def qa_view(
     sub_collection_id: int | None = None,
 ):
     book: m.Book = db.session.get(m.Book, book_id)
-    if not book or book.owner != current_user or book.is_deleted:
+    if not book or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
         return redirect(url_for("book.my_books"))
@@ -1232,7 +1232,7 @@ def create_comment(
     sub_collection_id: int | None = None,
 ):
     book: m.Book = db.session.get(m.Book, book_id)
-    if not book or book.owner != current_user or book.is_deleted:
+    if not book or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
         return redirect(url_for("book.my_books"))
@@ -1343,7 +1343,7 @@ def comment_delete(
 ):
     book: m.Book = db.session.get(m.Book, book_id)
 
-    if not book or book.owner != current_user or book.is_deleted:
+    if not book or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
         return redirect(url_for("book.my_books"))
@@ -1438,7 +1438,7 @@ def comment_edit(
 ):
     book: m.Book = db.session.get(m.Book, book_id)
 
-    if not book or book.owner != current_user or book.is_deleted:
+    if not book or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
         return redirect(url_for("book.my_books"))
