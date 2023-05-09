@@ -64,3 +64,16 @@ jobs:
         with:
           push: true
           tags: simple2b/open-law-dev:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_IP_PROD }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo su -l runner -c "cd open-law; ./up.sh"
