@@ -54,13 +54,9 @@
     <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
             <div class="flex flex-row pb-3 p-3 w-2/3 md:w-full">
               <div class="flex flex-col m-5 justify-center items-center">
-                <div>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /> </svg>
-                </div>
+                <div> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /> </svg> </div>
                 <span class="text-3xl">35</span>
-                <div>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /> </svg>
-                </div>
+                <div> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /> </svg> </div>
               </div>
               <!-- prettier-ignore -->
               <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col md:max-w-xl">
@@ -103,13 +99,13 @@
               {% endfor %}
               </div>
             <div id="accordion-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-1">
-              <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+              <div class="p-5 border-t border-gray-200 dark:border-gray-700 dark:bg-gray-900">
                     <form {% if sub_collection %}
                         action="{{ url_for('book.create_comment', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id,section_id=section.id,interpretation_id=interpretation.id) }}"
                       {% else %}
                         action="{{ url_for('book.create_comment', book_id=book.id, collection_id=collection.id,section_id=section.id,interpretation_id=interpretation.id) }}"
                       {% endif %}
-                      method="post" class="flex flex-col bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+                      method="post" class="flex flex-col bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
                       {{ form_hidden_tag() }}
                       <input type="hidden" name="parent_id" id="parent_id" value="{{comment.id}}" />
                       <div class="relative z-0 w-full mb-6 group">
