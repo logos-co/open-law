@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "webpack --watch",
-    "build": "webpack"
+    "js-watch": "webpack --watch",
+    "js": "webpack",
+    "css": "tailwindcss -i ./src/styles.css -o ./app/static/css/styles.css --minify",
+    "css-watch": "tailwindcss -i ./src/styles.css -o ./app/static/css/styles.css --watch"
   },
   "author": "",
   "license": "ISC",
