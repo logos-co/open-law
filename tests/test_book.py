@@ -1,3 +1,4 @@
+# flake8: noqa F501
 from flask import current_app as Response
 from flask.testing import FlaskClient, FlaskCliRunner
 
@@ -887,3 +888,98 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
         m.Interpretation, section_in_collection.interpretations[0].id
     )
     assert deleted_interpretation.is_deleted
+
+
+def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
+    _, user = login(client)
+    user: m.User
+
+    # add dummmy data
+    runner.invoke(args=["db-populate"])
+
+    book: m.Book = db.session.get(m.Book, 1)
+    book.user_id = user.id
+    book.save()
+
+    leaf_collection: m.Collection = m.Collection(
+        label="Test Leaf Collection #1 Label",
+        version_id=book.last_version.id,
+        is_leaf=True,
+        parent_id=book.last_version.root_collection.id,
+    ).save()
+    section_in_collection: m.Section = m.Section(
+        label="Test Section in Collection #1 Label",
+        about="Test Section in Collection #1 About",
+        collection_id=leaf_collection.id,
+        version_id=book.last_version.id,
+    ).save()
+
+    collection: m.Collection = m.Collection(
+        label="Test Collection #1 Label", version_id=book.last_version.id
+    ).save()
+    sub_collection: m.Collection = m.Collection(
+        label="Test SubCollection #1 Label",
+        version_id=book.last_version.id,
+        parent_id=collection.id,
+        is_leaf=True,
+    ).save()
+    section_in_subcollection: m.Section = m.Section(
+        label="Test Section in Subcollection #1 Label",
+        about="Test Section in Subcollection #1 About",
+        collection_id=sub_collection.id,
+        version_id=book.last_version.id,
+    ).save()
+
+    label_1 = "Test Interpretation #1 Label"
+    text_1 = "Test Interpretation #1 Text"
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/create_interpretation",
+        data=dict(section_id=section_in_subcollection.id, label=label_1, text=text_1),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    interpretation: m.Interpretation = m.Interpretation.query.filter_by(
+        label=label_1, section_id=section_in_subcollection.id
+    ).first()
+    assert interpretation
+    assert interpretation.section_id == section_in_subcollection.id
+    assert not interpretation.comments
+
+    comment_text = "Some comment text"
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/{interpretation.id}/preview/create_comment",
+        data=dict(
+            section_id=section_in_subcollection.id,
+            text=comment_text,
+            interpretation_id=interpretation.id,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response
+    assert response.status_code == 200
+    assert b"Success" in response.data
+    assert str.encode(comment_text) in response.data
+
+    comment: m.Comment = m.Comment.query.filter_by(text=comment_text).first()
+    assert comment
+
+    # delete
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/{interpretation.id}/comment_delete",
+        data=dict(
+            section_id=section_in_subcollection.id,
+            text=comment_text,
+            interpretation_id=interpretation.id,
+            comment_id=comment.id,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response
+    assert response.status_code == 200
+    assert b"Success" in response.data
+    assert str.encode(comment_text) not in response.data
