@@ -1,3 +1,17 @@
+##########################################
+## build frontend
+##########################################
+FROM node:buster as front_build
+# FROM node as front_build
+RUN mkdir /front
+WORKDIR /front
+COPY . /front/
+RUN yarn
+RUN npx update-browserslist-db@latest -y
+RUN yarn css
+RUN yarn js
+
+
 FROM python:3.11-alpine
 
 # install build utils and dependencies
@@ -36,3 +50,4 @@ RUN poetry install --no-dev --no-interaction --no-ansi
 RUN poetry add gunicorn
 
 COPY --chown=app:app . .
+COPY --chown=app:app --from=front_build /front/app/static ./app/static
