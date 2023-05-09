@@ -8,7 +8,6 @@ export function initComments() {
   if (deleteCommentBtn && deleteCommentInputOnModal) {
     deleteCommentBtn.addEventListener('click', () => {
       const id = deleteCommentBtn.getAttribute('data-comment-id');
-      console.log(id);
       deleteCommentInputOnModal.value = id;
     });
   }
