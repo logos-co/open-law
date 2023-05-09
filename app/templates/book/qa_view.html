@@ -66,7 +66,7 @@
                   </div>
                 </div>
                 <div id="accordion-collapse" data-accordion="collapse" class="flex mt-auto align-center justify-between space-x-3">
-                  <div>Commented by {{comment.user.username}} on {{comment.created_at.strftime('%B %d, %Y')}}</div>
+                  <div>Commented by <span class="text-blue-500">{{comment.user.username}}</span> on {{comment.created_at.strftime('%B %d, %Y')}}</div>
                   <div class="flex ml-auto justify-between w-24">
                     <div class="relative">
                      <button id="delete_comment_btn" data-popover-target="popover-delete" data-comment-id="{{comment.id}}" type="button" data-modal-target="delete_comment_modal" data-modal-toggle="delete_comment_modal" class="space-x-0.5 flex items-center">
