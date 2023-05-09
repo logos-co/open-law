@@ -9,6 +9,7 @@ class Comment(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, unique=False, nullable=False)
     marked = db.Column(db.Boolean, default=False)
+    edited = db.Column(db.Boolean, default=False)
     included_with_interpretation = db.Column(db.Boolean, default=False)
 
     # Foreign keys

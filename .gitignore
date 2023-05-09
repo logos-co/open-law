@@ -12,3 +12,5 @@ node_modules/
 
 # typescrypt generated files
 /app/static/js/*.d.ts
+
+.DS_Store
