@@ -27,5 +27,9 @@ class Interpretation(BaseModel):
         back_populates="interpretations",
     )
 
+    @property
+    def active_comments(self):
+        return [comment for comment in self.comments if not comment.is_deleted]
+
     def __repr__(self):
         return f"<{self.id}: {self.label}>"
