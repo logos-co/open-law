@@ -48,6 +48,7 @@
   <dl
     class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
     <!-- prettier-ignore -->
+    <div class="quill-editor text-sm dark:text-white p-3">Comments:</div>
     {% for comment in interpretation.comments if not comment.is_deleted %}
     <!-- prettier-ignore -->
     <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
@@ -80,12 +81,16 @@
                     </button>
                   </div>
               </dt>
+              
             </div>
+            <div class="p-5 m-3">
+              {% for child in comment.children %}<div class="p-1 mb-2">
+              - {{child.text}}<span> - <span class="text-blue-500">{{child.user.username}}</span> {{child.created_at.strftime('%B %d, %Y')}}</span>
+              </div>
+              {% endfor %}
+              </div>
             <div id="accordion-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-1">
               <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
-                    {% for child in comment.children %}
-                    {{child.text}}
-                    {% endfor %}
                     <form {% if sub_collection %}
                         action="{{ url_for('book.create_comment', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id,section_id=section.id,interpretation_id=interpretation.id) }}"
                       {% else %}
