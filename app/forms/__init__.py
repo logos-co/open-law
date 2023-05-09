@@ -11,3 +11,4 @@ from .collection import CreateCollectionForm, EditCollectionForm
 from .section import CreateSectionForm, EditSectionForm
 from .interpretation import CreateInterpretationForm, EditInterpretationForm
 from .comment import CreateCommentForm
+from .vote import VoteForm
