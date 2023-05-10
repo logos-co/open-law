@@ -30,5 +30,17 @@ class Comment(BaseModel):
         back_populates="comments",
     )
 
+    @property
+    def vote_count(self):
+        count = 0
+
+        for vote in self.votes:
+            if vote.positive:
+                count += 1
+            else:
+                count -= 1
+
+        return count
+
     def __repr__(self):
         return f"<{self.id}: {self.text[:20]}>"

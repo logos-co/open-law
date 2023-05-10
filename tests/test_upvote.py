@@ -5,7 +5,7 @@ from app import models as m
 from tests.utils import login
 
 
-def test_upvote(client: FlaskClient):
+def test_upvote_interpretation(client: FlaskClient):
     _, user = login(client)
 
     response: Response = client.post(
@@ -79,7 +79,7 @@ def test_upvote(client: FlaskClient):
     response: Response = client.post(
         f"/vote/interpretation/{interpretation.id}",
         data=dict(
-            # positive=False,
+            positive=False,
         ),
         follow_redirects=True,
     )
@@ -91,3 +91,90 @@ def test_upvote(client: FlaskClient):
     assert "vote_count" in json
     assert json["vote_count"] == 0
     assert interpretation.vote_count == 0
+
+
+def test_upvote_comment(client: FlaskClient):
+    _, user = login(client)
+
+    response: Response = client.post(
+        "/vote/comment/999",
+        data=dict(
+            positive=True,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response
+    assert response.status_code == 404
+    assert response.json["message"] == "Comment not found"
+
+    comment = m.Comment(
+        text="Test Comment 1 Text",
+        user_id=user.id,
+    ).save()
+
+    assert comment.vote_count == 0
+
+    response: Response = client.post(
+        f"/vote/comment/{comment.id}",
+        data=dict(
+            positive=True,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response
+    assert response.status_code == 200
+    json = response.json
+    assert json
+    assert "vote_count" in json
+    assert json["vote_count"] == 1
+    assert comment.vote_count == 1
+
+    response: Response = client.post(
+        f"/vote/comment/{comment.id}",
+        data=dict(
+            positive=True,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response
+    assert response.status_code == 200
+    json = response.json
+    assert json
+    assert "vote_count" in json
+    assert json["vote_count"] == 0
+    assert comment.vote_count == 0
+
+    response: Response = client.post(
+        f"/vote/comment/{comment.id}",
+        data=dict(
+            positive=False,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response
+    assert response.status_code == 200
+    json = response.json
+    assert json
+    assert "vote_count" in json
+    assert json["vote_count"] == -1
+    assert comment.vote_count == -1
+
+    response: Response = client.post(
+        f"/vote/comment/{comment.id}",
+        data=dict(
+            positive=False,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response
+    assert response.status_code == 200
+    json = response.json
+    assert json
+    assert "vote_count" in json
+    assert json["vote_count"] == 0
+    assert comment.vote_count == 0
