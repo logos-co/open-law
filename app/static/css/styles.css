@@ -1149,6 +1149,10 @@ input:checked + .toggle-bg {
   z-index: 50;
 }
 
+.z-\[55\] {
+  z-index: 55;
+}
+
 .col-span-6 {
   grid-column: span 6 / span 6;
 }
@@ -2003,6 +2007,11 @@ input:checked + .toggle-bg {
 .bg-red-700 {
   --tw-bg-opacity: 1;
   background-color: rgb(200 30 30 / var(--tw-bg-opacity));
+}
+
+.bg-slate-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(71 85 105 / var(--tw-bg-opacity));
 }
 
 .bg-teal-700 {
