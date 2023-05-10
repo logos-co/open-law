@@ -38,7 +38,7 @@
       {{ form_hidden_tag() }}
       <div class="relative z-0 w-full mb-6 group">
         <!-- prettier-ignore -->
-        <input autocomplete="off" type="text" name="text" id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+        <input autocomplete="off" maxlength="256" type="text" name="text" id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
         <!-- prettier-ignore -->
         <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6" >Comment</label >
       </div>
@@ -106,8 +106,21 @@
               
             </div>
             <div class="p-5 m-3">
-              {% for child in comment.children %}<div class="p-1 mb-2">
-              - {{child.text}}<span> - <span class="text-blue-500">{{child.user.username}}</span> {{child.created_at.strftime('%B %d, %Y')}}</span>
+              {% for child in comment.children %}<div class="p-5 mb-2 flex justify-between items-end bg-slate-600 rounded-lg"><div>
+              <div class="inline-block mb-4">- {{child.text}}</div><span><div>by <span class="text-blue-500">{{child.user.username}}</span> {{child.created_at.strftime('%B %d, %Y')}}</div></span></div>
+              {% if child.user_id == current_user.id %}
+              <div class="relative ml-2">
+                <button id="delete_comment_btn" data-popover-target="popover-delete" data-comment-id="{{child.id}}" type="button" data-modal-target="delete_comment_modal" data-modal-toggle="delete_comment_modal" class="space-x-0.5 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /> </svg>
+                </button>
+                <div data-popover id="popover-delete" role="tooltip" class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800">
+                  <div class="px-3 py-2">
+                      <p>Delete this comment</p>
+                  </div>
+                  <div data-popper-arrow></div>
+                </div>
+              </div>
+              {% endif %}
               </div>
               {% endfor %}
               </div>
@@ -123,7 +136,7 @@
                       <input type="hidden" name="parent_id" id="parent_id" value="{{comment.id}}" />
                       <div class="relative z-0 w-full mb-6 group">
                         <!-- prettier-ignore -->
-                        <input autocomplete="off" type="text" name="text" id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                        <input autocomplete="off" maxlength="256" type="text" name="text" id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                         <!-- prettier-ignore -->
                         <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6" >Comment</label >
                       </div>
