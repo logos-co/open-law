@@ -54,15 +54,16 @@ export function initWallet() {
       credentials: 'include',
       redirect: 'follow',
     });
-    console.log('res2', res2);
-    window.location.href = res2.url;
+    window.location.reload();
   }
 
-  const connectWalletBtn = document.querySelector('#connectWalletBtn');
+  const connectWalletBtns = document.querySelectorAll('#connectWalletBtn');
 
-  if (connectWalletBtn) {
-    connectWalletBtn.addEventListener('click', () => {
-      signInWithEthereum();
-    });
+  if (connectWalletBtns) {
+    connectWalletBtns.forEach(btn =>
+      btn.addEventListener('click', () => {
+        signInWithEthereum();
+      }),
+    );
   }
 }

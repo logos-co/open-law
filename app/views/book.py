@@ -34,21 +34,25 @@ def get_all():
 
 
 @bp.route("/", methods=["GET"])
-@login_required
 def my_library():
-    q = request.args.get("q", type=str, default=None)
-    books: m.Book = m.Book.query.order_by(m.Book.id)
-    books = books.filter_by(user_id=current_user.id)
-    if q:
-        books = books.filter(m.Book.label.like(f"{q}"))
+    if current_user.is_authenticated:
+        q = request.args.get("q", type=str, default=None)
+        books: m.Book = m.Book.query.order_by(m.Book.id)
+        books = books.filter_by(user_id=current_user.id, is_deleted=False)
+        if q:
+            books = books.filter(m.Book.label.like(f"{q}"))
 
-    pagination = create_pagination(total=books.count())
+        pagination = create_pagination(total=books.count())
 
+        return render_template(
+            "book/index.html",
+            books=books.paginate(page=pagination.page, per_page=pagination.per_page),
+            page=pagination,
+            search_query=q,
+        )
     return render_template(
         "book/index.html",
-        books=books.paginate(page=pagination.page, per_page=pagination.per_page),
-        page=pagination,
-        search_query=q,
+        books=[],
     )
 
 
