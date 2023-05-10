@@ -15,7 +15,6 @@ migration = Migrate()
 
 
 def create_app(environment="development"):
-
     from config import config
     from app.views import (
         main_blueprint,
@@ -24,6 +23,7 @@ def create_app(environment="development"):
         book_blueprint,
         home_blueprint,
         section_blueprint,
+        vote_blueprint,
     )
     from app.models import (
         User,
@@ -52,6 +52,7 @@ def create_app(environment="development"):
     app.register_blueprint(book_blueprint)
     app.register_blueprint(home_blueprint)
     app.register_blueprint(section_blueprint)
+    app.register_blueprint(vote_blueprint)
 
     # Set up flask login.
     @login_manager.user_loader

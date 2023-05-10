@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from flask_login import current_user
+
 from app import db
 from app.models.utils import BaseModel
 
@@ -26,6 +28,25 @@ class Interpretation(BaseModel):
         secondary="interpretation_tags",
         back_populates="interpretations",
     )
+
+    @property
+    def vote_count(self):
+        count = 0
+
+        for vote in self.votes:
+            if vote.positive:
+                count += 1
+                continue
+            count -= 1
+
+        return count
+
+    @property
+    def current_user_vote(self):
+        for vote in self.votes:
+            if vote.user_id == current_user.id:
+                return vote.positive
+        return None
 
     @property
     def active_comments(self):

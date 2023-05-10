@@ -4,6 +4,7 @@ import {initWallet} from './wallet';
 import {initQuill} from './initQuill';
 import {initQuillValueToInput} from './quillValueToInput';
 import {initComments} from './comment';
+import {initVote} from './vote';
 import {initTheme} from './theme';
 
 initBooks();
@@ -12,4 +13,5 @@ initQuill();
 initQuillValueToInput();
 initWallet();
 initComments();
+initVote();
 initTheme();
