@@ -39,8 +39,8 @@ class Comment(BaseModel):
         for vote in self.votes:
             if vote.positive:
                 count += 1
-            else:
-                count -= 1
+                continue
+            count -= 1
 
         return count
 
