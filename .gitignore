@@ -9,4 +9,8 @@ node_modules/
 .env
 *.pyc
 /*.sqlite3
+
+# typescrypt generated files
+/app/static/js/*.d.ts
+
 .DS_Store
