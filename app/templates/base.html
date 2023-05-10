@@ -75,10 +75,6 @@
 
     {% block body %}
 
-    <!-- SideBar -->
-    <!-- prettier-ignore -->
-    {% include 'sidebar.html' %}
-
     {% block right_sidebar %} {% include 'right_sidebar.html' %} {% endblock %}
 
     {% include 'book/add_book_modal.html' %}
@@ -86,7 +82,7 @@
     <!-- prettier-ignore -->
     <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript" defer></script>
 
-    <div class="p-0 mt-16 h-auto md:ml-64">
+    <div class="p-0 mt-36 h-auto">
       <!-- Main Content -->
       {% block content %}{% endblock %}
     </div>
