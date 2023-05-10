@@ -1,5 +1,6 @@
 <nav
   class="fixed top-0 z-[55] w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+  <div>  
   <div class="px-3 py-3 lg:px-5 lg:pl-3">
     <div class="flex items-center justify-between">
       <div class="flex w-full items-center justify-between">
@@ -25,11 +26,15 @@
           <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path> </svg>
         </button>
 
-         <!-- prettier-ignore -->
-         {% if not current_user.is_authenticated %}
-          <button id="connectWalletBtn" type="button" class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Connect wallet</button>
-          {% endif %}
-        {% if current_user.is_authenticated %}
+        <!-- prettier-ignore -->
+        {% if not current_user.is_authenticated %}
+        <button
+          id="connectWalletBtn"
+          type="button"
+          class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+          Connect wallet
+        </button>
+        {% endif %} {% if current_user.is_authenticated %}
         <div class="md:flex hidden">
           <div class="items-center md:ml-3 hidden md:flex">
             <!-- prettier-ignore -->
@@ -75,10 +80,10 @@
   </div>
 
   {% if current_user.is_authenticated %}
-    <!-- Dropdown menu -->
-    <!--Those notification for now with dummy data-->
-    <!-- prettier-ignore -->
-    <div id="dropdownNotification" class="shadow-md z-20 hidden w-screen bg-white divide-y divide-gray-100 rounded-lg dark:bg-gray-800 dark:divide-gray-700 border border-gray-600 dark:shadow-gray-600 md:w-1/2" aria-labelledby="dropdownNotificationButton">
+  <!-- Dropdown menu -->
+  <!--Those notification for now with dummy data-->
+  <!-- prettier-ignore -->
+  <div id="dropdownNotification" class="shadow-md z-20 hidden w-screen bg-white divide-y divide-gray-100 rounded-lg dark:bg-gray-800 dark:divide-gray-700 border border-gray-600 dark:shadow-gray-600 md:w-1/2" aria-labelledby="dropdownNotificationButton">
       <div class="block px-4 py-2 font-medium text-center text-gray-700 rounded-t-lg bg-gray-50 dark:bg-gray-800 dark:text-white"> Notifications </div>
       <div class="divide-y divide-gray-100 dark:divide-gray-700">
         <a href="#" class="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -108,4 +113,36 @@
       </a>
     </div>
   {% endif %}
+</div>
+  <!-- Second top navbar -->
+  <div
+    class="px-3 py-3 lg:px-5 lg:pl-3 border-t border-gray-200 dark:border-gray-700">
+    <div class="flex items-center justify-between">
+      <div class="flex w-full items-center justify-between">
+        <ul class="flex font-medium items-center">
+          <li class="mx-2">
+            <a
+              href="#"
+              class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+              <span>My Library</span>
+            </a>
+          </li>
+          <li class="my-auto">
+            <a
+              href="#"
+              class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+              <span>My Contributions</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+              <span>Favorite Books</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </nav>

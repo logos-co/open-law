@@ -1113,12 +1113,16 @@ input:checked + .toggle-bg {
   top: 2.5rem;
 }
 
-.top-28 {
-  top: 7rem;
-}
-
 .top-3 {
   top: 0.75rem;
+}
+
+.top-32 {
+  top: 8rem;
+}
+
+.top-44 {
+  top: 11rem;
 }
 
 .-z-10 {
@@ -1189,6 +1193,11 @@ input:checked + .toggle-bg {
   margin-bottom: -0.375rem;
 }
 
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -1202,6 +1211,11 @@ input:checked + .toggle-bg {
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+
+.my-auto {
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .-mb-px {
@@ -1294,10 +1308,6 @@ input:checked + .toggle-bg {
 
 .mt-1\.5 {
   margin-top: 0.375rem;
-}
-
-.mt-16 {
-  margin-top: 4rem;
 }
 
 .mt-2 {
@@ -2919,10 +2929,6 @@ input:checked + .toggle-bg {
     margin-left: 0.75rem;
   }
 
-  .md\:ml-64 {
-    margin-left: 16rem;
-  }
-
   .md\:ml-auto {
     margin-left: auto;
   }
@@ -2992,6 +2998,10 @@ input:checked + .toggle-bg {
     flex-direction: row;
   }
 
+  .md\:flex-wrap {
+    flex-wrap: wrap;
+  }
+
   .md\:space-x-3 > :not([hidden]) ~ :not([hidden]) {
     --tw-space-x-reverse: 0;
     margin-right: calc(0.75rem * var(--tw-space-x-reverse));
@@ -3005,6 +3015,11 @@ input:checked + .toggle-bg {
   .md\:text-lg {
     font-size: 1.125rem;
     line-height: 1.75rem;
+  }
+
+  .md\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 }
 
