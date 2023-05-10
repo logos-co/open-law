@@ -41,8 +41,6 @@ const voteClickEventListener = async (
   }
 
   const currentUserVote = json.current_user_vote;
-  console.log('currentUserVote', currentUserVote);
-
   setStrokeToVoteBtns(currentUserVote);
 };
 
