@@ -1,3 +1,5 @@
+from flask_login import current_user
+
 from app import db
 from app.models.utils import BaseModel
 
@@ -41,6 +43,13 @@ class Comment(BaseModel):
                 count -= 1
 
         return count
+
+    @property
+    def current_user_vote(self):
+        for vote in self.votes:
+            if vote.user_id == current_user.id:
+                return vote.positive
+        return None
 
     def __repr__(self):
         return f"<{self.id}: {self.text[:20]}>"

@@ -31,7 +31,9 @@ def vote_interpretation(interpretation_id: int):
         if vote:
             db.session.delete(vote)
 
-        positive = form.positive.data and "True" in form.positive.raw_data
+        positive = form.positive.data and "true" in [
+            data.lower() for data in form.positive.raw_data
+        ]
         if not vote or vote.positive != positive:
             vote: m.InterpretationVote = m.InterpretationVote(
                 user_id=current_user.id,
@@ -56,7 +58,12 @@ def vote_interpretation(interpretation_id: int):
             )
         db.session.commit()
 
-        return jsonify({"vote_count": interpretation.vote_count})
+        return jsonify(
+            {
+                "vote_count": interpretation.vote_count,
+                "current_user_vote": interpretation.current_user_vote,
+            }
+        )
 
     log(
         log.CRITICAL,
@@ -86,7 +93,9 @@ def vote_comment(comment_id: int):
         if vote:
             db.session.delete(vote)
 
-        positive = form.positive.data and "True" in form.positive.raw_data
+        positive = form.positive.data and "true" in [
+            data.lower() for data in form.positive.raw_data
+        ]
         if not vote or vote.positive != positive:
             vote: m.CommentVote = m.CommentVote(
                 user_id=current_user.id,
@@ -111,7 +120,12 @@ def vote_comment(comment_id: int):
             )
         db.session.commit()
 
-        return jsonify({"vote_count": comment.vote_count})
+        return jsonify(
+            {
+                "vote_count": comment.vote_count,
+                "current_user_vote": comment.current_user_vote,
+            }
+        )
 
     log(
         log.CRITICAL,

@@ -42,6 +42,8 @@ def test_upvote_interpretation(client: FlaskClient):
     assert json
     assert "vote_count" in json
     assert json["vote_count"] == 1
+    assert "current_user_vote" in json
+    assert json["current_user_vote"]
     assert interpretation.vote_count == 1
 
     response: Response = client.post(
@@ -58,6 +60,8 @@ def test_upvote_interpretation(client: FlaskClient):
     assert json
     assert "vote_count" in json
     assert json["vote_count"] == 0
+    assert "current_user_vote" in json
+    assert json["current_user_vote"] is None
     assert interpretation.vote_count == 0
 
     response: Response = client.post(
@@ -74,6 +78,8 @@ def test_upvote_interpretation(client: FlaskClient):
     assert json
     assert "vote_count" in json
     assert json["vote_count"] == -1
+    assert "current_user_vote" in json
+    assert not json["current_user_vote"]
     assert interpretation.vote_count == -1
 
     response: Response = client.post(
@@ -90,6 +96,8 @@ def test_upvote_interpretation(client: FlaskClient):
     assert json
     assert "vote_count" in json
     assert json["vote_count"] == 0
+    assert "current_user_vote" in json
+    assert json["current_user_vote"] is None
     assert interpretation.vote_count == 0
 
 
@@ -129,6 +137,8 @@ def test_upvote_comment(client: FlaskClient):
     assert json
     assert "vote_count" in json
     assert json["vote_count"] == 1
+    assert "current_user_vote" in json
+    assert json["current_user_vote"]
     assert comment.vote_count == 1
 
     response: Response = client.post(
@@ -145,6 +155,8 @@ def test_upvote_comment(client: FlaskClient):
     assert json
     assert "vote_count" in json
     assert json["vote_count"] == 0
+    assert "current_user_vote" in json
+    assert json["current_user_vote"] is None
     assert comment.vote_count == 0
 
     response: Response = client.post(
@@ -161,6 +173,8 @@ def test_upvote_comment(client: FlaskClient):
     assert json
     assert "vote_count" in json
     assert json["vote_count"] == -1
+    assert "current_user_vote" in json
+    assert not json["current_user_vote"]
     assert comment.vote_count == -1
 
     response: Response = client.post(
@@ -177,4 +191,6 @@ def test_upvote_comment(client: FlaskClient):
     assert json
     assert "vote_count" in json
     assert json["vote_count"] == 0
+    assert "current_user_vote" in json
+    assert json["current_user_vote"] is None
     assert comment.vote_count == 0
