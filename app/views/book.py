@@ -289,14 +289,9 @@ def settings(book_id: int):
 
 
 @bp.route("/<int:book_id>/add_contributor", methods=["POST"])
+@register_book_verify_route(bp.name)
 @login_required
 def add_contributor(book_id: int):
-    book: m.Book = db.session.get(m.Book, book_id)
-    if not book or book.is_deleted or book.owner != current_user:
-        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
-        return redirect(url_for("book.my_books"))
-
     form = f.AddContributorForm()
 
     if form.validate_on_submit():
@@ -327,26 +322,21 @@ def add_contributor(book_id: int):
 
 
 @bp.route("/<int:book_id>/delete_contributor", methods=["POST"])
+@register_book_verify_route(bp.name)
 @login_required
 def delete_contributor(book_id: int):
-    book: m.Book = db.session.get(m.Book, book_id)
-    if not book or book.is_deleted or book.owner != current_user:
-        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
-        return redirect(url_for("book.my_books"))
-
     form = f.DeleteContributorForm()
 
     if form.validate_on_submit():
         book_contributor = m.BookContributor.query.filter_by(
-            user_id=int(form.user_id.data), book_id=book.id
+            user_id=int(form.user_id.data), book_id=book_id
         ).first()
         if not book_contributor:
             log(
                 log.INFO,
                 "BookContributor does not exists user: [%s], book: [%s]",
                 form.user_id.data,
-                book.id,
+                book_id,
             )
             flash("Does not exists!", "success")
             return redirect(url_for("book.settings", book_id=book_id))
@@ -367,26 +357,21 @@ def delete_contributor(book_id: int):
 
 
 @bp.route("/<int:book_id>/edit_contributor_role", methods=["POST"])
+@register_book_verify_route(bp.name)
 @login_required
 def edit_contributor_role(book_id: int):
-    book: m.Book = db.session.get(m.Book, book_id)
-    if not book or book.is_deleted or book.owner != current_user:
-        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
-        return redirect(url_for("book.my_books"))
-
     form = f.EditContributorRoleForm()
 
     if form.validate_on_submit():
         book_contributor = m.BookContributor.query.filter_by(
-            user_id=int(form.user_id.data), book_id=book.id
+            user_id=int(form.user_id.data), book_id=book_id
         ).first()
         if not book_contributor:
             log(
                 log.INFO,
                 "BookContributor does not exists user: [%s], book: [%s]",
                 form.user_id.data,
-                book.id,
+                book_id,
             )
             flash("Does not exists!", "success")
             return redirect(url_for("book.settings", book_id=book_id))

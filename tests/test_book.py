@@ -224,6 +224,28 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
     assert response.status_code == 200
     assert b"Success!" in response.data
 
+    moderator = m.User(username="Moderator", password="test").save()
+
+    moderators_book = m.Book(label="Test Book", user_id=moderator.id).save()
+    response: Response = client.post(
+        f"/book/{moderators_book.id}/add_contributor",
+        data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
+
+    moderators_book = m.Book(label="Test Book", user_id=moderator.id).save()
+    response: Response = client.post(
+        f"/book/999/add_contributor",
+        data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
+
 
 def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
     _, user = login(client)
