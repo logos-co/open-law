@@ -72,7 +72,7 @@ def test_create_edit_book(client: FlaskClient):
     )
 
     assert response.status_code == 200
-    assert b"Book not found" in response.data
+    assert b"You are not owner of this book!" in response.data
 
     response: Response = client.post(
         f"/book/{book.id}/edit",

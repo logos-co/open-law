@@ -8,11 +8,22 @@ from flask import (
 )
 from flask_login import login_required, current_user
 
-from app.controllers import create_pagination, create_breadcrumbs
+from app.controllers import (
+    create_pagination,
+    create_breadcrumbs,
+    register_book_verify_route,
+    book_validator,
+)
 from app import models as m, db, forms as f
 from app.logger import log
 
 bp = Blueprint("book", __name__, url_prefix="/book")
+
+
+@bp.before_request
+def before_request():
+    if res := book_validator():
+        return res
 
 
 @bp.route("/all", methods=["GET"])
@@ -77,6 +88,7 @@ def create():
 
 
 @bp.route("/<int:book_id>/edit", methods=["POST"])
+@register_book_verify_route(bp.name)
 @login_required
 def edit(book_id: int):
     form = f.EditBookForm()

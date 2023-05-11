@@ -18,13 +18,6 @@ class EditBookForm(BaseBookForm):
     book_id = StringField("User ID", [DataRequired()])
     submit = SubmitField("Edit book")
 
-    def validate_book_id(self, field):
-        book_id = field.data
-        book: m.Book = db.session.get(m.Book, book_id)
-        if not book or book.is_deleted:
-            log(log.WARNING, "Book with id [%s] not found", book_id)
-            raise ValidationError("Book not found")
-
     def validate_label(self, field):
         label = field.data
         book_id = self.book_id.data
