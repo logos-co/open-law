@@ -58,7 +58,7 @@ def book_validator() -> Response | None:
         sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
         if not sub_collection or sub_collection.is_deleted:
             log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-            flash("SubCollection not found", "danger")
+            flash("Subcollection not found", "danger")
             return redirect(
                 url_for(
                     "book.sub_collection_view",

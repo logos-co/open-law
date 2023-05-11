@@ -498,7 +498,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     )
 
     assert response.status_code == 200
-    assert b"SubCollection not found" in response.data
+    assert b"Subcollection not found" in response.data
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{sub_collection.id}/delete",
@@ -517,7 +517,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     )
 
     assert response.status_code == 200
-    assert b"Collection not found" in response.data
+    assert b"Subcollection not found" in response.data
 
 
 def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
