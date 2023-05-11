@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask_login import current_user
 
-from app import db
+from app import db, models as m
 from app.models.utils import BaseModel
 
 
@@ -22,7 +22,7 @@ class Interpretation(BaseModel):
     # Relationships
     user = db.relationship("User")
     section = db.relationship("Section")
-    comments = db.relationship("Comment", viewonly=True)
+    comments = db.relationship("Comment", viewonly=True, order_by="desc(Comment.id)")
     votes = db.relationship("InterpretationVote", viewonly=True)
     tags = db.relationship(
         "Tag",
@@ -52,6 +52,10 @@ class Interpretation(BaseModel):
     @property
     def active_comments(self):
         return [comment for comment in self.comments if not comment.is_deleted]
+
+    @property
+    def book(self) -> m.Book:
+        return self.section.version.book
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"

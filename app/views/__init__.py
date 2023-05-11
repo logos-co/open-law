@@ -6,3 +6,4 @@ from .book import bp as book_blueprint
 from .home import bp as home_blueprint
 from .section import bp as section_blueprint
 from .vote import bp as vote_blueprint
+from .approve import bp as approve_blueprint
