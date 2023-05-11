@@ -8,6 +8,7 @@ from app.logger import log
 
 class BaseBookForm(FlaskForm):
     label = StringField("Label", [DataRequired(), Length(6, 256)])
+    about = StringField("About")
 
 
 class CreateBookForm(BaseBookForm):
@@ -22,10 +23,14 @@ class EditBookForm(BaseBookForm):
         label = field.data
         book_id = self.book_id.data
 
-        existing_book: m.Book = m.Book.query.filter_by(
-            is_deleted=False,
-            label=label,
-        ).first()
+        existing_book: m.Book = (
+            m.Book.query.filter_by(
+                is_deleted=False,
+                label=label,
+            )
+            .filter(m.Book.id != book_id)
+            .first()
+        )
         if existing_book:
             log(
                 log.WARNING, "Book with label [%s] already exists: [%s]", label, book_id
