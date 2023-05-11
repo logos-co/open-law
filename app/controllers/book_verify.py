@@ -66,3 +66,18 @@ def book_validator() -> Response | None:
                     collection_id=collection_id,
                 )
             )
+
+    section_id = request_args.get("section_id")
+    if section_id:
+        section: m.Section = db.session.get(m.Section, section_id)
+        if not section or collection.is_deleted:
+            log(log.WARNING, "Section with id [%s] not found", section)
+            flash("Section not found", "danger")
+            return redirect(
+                url_for(
+                    "book.section_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                    sub_collection_id=sub_collection_id,
+                )
+            )

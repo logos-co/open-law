@@ -601,7 +601,9 @@ def section_create(
 ):
     book: m.Book = db.session.get(m.Book, book_id)
     collection: m.Collection = db.session.get(m.Collection, collection_id)
-    sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+    sub_collection = None
+    if sub_collection_id:
+        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
 
     redirect_url = url_for("book.collection_view", book_id=book_id)
     if collection_id:
@@ -758,6 +760,7 @@ def section_delete(
     "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/<int:section_id>/create_interpretation",
     methods=["POST"],
 )
+@register_book_verify_route(bp.name)
 @login_required
 def interpretation_create(
     book_id: int,
@@ -765,44 +768,8 @@ def interpretation_create(
     section_id: int,
     sub_collection_id: int | None = None,
 ):
-    book: m.Book = db.session.get(m.Book, book_id)
-    if not book or book.is_deleted:
-        log(log.WARNING, "Book with id [%s] not found", book_id)
-        flash("Book not found", "danger")
-        return redirect(url_for("book.my_books"))
-
-    collection: m.Collection = db.session.get(m.Collection, collection_id)
-    if not collection or collection.is_deleted:
-        log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Collection not found", "danger")
-        return redirect(url_for("book.collection_view", book_id=book_id))
-
-    sub_collection = None
-    if sub_collection_id:
-        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-        if not sub_collection or sub_collection.is_deleted:
-            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-            flash("SubCollection not found", "danger")
-            return redirect(
-                url_for(
-                    "book.sub_collection_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                )
-            )
-
     section: m.Section = db.session.get(m.Section, section_id)
-    if not section or collection.is_deleted:
-        log(log.WARNING, "Section with id [%s] not found", section)
-        flash("Section not found", "danger")
-        return redirect(
-            url_for(
-                "book.section_view",
-                book_id=book_id,
-                collection_id=collection_id,
-                sub_collection_id=sub_collection_id,
-            )
-        )
+
     redirect_url = url_for(
         "book.interpretation_view",
         book_id=book_id,
@@ -850,6 +817,7 @@ def interpretation_create(
     ),
     methods=["POST"],
 )
+@register_book_verify_route(bp.name)
 @login_required
 def interpretation_edit(
     book_id: int,
@@ -858,31 +826,6 @@ def interpretation_edit(
     interpretation_id: int,
     sub_collection_id: int | None = None,
 ):
-    book: m.Book = db.session.get(m.Book, book_id)
-    if not book or book.owner != current_user or book.is_deleted:
-        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
-        return redirect(url_for("book.my_books"))
-
-    collection: m.Collection = db.session.get(m.Collection, collection_id)
-    if not collection or collection.is_deleted:
-        log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Collection not found", "danger")
-        return redirect(url_for("book.collection_view", book_id=book_id))
-
-    if sub_collection_id:
-        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-        if not sub_collection or sub_collection.is_deleted:
-            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-            flash("SubCollection not found", "danger")
-            return redirect(
-                url_for(
-                    "book.sub_collection_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                )
-            )
-
     redirect_url = url_for(
         "book.qa_view",
         book_id=book_id,
@@ -939,6 +882,7 @@ def interpretation_edit(
     ),
     methods=["POST"],
 )
+@register_book_verify_route(bp.name)
 @login_required
 def interpretation_delete(
     book_id: int,
@@ -947,31 +891,6 @@ def interpretation_delete(
     interpretation_id: int,
     sub_collection_id: int | None = None,
 ):
-    book: m.Book = db.session.get(m.Book, book_id)
-    if not book or book.owner != current_user or book.is_deleted:
-        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
-        return redirect(url_for("book.my_books"))
-
-    collection: m.Collection = db.session.get(m.Collection, collection_id)
-    if not collection or collection.is_deleted:
-        log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Collection not found", "danger")
-        return redirect(url_for("book.collection_view", book_id=book_id))
-
-    if sub_collection_id:
-        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-        if not sub_collection or sub_collection.is_deleted:
-            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-            flash("SubCollection not found", "danger")
-            return redirect(
-                url_for(
-                    "book.sub_collection_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                )
-            )
-
     redirect_url = url_for(
         "book.interpretation_view",
         book_id=book_id,
