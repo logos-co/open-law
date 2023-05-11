@@ -22,8 +22,8 @@ bp = Blueprint("book", __name__, url_prefix="/book")
 
 @bp.before_request
 def before_request():
-    if res := book_validator():
-        return res
+    if response := book_validator():
+        return response
 
 
 @bp.route("/all", methods=["GET"])
@@ -1086,6 +1086,7 @@ def create_comment(
     ),
     methods=["POST"],
 )
+@register_book_verify_route(bp.name)
 @login_required
 def comment_delete(
     book_id: int,
@@ -1094,65 +1095,9 @@ def comment_delete(
     interpretation_id: int,
     sub_collection_id: int | None = None,
 ):
-    book: m.Book = db.session.get(m.Book, book_id)
-
-    if not book or book.is_deleted:
-        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
-        return redirect(url_for("book.my_books"))
-
-    collection: m.Collection = db.session.get(m.Collection, collection_id)
-    if not collection or collection.is_deleted:
-        log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Collection not found", "danger")
-        return redirect(url_for("book.collection_view", book_id=book_id))
-
-    if sub_collection_id:
-        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-        if not sub_collection or sub_collection.is_deleted:
-            log(
-                log.WARNING,
-                "Sub_collection with id [%s] not found",
-                sub_collection_id,
-            )
-            flash("SubCollection not found", "danger")
-            return redirect(
-                url_for(
-                    "book.sub_collection_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                )
-            )
-
-    redirect_url = url_for(
-        "book.qa_view",
-        book_id=book_id,
-        collection_id=collection_id,
-        sub_collection_id=sub_collection_id,
-        section_id=section_id,
-        interpretation_id=interpretation_id,
-    )
-    section: m.Section = db.session.get(m.Section, section_id)
-    if not section or section.is_deleted:
-        log(log.WARNING, "Section with id [%s] not found", section_id)
-        flash("Section not found", "danger")
-        return redirect(redirect_url)
-
-    interpretation: m.Interpretation = db.session.get(
-        m.Interpretation, interpretation_id
-    )
-    if not interpretation or interpretation.is_deleted:
-        log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
-        flash("Interpretation not found", "danger")
-        return redirect(redirect_url)
-
     form = f.DeleteCommentForm()
     comment_id = form.comment_id.data
     comment: m.Comment = db.session.get(m.Comment, comment_id)
-    if not comment or comment.is_deleted:
-        log(log.WARNING, "Comment with id [%s] not found", comment_id)
-        flash("Comment not found", "danger")
-        return redirect(redirect_url)
 
     if form.validate_on_submit():
         comment.is_deleted = True
@@ -1160,7 +1105,16 @@ def comment_delete(
         comment.save()
 
         flash("Success!", "success")
-        return redirect(redirect_url)
+        return redirect(
+            url_for(
+                "book.qa_view",
+                book_id=book_id,
+                collection_id=collection_id,
+                sub_collection_id=sub_collection_id,
+                section_id=section_id,
+                interpretation_id=interpretation_id,
+            )
+        )
     return redirect(
         url_for(
             "book.sub_collection_view",
@@ -1181,6 +1135,7 @@ def comment_delete(
     ),
     methods=["POST"],
 )
+@register_book_verify_route(bp.name)
 @login_required
 def comment_edit(
     book_id: int,
@@ -1189,65 +1144,9 @@ def comment_edit(
     interpretation_id: int,
     sub_collection_id: int | None = None,
 ):
-    book: m.Book = db.session.get(m.Book, book_id)
-
-    if not book or book.is_deleted:
-        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
-        return redirect(url_for("book.my_books"))
-
-    collection: m.Collection = db.session.get(m.Collection, collection_id)
-    if not collection or collection.is_deleted:
-        log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Collection not found", "danger")
-        return redirect(url_for("book.collection_view", book_id=book_id))
-
-    if sub_collection_id:
-        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-        if not sub_collection or sub_collection.is_deleted:
-            log(
-                log.WARNING,
-                "Sub_collection with id [%s] not found",
-                sub_collection_id,
-            )
-            flash("SubCollection not found", "danger")
-            return redirect(
-                url_for(
-                    "book.sub_collection_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                )
-            )
-
-    redirect_url = url_for(
-        "book.qa_view",
-        book_id=book_id,
-        collection_id=collection_id,
-        sub_collection_id=sub_collection_id,
-        section_id=section_id,
-        interpretation_id=interpretation_id,
-    )
-    section: m.Section = db.session.get(m.Section, section_id)
-    if not section or section.is_deleted:
-        log(log.WARNING, "Section with id [%s] not found", section_id)
-        flash("Section not found", "danger")
-        return redirect(redirect_url)
-
-    interpretation: m.Interpretation = db.session.get(
-        m.Interpretation, interpretation_id
-    )
-    if not interpretation or interpretation.is_deleted:
-        log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
-        flash("Interpretation not found", "danger")
-        return redirect(redirect_url)
-
     form = f.EditCommentForm()
     comment_id = form.comment_id.data
     comment: m.Comment = db.session.get(m.Comment, comment_id)
-    if not comment or comment.is_deleted:
-        log(log.WARNING, "Comment with id [%s] not found", comment_id)
-        flash("Comment not found", "danger")
-        return redirect(redirect_url)
 
     if form.validate_on_submit():
         comment.text = form.text.data
@@ -1256,7 +1155,16 @@ def comment_edit(
         comment.save()
 
         flash("Success!", "success")
-        return redirect(redirect_url)
+        return redirect(
+            url_for(
+                "book.qa_view",
+                book_id=book_id,
+                collection_id=collection_id,
+                sub_collection_id=sub_collection_id,
+                section_id=section_id,
+                interpretation_id=interpretation_id,
+            )
+        )
     return redirect(
         url_for(
             "book.sub_collection_view",

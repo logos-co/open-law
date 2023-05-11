@@ -100,3 +100,20 @@ def book_validator() -> Response | None:
                     interpretation_id=interpretation_id,
                 )
             )
+
+    comment_id = request_args.get("comment_id")
+    if comment_id:
+        comment: m.Comment = db.session.get(m.Comment, comment_id)
+        if not comment or comment.is_deleted:
+            log(log.WARNING, "Comment with id [%s] not found", comment_id)
+            flash("Comment not found", "danger")
+            return redirect(
+                url_for(
+                    "book.qa_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                    sub_collection_id=sub_collection_id,
+                    section_id=section_id,
+                    interpretation_id=interpretation_id,
+                )
+            )
