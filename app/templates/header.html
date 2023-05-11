@@ -120,9 +120,9 @@
     <div class="flex items-center justify-between">
       <div class="flex w-full items-center justify-between">
         <ul class="flex font-medium items-center">
-          <li class="mx-2">
+          <li class="mx-2 {% if selected_tab == 'my_library' %} bg-slate-300 dark:bg-slate-700 rounded-lg {% endif %}">
             <a
-              href="#"
+              href="{{ url_for('book.my_library') }}"
               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
               <span>My Library</span>
             </a>

@@ -1,13 +1,17 @@
 <!-- prettier-ignore -->
-<nav class="fixed flex top-32 p-4 pl-1 mt-1.5 z-40 w-full md:w-4/5 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700" aria-label="Breadcrumb">
+<nav class="fixed flex top-32 p-4 pl-1 mt-1.5 z-40 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700" aria-label="Breadcrumb">
   <ol class="inline-flex items-center space-x-1 md:space-x-3 ml-5 overflow-x-scroll md:overflow-auto p-0">
     {% for breadcrumb in breadcrumbs %}
     <li class="inline-flex items-center">
       {% if not loop.index==breadcrumbs|length %}
-      <a href="{{ breadcrumb.url }}" class="inline-flex items-center text-sm truncate w-30 font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+      <a href="{{ breadcrumb.url }}" class="inline-flex items-center text-sm truncate w-24 font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" data-tooltip-target="breadcrumb-{{loop.index}}-tooltip" data-tooltip-placement="bottom">
       {% else %}
-      <span class="inline-flex items-center text-sm truncate w-40 font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+      <span class="inline-flex items-center text-sm truncate w-40 font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" data-tooltip-target="breadcrumb-{{loop.index}}-tooltip" data-tooltip-placement="bottom">
       {% endif %}
+      <div id="breadcrumb-{{loop.index}}-tooltip" role="tooltip" class="delay-100 absolute z-[100] invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-700 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+        {{ breadcrumb.label }}
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
         <!-- prettier-ignore -->
         <!--svg for all types of breadcrumb-->
         {% if breadcrumb.type == "MyBookList" or breadcrumb.type == "AuthorBookList" %}

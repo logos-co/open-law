@@ -43,7 +43,7 @@ def book_validator() -> Response | None:
         if not book or book.is_deleted or book.owner != current_user:
             log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
             flash("You are not owner of this book!", "danger")
-            return redirect(url_for("book.my_books"))
+            return redirect(url_for("book.my_library"))
 
     collection_id = request_args.get("collection_id")
     if collection_id:

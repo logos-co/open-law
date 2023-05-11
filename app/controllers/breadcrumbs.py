@@ -30,7 +30,7 @@ def create_breadcrumbs(
         crumples += [
             s.BreadCrumb(
                 type=s.BreadCrumbType.MyBookList,
-                url=url_for("book.my_books"),
+                url=url_for("book.my_library"),
                 label="My Books",
             )
         ]
