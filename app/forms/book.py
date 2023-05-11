@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, ValidationError
 from wtforms.validators import DataRequired, Length
 
-from app import models as m, db
+from app import models as m
 from app.logger import log
 
 
