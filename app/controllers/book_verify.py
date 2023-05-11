@@ -44,3 +44,25 @@ def book_validator() -> Response | None:
             log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
             flash("You are not owner of this book!", "danger")
             return redirect(url_for("book.my_books"))
+
+    collection_id = request_args.get("collection_id")
+    if collection_id:
+        collection: m.Collection = db.session.get(m.Collection, collection_id)
+        if not collection or collection.is_deleted:
+            log(log.WARNING, "Collection with id [%s] not found", collection_id)
+            flash("Collection not found", "danger")
+            return redirect(url_for("book.collection_view", book_id=book_id))
+
+    sub_collection_id = request_args.get("sub_collection_id")
+    if sub_collection_id:
+        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
+        if not sub_collection or sub_collection.is_deleted:
+            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
+            flash("SubCollection not found", "danger")
+            return redirect(
+                url_for(
+                    "book.sub_collection_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                )
+            )
