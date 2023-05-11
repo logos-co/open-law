@@ -9,11 +9,10 @@
       <h1 class="text-2xl font-extrabold dark:text-white ml-4">Books</h1>
   </div>
 
-  {% for book in books %}
+  {% for book in books if not book.is_deleted %}
   <!-- prettier-ignore -->
   <dl class="bg-white dark:bg-gray-900 max-w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-    <a class="flex flex-col pb-2" href="{{url_for('book.collection_view',book_id=book.id)}}">
-      <dt class="mb-2"> {{book.owner.username}}/{{book.label}} </dt>
+      <dt class="mb-2"> <a class="flex flex-col pb-4" href="{{url_for('book.collection_view',book_id=book.id)}}">{{book.owner.username}}/{{book.label}}</a> </dt>
       <dd class="flex flex-col md:flex-row text-lg font-semibold  text-gray-500 md:text-lg dark:text-gray-400">
         {% if book.versions %}
         <p> Last updated on  {{book.versions[-1].updated_at.strftime('%B %d, %Y')}}</p>
@@ -34,7 +33,6 @@
           </span>
         </div>
       </dd>
-    </a>
   </dl>
   {% endfor %}
   <!-- prettier-ignore -->
