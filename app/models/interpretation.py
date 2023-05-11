@@ -11,6 +11,7 @@ class Interpretation(BaseModel):
 
     label = db.Column(db.String(256), unique=False, nullable=False)
     text = db.Column(db.Text, unique=False, nullable=False)
+    approved = db.Column(db.Boolean, default=False)
     marked = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
 
