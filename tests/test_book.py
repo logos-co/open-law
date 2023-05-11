@@ -3,7 +3,7 @@ from flask import current_app as Response
 from flask.testing import FlaskClient, FlaskCliRunner
 
 from app import models as m, db
-from tests.utils import login
+from tests.utils import login, logout
 
 
 def test_create_edit_delete_book(client: FlaskClient):
@@ -72,7 +72,7 @@ def test_create_edit_delete_book(client: FlaskClient):
     )
 
     assert response.status_code == 200
-    assert b"Book not found" in response.data
+    assert b"You are not owner of this book!" in response.data
 
     response: Response = client.post(
         f"/book/{book.id}/edit",
@@ -194,6 +194,15 @@ def test_delete_contributor(client: FlaskClient, runner: FlaskCliRunner):
     assert response.status_code == 200
     assert b"Does not exists!" in response.data
 
+    response: Response = client.post(
+        f"/book/{123}/add_contributor",
+        data=dict(user_id=1, role=m.BookContributor.Roles.MODERATOR),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
+
 
 def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
     _, user = login(client)
@@ -225,6 +234,27 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
     assert response.status_code == 200
     assert b"Success!" in response.data
 
+    moderator = m.User(username="Moderator", password="test").save()
+
+    moderators_book = m.Book(label="Test Book", user_id=moderator.id).save()
+    response: Response = client.post(
+        f"/book/{moderators_book.id}/add_contributor",
+        data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
+
+    response: Response = client.post(
+        f"/book/999/add_contributor",
+        data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
+
 
 def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
     _, user = login(client)
@@ -254,6 +284,14 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
 
     assert response.status_code == 200
     assert b"Collection label must be unique!" in response.data
+
+    response: Response = client.post(
+        f"/book/999/create_collection",
+        data=dict(label="Test Collection #1 Label", about="Test Collection #1 About"),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
 
     collection: m.Collection = m.Collection.query.filter_by(
         label="Test Collection #1 Label"
@@ -289,6 +327,14 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
 
     assert response.status_code == 200
     assert b"Success!" in response.data
+
+    response: Response = client.post(
+        f"/book/999/{collection.id}/edit",
+        data=dict(label="Test Collection #1 Label", about="Test Collection #1 About"),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
 
     edited_collection: m.Collection = m.Collection.query.filter_by(
         label=new_label, about=new_about
@@ -326,12 +372,20 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
     assert response.status_code == 200
     assert b"Collection not found" in response.data
 
+    response: Response = client.post(
+        f"/book/999/{collection.id}/delete",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
+
 
 def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     _, user = login(client)
     user: m.User
 
-    # add dummmy data
+    # add dummy data
     runner.invoke(args=["db-populate"])
 
     book: m.Book = db.session.get(m.Book, 1)
@@ -347,6 +401,16 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     collection: m.Collection = m.Collection(
         label="Test Collection #1 Label", version_id=book.last_version.id
     ).save()
+
+    response: Response = client.post(
+        f"/book/999/{leaf_collection.id}/create_sub_collection",
+        data=dict(
+            label="Test SubCollection #1 Label", about="Test SubCollection #1 About"
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
 
     response: Response = client.post(
         f"/book/{book.id}/{leaf_collection.id}/create_sub_collection",
@@ -435,7 +499,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     )
 
     assert response.status_code == 200
-    assert b"SubCollection not found" in response.data
+    assert b"Subcollection not found" in response.data
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{sub_collection.id}/delete",
@@ -454,7 +518,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     )
 
     assert response.status_code == 200
-    assert b"Collection not found" in response.data
+    assert b"Subcollection not found" in response.data
 
 
 def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
@@ -1004,3 +1068,36 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
     assert response.status_code == 200
     assert b"Success" in response.data
     assert str.encode(comment_text) not in response.data
+
+
+def test_access_to_settings_page(client: FlaskClient):
+    _, user = login(client)
+
+    book_1 = m.Book(label="test", about="test").save()
+    book_2 = m.Book(label="test", about="test", user_id=user.id).save()
+
+    response: Response = client.get(
+        f"/book/{book_1.id}/settings",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
+
+    response: Response = client.get(
+        f"/book/{book_2.id}/settings",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" not in response.data
+
+    logout(client)
+
+    response: Response = client.get(
+        f"/book/{book_2.id}/settings",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
