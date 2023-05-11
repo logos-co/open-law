@@ -664,10 +664,6 @@ def section_edit(
         section_id=section_id,
     )
     section: m.Section = db.session.get(m.Section, section_id)
-    if not section or section.is_deleted:
-        log(log.WARNING, "Section with id [%s] not found", section_id)
-        flash("Section not found", "danger")
-        return redirect(redirect_url)
 
     form = f.EditSectionForm()
 
@@ -713,18 +709,7 @@ def section_delete(
     collection: m.Collection = db.session.get(
         m.Collection, sub_collection_id or collection_id
     )
-
-    redirect_url = url_for(
-        "book.section_view",
-        book_id=book_id,
-        collection_id=collection_id,
-        sub_collection_id=sub_collection_id,
-    )
     section: m.Section = db.session.get(m.Section, section_id)
-    if not section or section.is_deleted:
-        log(log.WARNING, "Section with id [%s] not found", section_id)
-        flash("Section not found", "danger")
-        return redirect(redirect_url)
 
     section.is_deleted = True
     if not collection.active_sections:
@@ -769,7 +754,7 @@ def interpretation_create(
     sub_collection_id: int | None = None,
 ):
     section: m.Section = db.session.get(m.Section, section_id)
-
+    form = f.CreateInterpretationForm()
     redirect_url = url_for(
         "book.interpretation_view",
         book_id=book_id,
@@ -777,8 +762,6 @@ def interpretation_create(
         sub_collection_id=sub_collection_id,
         section_id=section.id,
     )
-
-    form = f.CreateInterpretationForm()
 
     if form.validate_on_submit():
         interpretation: m.Interpretation = m.Interpretation(
@@ -826,6 +809,10 @@ def interpretation_edit(
     interpretation_id: int,
     sub_collection_id: int | None = None,
 ):
+    interpretation: m.Interpretation = db.session.get(
+        m.Interpretation, interpretation_id
+    )
+    form = f.EditInterpretationForm()
     redirect_url = url_for(
         "book.qa_view",
         book_id=book_id,
@@ -834,21 +821,6 @@ def interpretation_edit(
         section_id=section_id,
         interpretation_id=interpretation_id,
     )
-    section: m.Section = db.session.get(m.Section, section_id)
-    if not section or section.is_deleted:
-        log(log.WARNING, "Section with id [%s] not found", section_id)
-        flash("Section not found", "danger")
-        return redirect(redirect_url)
-
-    interpretation: m.Interpretation = db.session.get(
-        m.Interpretation, interpretation_id
-    )
-    if not interpretation or interpretation.is_deleted:
-        log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
-        flash("Interpretation not found", "danger")
-        return redirect(redirect_url)
-
-    form = f.EditInterpretationForm()
 
     if form.validate_on_submit():
         label = form.label.data
@@ -891,26 +863,9 @@ def interpretation_delete(
     interpretation_id: int,
     sub_collection_id: int | None = None,
 ):
-    redirect_url = url_for(
-        "book.interpretation_view",
-        book_id=book_id,
-        collection_id=collection_id,
-        sub_collection_id=sub_collection_id,
-        section_id=section_id,
-    )
-    section: m.Section = db.session.get(m.Section, section_id)
-    if not section or section.is_deleted:
-        log(log.WARNING, "Section with id [%s] not found", section_id)
-        flash("Section not found", "danger")
-        return redirect(redirect_url)
-
     interpretation: m.Interpretation = db.session.get(
         m.Interpretation, interpretation_id
     )
-    if not interpretation or interpretation.is_deleted:
-        log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
-        flash("Interpretation not found", "danger")
-        return redirect(redirect_url)
 
     interpretation.is_deleted = True
     log(log.INFO, "Delete interpretation [%s]", interpretation)

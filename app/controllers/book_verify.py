@@ -81,3 +81,22 @@ def book_validator() -> Response | None:
                     sub_collection_id=sub_collection_id,
                 )
             )
+
+    interpretation_id = request_args.get("interpretation_id")
+    if interpretation_id:
+        interpretation: m.Interpretation = db.session.get(
+            m.Interpretation, interpretation_id
+        )
+        if not interpretation or interpretation.is_deleted:
+            log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
+            flash("Interpretation not found", "danger")
+            return redirect(
+                url_for(
+                    "book.qa_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                    sub_collection_id=sub_collection_id,
+                    section_id=section_id,
+                    interpretation_id=interpretation_id,
+                )
+            )
