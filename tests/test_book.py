@@ -3,7 +3,7 @@ from flask import current_app as Response
 from flask.testing import FlaskClient, FlaskCliRunner
 
 from app import models as m, db
-from tests.utils import login
+from tests.utils import login, logout
 
 
 def test_create_edit_book(client: FlaskClient):
@@ -1003,3 +1003,36 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
     assert response.status_code == 200
     assert b"Success" in response.data
     assert str.encode(comment_text) not in response.data
+
+
+def test_access_to_settings_page(client: FlaskClient):
+    _, user = login(client)
+
+    book_1 = m.Book(label="test", about="test").save()
+    book_2 = m.Book(label="test", about="test", user_id=user.id).save()
+
+    response: Response = client.get(
+        f"/book/{book_1.id}/settings",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data
+
+    response: Response = client.get(
+        f"/book/{book_2.id}/settings",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" not in response.data
+
+    logout(client)
+
+    response: Response = client.get(
+        f"/book/{book_2.id}/settings",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"You are not owner of this book!" in response.data

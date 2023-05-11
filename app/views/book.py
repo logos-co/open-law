@@ -278,13 +278,10 @@ def interpretation_view(
 
 
 @bp.route("/<int:book_id>/settings", methods=["GET"])
+@register_book_verify_route(bp.name)
 @login_required
 def settings(book_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
-    if not book or book.is_deleted or book.owner != current_user:
-        log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
-        return redirect(url_for("book.my_books"))
 
     return render_template(
         "book/settings.html", book=book, roles=m.BookContributor.Roles
