@@ -102,10 +102,12 @@ def create():
 @login_required
 def profile_delete():
     user: m.User = db.session.get(m.User, current_user.id)
-    logout_user()
+    for book in user.books:
+        book.is_deleted = True
     user.is_deleted = True
-    user.save()
     log(log.INFO, "User deleted. User: [%s]", user)
+    user.save()
+    logout_user()
     flash("User deleted!", "success")
     return redirect(url_for("home.get_all"))
 

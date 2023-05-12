@@ -117,3 +117,19 @@ def test_profile(client):
         follow_redirects=True,
     )
     assert b"This field is required." in res2.data
+    book = m.Book(
+        label="Book label",
+        about="Book about",
+        user_id=user.id,
+    )
+    book.save()
+    assert book
+
+    # delete_profile
+    res = client.post(
+        "/user/profile_delete",
+        follow_redirects=True,
+    )
+    assert res
+    assert user.is_deleted
+    assert user.books[0].is_deleted

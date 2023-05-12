@@ -10,7 +10,9 @@ bp = Blueprint("home", __name__, url_prefix="/home")
 
 @bp.route("/", methods=["GET"])
 def get_all():
-    books: m.Book = m.Book.query.order_by(m.Book.id).limit(5)
+    books: m.Book = (
+        m.Book.query.filter_by(is_deleted=False).order_by(m.Book.id).limit(5)
+    )
     interpretations = (
         db.session.query(
             m.Interpretation,
