@@ -6,3 +6,9 @@
 .text-danger {
     color: red;
 }
+.h-box{
+    height: calc(100vh - 150px);
+}
+.w-box{
+    width: calc(100vw - 255px);
+}

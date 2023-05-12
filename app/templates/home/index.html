@@ -3,11 +3,18 @@
 {% block content %}
 <div class="border-b border-gray-200 dark:border-gray-700 md:mr-64">
   <!-- prettier-ignore -->
+  <h1 class="hidden md:inline font-extrabold text-lg dark:text-white ml-4 mt-5">Open Common Law</h1>
+  <p
+    class="hidden md:block text-sm ml-4 w-1/2 text-gray-500 text-center md:text-left dark:text-gray-400">
+    An open-source law hosting platform that allows online communities to easily
+    create, collaborate, and publish their own body of law.
+  </p>
+  <!-- prettier-ignore -->
   <ul class="flex md:flex-wrap -mb-px text-xs md:text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
     <li class="mr-2 w-full md:w-auto" role="presentation">
       <!-- prettier-ignore -->
       <button class="inline-flex p-4 border-b-2 rounded-t-lg" id="last-sections-tab" data-tabs-target="#last-sections" type="button" role="tab" aria-controls="last-sections" aria-selected="false"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /> </svg>
-        Last Sections
+        LAtest Interpretations
       </button>
     </li>
     <li class="mr-2 w-full md:w-auto" role="presentation">
@@ -16,28 +23,86 @@
         Explore Books
       </button>
     </li>
-    <li class="mr-2 w-full md:w-auto" role="presentation">
-      <!-- prettier-ignore -->
-      <button class="inline-flex p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="all-sections-tab" data-tabs-target="#all-sections" type="button" role="tab" aria-controls="all-sections" aria-selected="false"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /> </svg>
-        All Sections
-      </button>
-    </li>
   </ul>
 </div>
 <div id="myTabContent" class="md:mr-64">
   <!-- prettier-ignore -->
   <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="last-sections" role="tabpanel" aria-labelledby="last-sections-tab">
-    <p class="text-sm text-gray-500 dark:text-gray-400">Last sections</p>
+    {% for interpretation in interpretations %}
+    <!-- prettier-ignore -->
+          <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+            <div class="flex flex-row pb-3 p-3 w-2/3 md:w-10/12">
+              <div class="vote-block flex flex-col m-5 justify-center items-center">
+                {% if interpretation.user_id != current_user.id %}
+                  <div class="vote-button cursor-pointer" data-vote-for="interpretation" data-entity-id="{{ interpretation.id }}" data-positive="true">
+                    <svg class="w-6 h-6 select-none
+                    {% if interpretation.current_user_vote %}
+                      stroke-green-500
+                    {% endif %}
+                    " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" > <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /> </svg>
+                  </div>
+                {% endif %}
+
+                <span
+                  class="vote-count text-3xl select-none
+                    {% if interpretation.vote_count < 0 %}
+                      text-red-500
+                    {% elif interpretation.vote_count > 0 %}
+                      text-green-500
+                    {% endif %}
+                  "
+                >
+                  {{ interpretation.vote_count }}
+                </span>
+
+                {% if interpretation.user_id != current_user.id %}
+                  <div class="vote-button cursor-pointer" data-vote-for="interpretation" data-entity-id="{{ interpretation.id }}" data-positive="false">
+                    <svg class="w-6 h-6 select-none
+                    {% if interpretation.current_user_vote == False %}
+                      stroke-red-500
+                    {% endif %}
+                    " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /> </svg>
+                  </div>
+                {% endif %}
+              </div>
+              <!-- prettier-ignore -->
+              <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
+                <div class="ql-snow truncate md:max-w-xl">
+                  {% set local_breadcrumbs = interpretation.section.breadcrumbs_path %}
+                  {% include 'book/local_breadcrumbs_navigation.html'%}
+                    <p>{{ interpretation.section.label }}</p>
+                  </a>
+                  <div class="dark:text-white h-30 ql-editor">
+                    <p>{{ interpretation.text|safe }}</p>
+                  </div>
+                </div>
+                <div class="flex mt-auto align-center justify-between md:w-full">
+                  <div>
+                    <span class="hidden md:inline-block">Interpretation by</span>
+                    {{interpretation.user.username}} on {{interpretation.created_at.strftime('%B %d, %Y')}}
+                  </div>
+                  <div class="flex ml-auto justify-between w-24">
+                    <span class="space-x-0.5 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+                    </span>
+                    <div class="space-x-0.5 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /> </svg>
+                      <p>{{interpretation.active_comments | length}}</p>
+                    </div>
+                  </div>
+                </div>
+              </dt>
+            </div>
+          </dl>
+
+    {% endfor %}
   </div>
   <!-- prettier-ignore -->
   <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="explore-books" role="tabpanel" aria-labelledby="explore-books-tab">
- {% for book in books %}
+ {% for book in books if not book.is_deleted %}
   <!-- prettier-ignore -->
   <dl class=" bg-white dark:bg-gray-900 max-w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-    <a
-      class="flex flex-col pb-2"
-      href="{{url_for('book.collection_view',book_id=book.id)}}">
-      <dt class="mb-2">{{book.owner.username}}/{{book.label}}</dt>
+      <dt class="mb-2"><a class="flex flex-col pb-4" href="{{url_for('book.collection_view',book_id=book.id)}}">{{book.owner.username}}/{{book.label}}</a></dt>
       <dd class="flex flex-col md:flex-row text-lg font-semibold text-gray-500 md:text-lg dark:text-gray-400">
         {% if book.versions %}
         <p> Last updated on {{book.versions[-1].updated_at.strftime('%B %d, %Y')}} </p>
@@ -57,18 +122,9 @@
           </span>
         </div>
       </dd>
-    </a>
   </dl>
   {% endfor %}
   <a type="button" href="{{ url_for('book.get_all') }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"> Explore all books... <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg> </a>
-  </div>
-  <!-- prettier-ignore -->
-  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="all-sections" role="tabpanel" aria-labelledby="all-sections-tab">
-  {% for section in sections %}
-    <!-- prettier-ignore -->
-    <h1 class="text-l font-extrabold dark:text-white my-2">{{section.path}}</h1>
-  {% endfor %}
-  <a type="button" href="{{ url_for('section.get_all') }}" class="mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"> Explore all sections... <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg> </a>
   </div>
 </div>
 {% endblock %}
