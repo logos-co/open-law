@@ -32,9 +32,9 @@ def get_all():
     )
 
 
-@bp.route("/profile", methods=["GET", "POST"])
+@bp.route("/edit_profile", methods=["GET", "POST"])
 @login_required
-def profile():
+def edit_profile():
     form = f.EditUserForm()
     if form.validate_on_submit():
         user: m.User = current_user
@@ -55,31 +55,22 @@ def profile():
 
     if current_user.is_activated:
         form.name.data = current_user.username
-    return render_template("user/profile.html", form=form)
+    return render_template("user/edit_profile.html", form=form)
 
 
-@bp.route("/save", methods=["POST"])
+@bp.route("/<int:user_id>/profile")
 @login_required
-def save():
-    form = f.UserForm()
-    if form.validate_on_submit():
-        u: m.User = m.User.query.get(int(form.user_id.data))
-        if not u:
-            log(log.ERROR, "Not found user by id : [%s]", form.user_id.data)
-            flash("Cannot save user data", "danger")
-        u.username = form.username.data
-        u.activated = form.activated.data
-        if form.password.data.strip("*\n "):
-            u.password = form.password.data
-        u.save()
-        if form.next_url.data:
-            return redirect(form.next_url.data)
-        return redirect(url_for("user.get_all"))
-
-    else:
-        log(log.ERROR, "User save errors: [%s]", form.errors)
-        flash(f"{form.errors}", "danger")
-        return redirect(url_for("user.get_all"))
+def profile(user_id: int):
+    user: m.User = m.User.query.get(user_id)
+    interpretations: m.Interpretation = m.Interpretation.query.filter_by(
+        user_id=user_id
+    )
+    if not user:
+        log(log.ERROR, "Not found user by id : [%s]", user_id)
+        flash("Cannot find user data", "danger")
+    return render_template(
+        "user/profile.html", user=user, interpretations=interpretations
+    )
 
 
 @bp.route("/create", methods=["POST"])

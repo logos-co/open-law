@@ -100,23 +100,20 @@ def test_profile(client):
     )
     login(client, username=user.username, password="password")
 
+    # edit_profile
+    new_name = "Some other name"
     res = client.post(
-        "/user/profile",
+        "/user/edit_profile",
         data={
-            "name": "Some other name",
+            "name": new_name,
             "avatar_img": avatar_img,
         },
         follow_redirects=True,
     )
     assert res.status_code == 200
-    assert user.username == "Some other name"
+    assert user.username == new_name
     assert user.is_activated
     assert user.avatar_img
-    res2 = client.post(
-        "/user/profile",
-        follow_redirects=True,
-    )
-    assert b"This field is required." in res2.data
     book = m.Book(
         label="Book label",
         about="Book about",
@@ -124,6 +121,16 @@ def test_profile(client):
     )
     book.save()
     assert book
+
+    # profile page
+    res = client.get(
+        "/user/2/profile",
+        follow_redirects=True,
+    )
+
+    assert res
+    assert res.status_code == 200
+    assert str.encode(new_name) in res.data
 
     # delete_profile
     res = client.post(
