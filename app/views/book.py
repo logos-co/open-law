@@ -154,8 +154,7 @@ def statistic_view(book_id: int):
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.my_library"))
-    else:
-        return render_template("book/stat.html", book=book)
+    return render_template("book/stat.html", book=book)
 
 
 @bp.route("/<int:book_id>/<int:collection_id>/subcollections", methods=["GET"])
