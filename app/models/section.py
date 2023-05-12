@@ -1,5 +1,6 @@
 from app import db
 from app.models.utils import BaseModel
+from app.controllers import create_breadcrumbs
 
 
 class Section(BaseModel):
@@ -31,6 +32,20 @@ class Section(BaseModel):
             path += f"{grand_parent.label} / {parent.label} / "
         path += self.label
         return path
+
+    @property
+    def breadcrumbs_path(self):
+        parent = self.collection
+        grand_parent = parent.parent
+        if grand_parent.is_root:
+            collection_path = (parent.id,)
+        else:
+            collection_path = (
+                grand_parent.id,
+                parent.id,
+            )
+        breadcrumbs_path = create_breadcrumbs(self.book_id, collection_path)
+        return breadcrumbs_path
 
     @property
     def book_id(self):
