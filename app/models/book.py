@@ -1,4 +1,6 @@
-from app import db
+from flask_login import current_user
+
+from app import db, models as m
 from app.models.utils import BaseModel
 
 
@@ -23,3 +25,12 @@ class Book(BaseModel):
     @property
     def last_version(self):
         return self.versions[-1]
+
+    @property
+    def current_user_has_star(self):
+        if current_user.is_authenticated:
+            book_star: m.BookStar = m.BookStar.query.filter_by(
+                user_id=current_user.id, book_id=self.id
+            ).first()
+            if book_star:
+                return True

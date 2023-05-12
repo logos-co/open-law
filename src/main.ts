@@ -7,6 +7,7 @@ import {initComments} from './comment';
 import {initVote} from './vote';
 import {initTheme} from './theme';
 import {initApprove} from './approve';
+import {initStar} from './star';
 
 initBooks();
 initContributors();
@@ -17,3 +18,4 @@ initComments();
 initVote();
 initTheme();
 initApprove();
+initStar();
