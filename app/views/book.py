@@ -147,6 +147,17 @@ def collection_view(book_id: int):
         )
 
 
+@bp.route("/<int:book_id>/statistics", methods=["GET"])
+def statistic_view(book_id: int):
+    book = db.session.get(m.Book, book_id)
+    if not book or book.is_deleted:
+        log(log.WARNING, "Book with id [%s] not found", book_id)
+        flash("Book not found", "danger")
+        return redirect(url_for("book.my_library"))
+    else:
+        return render_template("book/stat.html", book=book)
+
+
 @bp.route("/<int:book_id>/<int:collection_id>/subcollections", methods=["GET"])
 def sub_collection_view(book_id: int, collection_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
