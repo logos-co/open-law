@@ -150,7 +150,7 @@ def create_dummy_data():
     #   - comment 2
     #   - comment 3
     #       - comment 3.1 (marked)
-    #       - comment 3.2 (included_with_interpretation)
+    #       - comment 3.2 (approved)
     #       - comment 3.3
 
     comment_1 = m.Comment(
@@ -197,7 +197,7 @@ def create_dummy_data():
     comment_3_2 = m.Comment(
         text="Dummy Comment 3.2 Text",
         user_id=user.id,
-        included_with_interpretation=True,
+        approved=True,
         parent_id=comment_3.id,
         interpretation_id=interpretation_2.id,
     ).save()

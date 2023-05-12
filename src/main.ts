@@ -6,6 +6,7 @@ import {initQuillValueToInput} from './quillValueToInput';
 import {initComments} from './comment';
 import {initVote} from './vote';
 import {initTheme} from './theme';
+import {initApprove} from './approve';
 
 initBooks();
 initContributors();
@@ -15,3 +16,4 @@ initWallet();
 initComments();
 initVote();
 initTheme();
+initApprove();

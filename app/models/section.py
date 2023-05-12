@@ -19,7 +19,9 @@ class Section(BaseModel):
     collection = db.relationship("Collection", viewonly=True)
     user = db.relationship("User", viewonly=True)
     version = db.relationship("BookVersion", viewonly=True)
-    interpretations = db.relationship("Interpretation", viewonly=True)
+    interpretations = db.relationship(
+        "Interpretation", viewonly=True, order_by="desc(Interpretation.id)"
+    )
 
     @property
     def path(self):
