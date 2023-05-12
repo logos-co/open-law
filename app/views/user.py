@@ -1,7 +1,7 @@
 import base64
 
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, logout_user
 from app.controllers import create_pagination
 from sqlalchemy import not_
 
@@ -98,20 +98,18 @@ def create():
         return redirect(url_for("user.get_all"))
 
 
-@bp.route("/delete/<id>", methods=["DELETE"])
+@bp.route("/profile_delete", methods=["POST"])
 @login_required
-def delete(id):
-    u = m.User.query.filter_by(id=id).first()
-    if not u:
-        log(log.INFO, "There is no user with id: [%s]", id)
-        flash("There is no such user", "danger")
-        return "no user", 404
-
-    db.session.delete(u)
-    db.session.commit()
-    log(log.INFO, "User deleted. User: [%s]", u)
+def profile_delete():
+    user: m.User = db.session.get(m.User, current_user.id)
+    for book in user.books:
+        book.is_deleted = True
+    user.is_deleted = True
+    log(log.INFO, "User deleted. User: [%s]", user)
+    user.save()
+    logout_user()
     flash("User deleted!", "success")
-    return "ok", 200
+    return redirect(url_for("home.get_all"))
 
 
 @bp.route("/search", methods=["GET"])
