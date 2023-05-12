@@ -1,16 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, Length
 
 
 class BaseCommentForm(FlaskForm):
     text = StringField("Text", [DataRequired(), Length(3, 256)])
-    marked = BooleanField("Marked")
-    included_with_interpretation = BooleanField("Included")
-    parent_id = StringField("Text")
 
 
 class CreateCommentForm(BaseCommentForm):
+    parent_id = StringField("Text")
     submit = SubmitField("Create")
 
 
@@ -19,7 +17,6 @@ class DeleteCommentForm(FlaskForm):
     submit = SubmitField("Delete")
 
 
-class EditCommentForm(FlaskForm):
+class EditCommentForm(BaseCommentForm):
     comment_id = StringField("Text")
-    text = StringField("Text", [DataRequired(), Length(3, 256)])
     submit = SubmitField("Edit")
