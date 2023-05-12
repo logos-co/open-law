@@ -1101,3 +1101,113 @@ def test_access_to_settings_page(client: FlaskClient):
 
     assert response.status_code == 200
     assert b"You are not owner of this book!" in response.data
+
+
+def test_interpretation_in_home_last_inter_section(
+    client: FlaskClient, runner: FlaskCliRunner
+):
+    _, user = login(client)
+    user: m.User
+
+    # add dummmy data
+    runner.invoke(args=["db-populate"])
+
+    book: m.Book = db.session.get(m.Book, 1)
+    book.user_id = user.id
+    book.save()
+
+    leaf_collection: m.Collection = m.Collection(
+        label="Test Leaf Collection #1 Label",
+        version_id=book.last_version.id,
+        is_leaf=True,
+        parent_id=book.last_version.root_collection.id,
+    ).save()
+    section_in_collection: m.Section = m.Section(
+        label="Test Section in Collection #1 Label",
+        about="Test Section in Collection #1 About",
+        collection_id=leaf_collection.id,
+        version_id=book.last_version.id,
+    ).save()
+
+    collection: m.Collection = m.Collection(
+        label="Test Collection #1 Label", version_id=book.last_version.id
+    ).save()
+    sub_collection: m.Collection = m.Collection(
+        label="Test SubCollection #1 Label",
+        version_id=book.last_version.id,
+        parent_id=collection.id,
+        is_leaf=True,
+    ).save()
+    section_in_subcollection: m.Section = m.Section(
+        label="Test Section in Subcollection #1 Label",
+        about="Test Section in Subcollection #1 About",
+        collection_id=sub_collection.id,
+        version_id=book.last_version.id,
+    ).save()
+
+    label_1 = "Test Interpretation #1 Label"
+    text_1 = "Test Interpretation #1 Text"
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/create_interpretation",
+        data=dict(section_id=section_in_subcollection.id, label=label_1, text=text_1),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    interpretation: m.Interpretation = m.Interpretation.query.filter_by(
+        label=label_1, section_id=section_in_subcollection.id
+    ).first()
+    assert interpretation
+    assert interpretation.section_id == section_in_subcollection.id
+    assert not interpretation.comments
+
+    response: Response = client.post(
+        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/create_interpretation",
+        data=dict(section_id=section_in_collection.id, label=label_1, text=text_1),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    interpretation: m.Interpretation = m.Interpretation.query.filter_by(
+        label=label_1, section_id=section_in_collection.id
+    ).first()
+    assert interpretation
+    assert interpretation.section_id == section_in_collection.id
+    assert not interpretation.comments
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/999/create_section",
+        data=dict(collection_id=999, label=label_1, text=text_1),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Subcollection not found" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/{leaf_collection.id}/999/create_interpretation",
+        data=dict(collection_id=999, label=label_1, text=text_1),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Section not found" in response.data
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/888/create_interpretation",
+        data=dict(collection_id=999, label=label_1, text=text_1),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Section not found" in response.data
+
+    response: Response = client.get(
+        f"/home",
+        follow_redirects=True,
+    )
+
+    assert response
+    assert response.status_code == 200
+    assert str.encode(text_1) in response.data
