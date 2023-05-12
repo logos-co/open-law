@@ -190,7 +190,7 @@ def test_dummy_data(runner: FlaskCliRunner):
     #   - comment 2
     #   - comment 3
     #       - comment 3.1 (marked)
-    #       - comment 3.2 (included_with_interpretation)
+    #       - comment 3.2 (approved)
     #       - comment 3.3
 
     comment_1: m.Comment = m.Comment.query.filter_by(
@@ -243,7 +243,7 @@ def test_dummy_data(runner: FlaskCliRunner):
     assert comment_3_2 in comment_3.children
     assert comment_3_3 in comment_3.children
     assert comment_3_1.marked
-    assert comment_3_2.included_with_interpretation
+    assert comment_3_2.approved
 
     assert comment_1 in interpretation_2.comments
     assert comment_2 in interpretation_2.comments
