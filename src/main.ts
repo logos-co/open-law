@@ -8,6 +8,7 @@ import {initVote} from './vote';
 import {initTheme} from './theme';
 import {initApprove} from './approve';
 import {initStar} from './star';
+import {initQuillReadOnly} from './initQuillReadOnly';
 
 initBooks();
 initContributors();
@@ -19,3 +20,4 @@ initVote();
 initTheme();
 initApprove();
 initStar();
+initQuillReadOnly();

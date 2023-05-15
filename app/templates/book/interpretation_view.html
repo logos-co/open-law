@@ -46,7 +46,7 @@
           <!-- prettier-ignore -->
           <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
             <div class="ql-snow">
-              <div class="ql-editor">
+              <div class="ql-editor-readonly">
                 {{ section.about|safe }}
               </div>
             </div>
@@ -174,7 +174,7 @@
                     </svg>
                     <span>{{ section.label }}</span>
                   </a>
-                  <div class="dark:text-white h-30 ql-editor">
+                  <div class="dark:text-white h-30 ql-editor-readonly">
                     <p>{{ interpretation.text|safe }}</p>
                   </div>
                 </div>
