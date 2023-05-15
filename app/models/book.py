@@ -1,5 +1,5 @@
 from flask_login import current_user
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 
 from app import db, models as m
 from app.models.utils import BaseModel
