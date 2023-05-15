@@ -120,6 +120,7 @@ def test_profile(client):
         user_id=user.id,
     )
     book.save()
+    m.BookVersion(semver="1.0.0", book_id=book.id).save()
     assert book
 
     # profile page

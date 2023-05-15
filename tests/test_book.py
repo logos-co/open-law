@@ -1074,7 +1074,10 @@ def test_access_to_settings_page(client: FlaskClient):
     _, user = login(client)
 
     book_1 = m.Book(label="test", about="test").save()
+    m.BookVersion(semver="1.0.0", book_id=book_1.id).save()
+
     book_2 = m.Book(label="test", about="test", user_id=user.id).save()
+    m.BookVersion(semver="1.0.0", book_id=book_2.id).save()
 
     response: Response = client.get(
         f"/book/{book_1.id}/settings",
