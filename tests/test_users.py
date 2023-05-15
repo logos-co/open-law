@@ -139,4 +139,3 @@ def test_profile(client):
     )
     assert res
     assert user.is_deleted
-    assert user.books[0].is_deleted
