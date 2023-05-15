@@ -17,6 +17,7 @@ class CreateBookForm(BaseBookForm):
 
 class EditBookForm(BaseBookForm):
     book_id = StringField("User ID", [DataRequired()])
+    tags = StringField("Tags")
     submit = SubmitField("Edit book")
 
     def validate_label(self, field):
