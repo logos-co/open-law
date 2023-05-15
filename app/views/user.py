@@ -46,7 +46,7 @@ def edit_profile():
         user.is_activated = True
         user.save()
         return redirect(url_for("main.index"))
-    elif form.is_submitted:
+    elif form.is_submitted():
         log(log.ERROR, "Update user errors: [%s]", form.errors)
         for field, errors in form.errors.items():
             field_label = form._fields[field].label.text
@@ -59,7 +59,6 @@ def edit_profile():
 
 
 @bp.route("/<int:user_id>/profile")
-@login_required
 def profile(user_id: int):
     user: m.User = m.User.query.get(user_id)
     interpretations: m.Interpretation = m.Interpretation.query.filter_by(
@@ -93,14 +92,28 @@ def create():
 @login_required
 def profile_delete():
     user: m.User = db.session.get(m.User, current_user.id)
-    for book in user.books:
-        book.is_deleted = True
     user.is_deleted = True
     log(log.INFO, "User deleted. User: [%s]", user)
     user.save()
     logout_user()
     flash("User deleted!", "success")
     return redirect(url_for("home.get_all"))
+
+
+@bp.route("/profile_reactivate", methods=["GET", "POST"])
+def profile_reactivate():
+    user: m.User = db.session.get(m.User, current_user.id)
+    if not user:
+        log(log.CRITICAL, "No such user. User: [%s]", user)
+        return redirect(url_for("home.get_all"))
+    form = f.ReactivateUserForm()
+    if form.validate_on_submit():
+        user.is_deleted = False
+        log(log.INFO, "Form submitted. User reactivated: [%s]", user)
+        flash("User reactivated!", "success")
+        user.save()
+        return redirect(url_for("home.get_all"))
+    return render_template("user/reactivate.html", form=form)
 
 
 @bp.route("/search", methods=["GET"])

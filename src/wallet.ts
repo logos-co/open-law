@@ -54,7 +54,10 @@ export function initWallet() {
       credentials: 'include',
       redirect: 'follow',
     });
-    window.location.reload();
+    console.log(res2);
+    if (res2.status == 200) {
+      window.location.replace(res2.url);
+    } else window.location.reload();
   }
 
   const connectWalletBtns = document.querySelectorAll('#connectWalletBtn');

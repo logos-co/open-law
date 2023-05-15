@@ -8,15 +8,9 @@ const $addUserModalElement: HTMLElement =
 const modalOptions: ModalOptions = {
   placement: 'bottom-right',
   closable: true,
-  onHide: () => {
-    console.log('modal is hidden');
-  },
-  onShow: () => {
-    console.log('user id: ');
-  },
-  onToggle: () => {
-    console.log('modal has been toggled');
-  },
+  onHide: () => {},
+  onShow: () => {},
+  onToggle: () => {},
 };
 
 const addModal: ModalInterface = new Modal($addUserModalElement, modalOptions);
