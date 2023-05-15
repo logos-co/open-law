@@ -15,6 +15,7 @@ from app.controllers import (
     book_validator,
 )
 from app.controllers.delete_nested_book_entities import (
+    delete_nested_book_entities,
     delete_nested_collection_entities,
     delete_nested_section_entities,
     delete_nested_interpretation_entities,
@@ -133,6 +134,7 @@ def delete(book_id: int):
         return redirect(url_for("book.my_library"))
 
     book.is_deleted = True
+    delete_nested_book_entities(book)
     log(log.INFO, "Book deleted: [%s]", book)
     book.save()
     flash("Success!", "success")

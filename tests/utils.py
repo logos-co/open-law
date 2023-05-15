@@ -58,6 +58,26 @@ def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
     ).save()
 
 
+def check_if_nested_book_entities_is_deleted(book: m.Book, is_deleted: bool = True):
+    for version in book.versions:
+        version: m.BookVersion
+        assert version.is_deleted == is_deleted
+
+        check_if_nested_version_entities_is_deleted(version)
+
+
+def check_if_nested_version_entities_is_deleted(
+    book_version: m.BookVersion, is_deleted: bool = True
+):
+    root_collection: m.Collection = book_version.root_collection
+    assert root_collection.is_deleted == is_deleted
+    for collection in root_collection.children:
+        collection: m.Collection
+        assert collection.is_deleted == is_deleted
+
+        check_if_nested_collection_entities_is_deleted(collection)
+
+
 def check_if_nested_collection_entities_is_deleted(
     collection: m.Collection, is_deleted: bool = True
 ):

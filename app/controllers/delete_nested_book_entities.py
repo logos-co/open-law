@@ -2,8 +2,32 @@ from app import models as m
 from app.logger import log
 
 
+def delete_nested_book_entities(book: m.Book):
+    for version in book.versions:
+        version: m.BookVersion
+        version.is_deleted = True
+        log(log.INFO, "Delete version [%s]", version.id)
+        version.save(False)
+
+        delete_nested_version_entities(version)
+
+
+def delete_nested_version_entities(book_version: m.BookVersion):
+    root_collection: m.Collection = book_version.root_collection
+    root_collection.is_deleted = True
+    log(log.INFO, "Delete root collection [%s]", root_collection.id)
+    root_collection.save(False)
+
+    for collection in root_collection.children:
+        collection: m.Collection
+        collection.is_deleted = True
+        log(log.INFO, "Delete collection [%s]", collection.id)
+        collection.save(False)
+
+        delete_nested_collection_entities(collection)
+
+
 def delete_nested_collection_entities(collection: m.Collection):
-    collection.is_deleted = True
     for section in collection.sections:
         section: m.Section
         section.is_deleted = True

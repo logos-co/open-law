@@ -6,6 +6,7 @@ from app import models as m, db
 from tests.utils import (
     login,
     logout,
+    check_if_nested_book_entities_is_deleted,
     check_if_nested_collection_entities_is_deleted,
     check_if_nested_section_entities_is_deleted,
     check_if_nested_interpretation_entities_is_deleted,
@@ -106,6 +107,7 @@ def test_create_edit_delete_book(client: FlaskClient):
     assert b"Success!" in response.data
     book = db.session.get(m.Book, book.id)
     assert book.is_deleted == True
+    check_if_nested_book_entities_is_deleted(book)
 
 
 def test_add_contributor(client: FlaskClient):
