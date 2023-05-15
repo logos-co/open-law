@@ -123,7 +123,7 @@
                 <div class="flex mt-auto align-center justify-between md:w-full">
                   <div>
                     <span class="hidden md:inline-block">Interpretation by</span>
-                     <a href="{{url_for('user.profile',user_id=interpretation.user.id)}}" class=" text-blue-500">{{interpretation.user.username}}</a> on {{interpretation.created_at.strftime('%B %d, %Y')}}
+                     <a href="{{url_for('user.profile',user_id=interpretation.user.id)}}" class=" text-blue-500 {% if interpretation.user.is_deleted %}line-through{% endif %}">{{interpretation.user.username}}</a> on {{interpretation.created_at.strftime('%B %d, %Y')}}
                   </div>
                   <div class="flex ml-auto justify-between w-24">
                     <span class="space-x-0.5 flex items-center">
