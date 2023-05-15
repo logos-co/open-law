@@ -10,6 +10,7 @@ import {initApprove} from './approve';
 import {initStar} from './star';
 import {initQuillReadOnly} from './initQuillReadOnly';
 
+initQuillReadOnly();
 initBooks();
 initContributors();
 initQuill();
@@ -20,4 +21,3 @@ initVote();
 initTheme();
 initApprove();
 initStar();
-initQuillReadOnly();
