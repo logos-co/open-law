@@ -3,7 +3,13 @@ from flask import current_app as Response
 from flask.testing import FlaskClient, FlaskCliRunner
 
 from app import models as m, db
-from tests.utils import login, logout
+from tests.utils import (
+    login,
+    logout,
+    check_if_nested_collection_entities_is_deleted,
+    check_if_nested_section_entities_is_deleted,
+    check_if_nested_interpretation_entities_is_deleted,
+)
 
 
 def test_create_edit_delete_book(client: FlaskClient):
@@ -363,6 +369,7 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
 
     deleted_collection: m.Collection = db.session.get(m.Collection, collection.id)
     assert deleted_collection.is_deleted
+    check_if_nested_collection_entities_is_deleted(deleted_collection)
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/delete",
@@ -511,6 +518,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
 
     deleted_collection: m.Collection = db.session.get(m.Collection, sub_collection.id)
     assert deleted_collection.is_deleted
+    check_if_nested_collection_entities_is_deleted(deleted_collection)
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{sub_collection.id}/delete",
@@ -745,6 +753,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
 
     deleted_section: m.Section = db.session.get(m.Section, section.id)
     assert deleted_section.is_deleted
+    check_if_nested_section_entities_is_deleted(deleted_section)
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_2.id}/delete_section",
@@ -756,6 +765,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
 
     deleted_section: m.Section = db.session.get(m.Section, section_2.id)
     assert deleted_section.is_deleted
+    check_if_nested_section_entities_is_deleted(deleted_section)
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{sub_collection.id}/999/delete_section",
@@ -937,6 +947,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
         m.Interpretation, section_in_subcollection.interpretations[0].id
     )
     assert deleted_interpretation.is_deleted
+    check_if_nested_interpretation_entities_is_deleted(deleted_interpretation)
 
     response: Response = client.post(
         (
@@ -953,6 +964,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
         m.Interpretation, section_in_collection.interpretations[0].id
     )
     assert deleted_interpretation.is_deleted
+    check_if_nested_interpretation_entities_is_deleted(deleted_interpretation)
 
 
 def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
