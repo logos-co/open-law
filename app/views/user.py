@@ -61,7 +61,7 @@ def edit_profile():
 @bp.route("/<int:user_id>/profile")
 @login_required
 def profile(user_id: int):
-    user: m.User = m.User.query.get(user_id)
+    user: m.User = db.session.get(m.User, user_id)
     interpretations: m.Interpretation = m.Interpretation.query.filter_by(
         user_id=user_id
     )
