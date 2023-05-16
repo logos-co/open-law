@@ -14,6 +14,7 @@ class Tag(BaseModel):
     comments = db.relationship(
         "Comment", secondary="comment_tags", back_populates="tags"
     )
+    books = db.relationship("Book", secondary="book_tags", back_populates="tags")
 
     def __repr__(self):
         return f"<{self.id}: {self.name}>"

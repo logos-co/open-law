@@ -13,6 +13,7 @@ from app.controllers import (
     create_breadcrumbs,
     register_book_verify_route,
     book_validator,
+    set_book_tags,
 )
 from app import models as m, db, forms as f
 from app.logger import log
@@ -100,6 +101,9 @@ def edit(book_id: int):
         book: m.Book = db.session.get(m.Book, book_id)
         label = form.label.data
         about = form.about.data
+        tags = form.tags.data
+        if tags:
+            set_book_tags(book, tags)
 
         book.label = label
         book.about = about

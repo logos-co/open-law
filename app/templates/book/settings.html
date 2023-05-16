@@ -60,10 +60,12 @@
           type="text"
           id="tags-input"
           class="multiple-input mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="e.g. Law   (press 'Enter' or Comma to add tag or 'Backspace' to edit last tag)"
+          placeholder="e.g. Law   (press 'Enter' or Comma to add tag. Click on tag to edit it)"
         >
         <div class="multiple-input-items gap-1 flex flex-wrap">
-          <div class="multiple-input-word bg-sky-500 rounded text-center py-1/2 px-2">Tag</div>
+          {% for tag in book.tags %}
+            <div class="cursor-pointer multiple-input-word bg-sky-300 hover:bg-sky-400 dark:bg-sky-500 dark:hover:bg-sky-600 rounded text-center py-1/2 px-2">{{tag.name}}</div>
+          {% endfor %}
         </div>
       </div>
 
