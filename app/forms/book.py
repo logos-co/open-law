@@ -9,6 +9,7 @@ from app.logger import log
 class BaseBookForm(FlaskForm):
     label = StringField("Label", [DataRequired(), Length(6, 256)])
     about = StringField("About")
+    tags = StringField("Tags")
 
 
 class CreateBookForm(BaseBookForm):
@@ -17,7 +18,6 @@ class CreateBookForm(BaseBookForm):
 
 class EditBookForm(BaseBookForm):
     book_id = StringField("User ID", [DataRequired()])
-    tags = StringField("Tags")
     submit = SubmitField("Edit book")
 
     def validate_label(self, field):

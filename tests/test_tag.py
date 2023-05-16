@@ -1,9 +1,36 @@
-# flake8: noqa F501
 from flask import current_app as Response
-from flask.testing import FlaskClient, FlaskCliRunner
+from flask.testing import FlaskClient
 
-from app import models as m, db
-from tests.utils import login, logout
+from app import models as m
+from tests.utils import login
+
+
+def test_create_tags_on_book_create(client: FlaskClient):
+    login(client)
+
+    BOOK_NAME = "Test Book"
+    tags = "tag1,tag2,tag3"
+
+    response: Response = client.post(
+        "/book/create",
+        data=dict(label=BOOK_NAME, tags=tags),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Book added!" in response.data
+
+    book = m.Book.query.filter_by(label=BOOK_NAME).first()
+    assert book.tags
+
+    splitted_tags = [tag.title() for tag in tags.split(",")]
+    assert len(book.tags) == 3
+    for tag in book.tags:
+        tag: m.Tag
+        assert tag.name in splitted_tags
+
+    tags_from_db: m.Tag = m.Tag.query.all()
+    assert len(tags_from_db) == 3
 
 
 def test_create_tags_on_book_edit(client: FlaskClient):

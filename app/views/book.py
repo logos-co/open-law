@@ -81,6 +81,10 @@ def create():
             label="Root Collection", version_id=version.id, is_root=True
         ).save()
 
+        tags = form.tags.data
+        if tags:
+            set_book_tags(book, tags)
+
         flash("Book added!", "success")
         return redirect(url_for("book.my_library"))
     else:

@@ -3,7 +3,7 @@
 <div id="add-book-modal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
   <div class="relative w-full max-w-2xl max-h-full">
     <!-- Modal content -->
-    <form action="{{ url_for('book.create') }}" method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+    <form action="{{ url_for('book.create') }}" method="post" class="prevent-submit-on-enter relative bg-white rounded-lg shadow dark:bg-gray-700">
       {{ form_hidden_tag() }}
       <input type="hidden" name="user_id" id="user-edit-id" value="0" />
       <input type="hidden" name="next_url" id="user-edit-next_url" value="" />
@@ -14,10 +14,23 @@
       </div>
       <!-- Modal body -->
       <div class="p-6 space-y-6">
-        <div class="grid grid-cols-6 gap-6">
-          <div class="col-span-6 sm:col-span-3">
-            <label for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >Label</label >
-            <input type="text" name="label" id="label" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Name" required />
+        <div class="col-span-6 sm:col-span-3">
+          <label for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >Label</label >
+          <input type="text" name="label" id="label" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Name" required />
+        </div>
+        <div class="mb-6">
+          <label for="tags-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Tags
+          </label>
+          <input type="text" name="tags" class="hidden tags-to-submit">
+          <input
+            type="text"
+            id="tags-input"
+            class="multiple-input mb-3 shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="e.g. Law   (press 'Enter' or Comma to add tag. Click on tag to edit it)"
+            data-save-results-to="tags-to-submit"
+          >
+          <div class="multiple-input-items gap-1 flex flex-wrap">
           </div>
         </div>
       </div>

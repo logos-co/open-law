@@ -1,4 +1,8 @@
-const handleClickOnTag = (element: Element, addedWords: string[]) => {
+const handleClickOnTag = (
+  element: Element,
+  addedWords: string[],
+  tagsToSubmitInput: HTMLInputElement,
+) => {
   const tag = element.innerHTML;
 
   addedWords = addedWords.filter(el => el != tag);
@@ -8,23 +12,37 @@ const handleClickOnTag = (element: Element, addedWords: string[]) => {
   multipleInput.value = tag;
 
   // prettier-ignore
-  const tagsToSubmitInput: HTMLInputElement = document.querySelector('.tags-to-submit');
   tagsToSubmitInput.value = addedWords.join();
 
   return addedWords;
 };
 
-export function initMultipleInput() {
-  const settingsForm = document.querySelector('.settings-form');
-  settingsForm.addEventListener('keypress', (e: any) => {
+const multipleInputJs = () => {
+  const form = document.querySelector('.prevent-submit-on-enter');
+  if (!form) {
+    return;
+  }
+  form.addEventListener('keypress', (e: any) => {
     if (e.keyCode === 13) {
       e.preventDefault();
     }
   });
 
   // prettier-ignore
-  const tagsToSubmitInput: HTMLInputElement = document.querySelector('.tags-to-submit');
   const multipleInput: any = document.querySelector('.multiple-input');
+  const tagsToSubmitInputClassName = multipleInput.getAttribute(
+    'data-save-results-to',
+  );
+  if (!tagsToSubmitInputClassName) {
+    console.error(
+      'Please set data-save-results-to attribute to .multiple-input element',
+    );
+    return;
+  }
+
+  const tagsToSubmitInput: HTMLInputElement = document.querySelector(
+    '.' + tagsToSubmitInputClassName,
+  );
 
   const wordsBlock: HTMLDivElement = document.querySelector(
     '.multiple-input-items',
@@ -34,7 +52,7 @@ export function initMultipleInput() {
   wordDivs.forEach(el => {
     addedWords.push(el.innerHTML);
     el.addEventListener('click', () => {
-      addedWords = handleClickOnTag(el, addedWords);
+      addedWords = handleClickOnTag(el, addedWords, tagsToSubmitInput);
     });
   });
 
@@ -81,7 +99,7 @@ export function initMultipleInput() {
       wordDiv.innerHTML = inputValue;
       addedWords.push(inputValue);
       wordDiv.addEventListener('click', () => {
-        addedWords = handleClickOnTag(wordDiv, addedWords);
+        addedWords = handleClickOnTag(wordDiv, addedWords, tagsToSubmitInput);
       });
 
       wordsBlock.appendChild(wordDiv);
@@ -107,5 +125,11 @@ export function initMultipleInput() {
     //     tagsToSubmitInput.value = addedWords.join();
     //   }
     // }
+  });
+};
+
+export function initMultipleInput() {
+  document.addEventListener('DOMContentLoaded', () => {
+    multipleInputJs();
   });
 }
