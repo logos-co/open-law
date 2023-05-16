@@ -14,6 +14,7 @@ from app.controllers import (
     register_book_verify_route,
     book_validator,
     set_book_tags,
+    set_comment_tags
 )
 from app import models as m, db, forms as f
 from app.logger import log
@@ -1007,13 +1008,13 @@ def qa_view(
 
 
 @bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:section_id>/<int:interpretation_id>/preview/create_comment",
+    "/<int:book_id>/<int:collection_id>/<int:section_id>/<int:interpretation_id>/create_comment",
     methods=["POST"],
 )
 @bp.route(
     (
         "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/"
-        "<int:section_id>/<int:interpretation_id>/preview/create_comment"
+        "<int:section_id>/<int:interpretation_id>/create_comment"
     ),
     methods=["POST"],
 )
@@ -1103,6 +1104,9 @@ def create_comment(
             section,
         )
         comment.save()
+        tags = form.tags.data
+        if tags:
+            set_comment_tags(comment, tags)
 
         flash("Success!", "success")
         return redirect(redirect_url)

@@ -9,6 +9,7 @@ class BaseCommentForm(FlaskForm):
 
 class CreateCommentForm(BaseCommentForm):
     parent_id = StringField("Text")
+    tags = StringField("Tags")
     submit = SubmitField("Create")
 
 

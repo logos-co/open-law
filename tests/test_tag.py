@@ -2,7 +2,7 @@ from flask import current_app as Response
 from flask.testing import FlaskClient
 
 from app import models as m
-from tests.utils import login
+from tests.utils import login, create_test_book
 
 
 def test_create_tags_on_book_create(client: FlaskClient):
@@ -85,3 +85,39 @@ def test_create_tags_on_book_edit(client: FlaskClient):
     assert len(tags_from_db) == 4
     book: m.Book = m.Book.query.first()
     assert len(book.tags) == 0
+
+
+def test_create_tags_on_comment_create(client: FlaskClient):
+    _, user = login(client)
+    create_test_book(user.id, 1)
+
+    book = m.Book.query.get(1)
+    collection = m.Collection.query.get(1)
+    section = m.Section.query.get(1)
+    interpretation = m.Interpretation.query.get(1)
+
+    tags = "tag1,tag2,tag3"
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{section.id}/{interpretation.id}/create_comment",
+        data=dict(
+            section_id=section.id,
+            text="some text",
+            interpretation_id=interpretation.id,
+            tags=tags,
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    comment: m.Comment = m.Comment.query.filter_by(text="some text").first()
+    assert comment
+    assert comment.tags
+
+    splitted_tags = [tag.title() for tag in tags.split(",")]
+    assert len(comment.tags) == 3
+    for tag in comment.tags:
+        tag: m.Tag
+        assert tag.name in splitted_tags
+
+    tags_from_db: m.Tag = m.Tag.query.all()
+    assert len(tags_from_db) == 3
