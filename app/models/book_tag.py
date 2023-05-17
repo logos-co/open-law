@@ -10,4 +10,4 @@ class BookTags(BaseModel):
     book_id = db.Column(db.Integer, db.ForeignKey("books.id"))
 
     def __repr__(self):
-        return f"<t:{self.tag} to b:{self.comment}"
+        return f"<t:{self.tag_id} to b:{self.book_id}"

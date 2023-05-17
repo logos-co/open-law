@@ -13,9 +13,8 @@ from app.controllers import (
     create_breadcrumbs,
     register_book_verify_route,
     book_validator,
-    set_book_tags,
-    set_comment_tags
 )
+from app.controllers.tags import set_book_tags, set_comment_tags
 from app import models as m, db, forms as f
 from app.logger import log
 
@@ -1109,7 +1108,7 @@ def create_comment(
             set_comment_tags(comment, tags)
 
         flash("Success!", "success")
-        return redirect(redirect_url)
+        return redirect(request.referrer)
     else:
         log(log.ERROR, "Comment create errors: [%s]", form.errors)
         for field, errors in form.errors.items():
@@ -1117,7 +1116,7 @@ def create_comment(
             for error in errors:
                 flash(error.lower().replace("field", field_label).title(), "danger")
 
-        return redirect(redirect_url)
+        return redirect(request.referrer)
 
 
 @bp.route(

@@ -95,7 +95,7 @@ const multipleInputJs = () => {
 
       const wordDiv = document.createElement('div');
       // prettier-ignore
-      wordDiv.className = 'cursor-pointer multiple-input-word bg-sky-300 hover:bg-sky-400 dark:bg-sky-500 dark:hover:bg-sky-600 rounded text-center py-1/2 px-2';
+      wordDiv.className = 'cursor-pointer multiple-input-word bg-sky-300 hover:bg-sky-400 dark:bg-blue-600 dark:hover:bg-blue-700 rounded text-center py-1/2 px-2';
       wordDiv.innerHTML = inputValue;
       addedWords.push(inputValue);
       wordDiv.addEventListener('click', () => {
