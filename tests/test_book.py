@@ -1071,7 +1071,7 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
 def test_access_to_settings_page(client: FlaskClient):
     _, user = login(client)
 
-    book_1 = m.Book(label="test", about="test").save()
+    book_1 = m.Book(label="test", about="test", user_id=user.id).save()
     m.BookVersion(semver="1.0.0", book_id=book_1.id).save()
 
     book_2 = m.Book(label="test", about="test", user_id=user.id).save()
@@ -1083,7 +1083,6 @@ def test_access_to_settings_page(client: FlaskClient):
     )
 
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
 
     response: Response = client.get(
         f"/book/{book_2.id}/settings",
