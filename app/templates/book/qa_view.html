@@ -8,24 +8,13 @@
 {% include 'book/delete_comment_modal.html' %}
 {% include 'book/edit_comment_modal.html' %}
 {% include 'book/edit_interpretation_modal.html' %}
-{% endif %}
-
-<!-- show delete section btn on rightside bar -->
-{% if current_user.is_authenticated %}
 {% set show_edit_interpretation = True %}
-{% endif %}
-<!-- prettier-ignore -->
-{% if current_user.is_authenticated %}
 {% set show_delete_interpretation = True %}
-{% endif %}
-
-
-<!-- prettier-ignore -->
-{% if current_user.is_authenticated %}
 {% block right_sidebar %}
-  {% include 'book/right_sidebar.html' %}
+{% include 'book/right_sidebar.html' %}
 {% endblock %}
 {% endif %}
+
 
 {% block content %}
 {% include 'book/breadcrumbs_navigation.html'%}
