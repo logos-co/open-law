@@ -451,14 +451,13 @@ def collection_create(book_id: int, collection_id: int | None = None):
             flash("You can't create subcollection for this collection", "danger")
             return redirect(
                 url_for(
-                    "book.sub_collection_view",
+                    "book.collection_view",
                     book_id=book_id,
-                    collection_id=collection_id,
                 )
             )
 
         redirect_url = url_for(
-            "book.sub_collection_view", book_id=book_id, collection_id=collection_id
+            "book.collection_view", book_id=book_id,
         )
 
     form = f.CreateCollectionForm()
@@ -639,14 +638,6 @@ def section_create(
         sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
 
     redirect_url = url_for("book.collection_view", book_id=book_id)
-    if collection_id:
-        redirect_url = url_for(
-            "book.section_view",
-            book_id=book_id,
-            collection_id=collection_id,
-            sub_collection_id=sub_collection_id,
-        )
-
     form = f.CreateSectionForm()
 
     if form.validate_on_submit():
@@ -1205,3 +1196,46 @@ def comment_edit(
             collection_id=collection_id,
         )
     )
+
+
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:section_id>/edit_section_label",
+    methods=["POST"],
+)
+@bp.route(
+    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/<int:section_id>/edit_section_label",
+    methods=["POST"],
+)
+@register_book_verify_route(bp.name)
+@login_required
+def section_edit_label(
+    book_id: int,
+    section_id: int,
+    collection_id: int,
+    sub_collection_id: int | None = None,
+):
+    redirect_url = url_for(
+        "book.collection_view",
+        book_id=book_id,
+    )
+    section: m.Section = db.session.get(m.Section, section_id)
+
+    form = f.EditSectionForm()
+
+    if form.validate_on_submit():
+        label = form.label.data
+        if label:
+            section.label = label
+
+        log(log.INFO, "Edit section [%s]", section.id)
+        section.save()
+
+        flash("Success!", "success")
+        return redirect(redirect_url)
+    else:
+        log(log.ERROR, "Section edit errors: [%s]", form.errors)
+        for field, errors in form.errors.items():
+            field_label = form._fields[field].label.text
+            for error in errors:
+                flash(error.replace("Field", field_label), "danger")
+        return redirect(redirect_url)
