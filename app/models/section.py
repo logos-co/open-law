@@ -22,6 +22,11 @@ class Section(BaseModel):
     interpretations = db.relationship(
         "Interpretation", viewonly=True, order_by="desc(Interpretation.id)"
     )
+    tags = db.relationship(
+        "Tag",
+        secondary="section_tags",
+        back_populates="sections",
+    )
 
     @property
     def path(self):

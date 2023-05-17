@@ -18,6 +18,7 @@ from app.controllers.tags import (
     set_book_tags,
     set_comment_tags,
     set_interpretation_tags,
+    set_section_tags,
 )
 from app import models as m, db, forms as f
 from app.logger import log
@@ -675,6 +676,10 @@ def section_create(
         log(log.INFO, "Create section [%s]. Collection: [%s]", section, collection_id)
         section.save()
 
+        tags = form.tags.data
+        if tags:
+            set_section_tags(section, tags)
+
         flash("Success!", "success")
         return redirect(redirect_url)
     else:
@@ -720,6 +725,10 @@ def section_edit(
         about = form.about.data
         if about:
             section.about = about
+
+        tags = form.tags.data
+        if tags:
+            set_section_tags(section, tags)
 
         log(log.INFO, "Edit section [%s]", section.id)
         section.save()

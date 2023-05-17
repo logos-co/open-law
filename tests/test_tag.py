@@ -5,7 +5,7 @@ from app import models as m, db
 from tests.utils import login, create_test_book
 
 
-def test_create_tags_on_book_create(client: FlaskClient):
+def test_create_tags_on_book_create_and_edit(client: FlaskClient):
     login(client)
 
     BOOK_NAME = "Test Book"
@@ -31,15 +31,6 @@ def test_create_tags_on_book_create(client: FlaskClient):
 
     tags_from_db: m.Tag = m.Tag.query.all()
     assert len(tags_from_db) == 3
-
-
-def test_create_tags_on_book_edit(client: FlaskClient):
-    _, user = login(client)
-
-    book: m.Book = m.Book(label="Test book", user_id=user.id).save()
-    m.BookVersion(semver="1.0.0", book_id=book.id).save()
-
-    assert not book.tags
 
     tags = "tag1,tag2,tag3"
 
@@ -196,6 +187,74 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
     splitted_tags = [tag.title() for tag in tags.split(",")]
     assert len(interpretation.tags) == 3
     for tag in interpretation.tags:
+        tag: m.Tag
+        assert tag.name in splitted_tags
+
+    tags_from_db: m.Tag = m.Tag.query.all()
+    assert len(tags_from_db) == 5
+
+
+def test_create_tags_on_section_create_and_edit(client: FlaskClient):
+    _, user = login(client)
+    create_test_book(user.id, 1)
+
+    book: m.Book = db.session.get(m.Book, 1)
+    collection: m.Collection = db.session.get(m.Collection, 1)
+    section: m.Section = db.session.get(m.Section, 1)
+
+    tags = "tag1,tag2,tag3"
+    label_1 = "Test Interpretation #1 Label"
+    text_1 = "Test Interpretation #1 Text"
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/create_section",
+        data=dict(
+            collection_id=collection.id,
+            label=label_1,
+            about=text_1,
+            tags=tags,
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+
+    assert response.status_code == 200
+    section: m.Section = m.Section.query.filter_by(label=label_1).first()
+    assert section
+    assert section.tags
+
+    splitted_tags = [tag.title() for tag in tags.split(",")]
+    assert len(section.tags) == 3
+    for tag in section.tags:
+        tag: m.Tag
+        assert tag.name in splitted_tags
+
+    tags_from_db: m.Tag = m.Tag.query.all()
+    assert len(tags_from_db) == 3
+
+    tags = "tag-4,tag5,tag3"
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{section.id}/edit_section",
+        data=dict(
+            section_id=section.id,
+            label=label_1,
+            about=text_1,
+            tags=tags,
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Success!" in response.data
+
+    assert response.status_code == 200
+    section: m.Section = m.Section.query.filter_by(label=label_1).first()
+    assert section
+    assert section.tags
+
+    splitted_tags = [tag.title() for tag in tags.split(",")]
+    assert len(section.tags) == 3
+    for tag in section.tags:
         tag: m.Tag
         assert tag.name in splitted_tags
 

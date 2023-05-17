@@ -9,6 +9,7 @@ from app.logger import log
 class BaseSectionForm(FlaskForm):
     label = StringField("Label", [DataRequired(), Length(3, 256)])
     about = StringField("About")
+    tags = StringField("Tags")
 
 
 class CreateSectionForm(BaseSectionForm):
@@ -49,7 +50,12 @@ class EditSectionForm(BaseSectionForm):
         label = field.data
         section_id = self.section_id.data
 
-        collection_id = db.session.get(m.Section, section_id).collection_id
+        session = db.session.get(m.Section, section_id)
+        if not session:
+            log(log.WARNING, "Session with id [%s] not found", section_id)
+            raise ValidationError("Invalid session id")
+
+        collection_id = session.collection_id
         section: m.Section = (
             m.Section.query.filter_by(
                 is_deleted=False, label=label, collection_id=collection_id

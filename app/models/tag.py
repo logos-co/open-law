@@ -8,6 +8,9 @@ class Tag(BaseModel):
     name = db.Column(db.String(32), unique=True, nullable=False)
 
     # Relationships
+    sections = db.relationship(
+        "Section", secondary="section_tags", back_populates="tags"
+    )
     interpretations = db.relationship(
         "Interpretation", secondary="interpretation_tags", back_populates="tags"
     )
