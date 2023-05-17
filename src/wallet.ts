@@ -54,7 +54,6 @@ export function initWallet() {
       credentials: 'include',
       redirect: 'follow',
     });
-    console.log(res2);
     if (res2.status == 200) {
       window.location.replace(res2.url);
     } else window.location.reload();

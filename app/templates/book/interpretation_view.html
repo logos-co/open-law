@@ -4,19 +4,10 @@
 {% if current_user.is_authenticated %}
 {% include 'book/delete_section_modal.html' %}
 {% include 'book/edit_section_modal.html' %}
-{% endif %}
-
-<!-- show delete section btn on rightside bar -->
-{% if current_user.is_authenticated %}
 <!-- prettier-ignore -->
 {% set show_delete_section = True %}
 <!-- prettier-ignore -->
 {% set show_edit_section = True %}
-<!-- prettier-ignore -->
-{% endif %}
-
-<!-- prettier-ignore -->
-{% if current_user.is_authenticated %}
 {% block right_sidebar %}
   {% include 'book/right_sidebar.html' %}
 {% endblock %}
