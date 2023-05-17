@@ -1,5 +1,5 @@
 # flake8: noqa F501
-from flask import current_app as Response
+from flask import current_app as Response, url_for
 from flask.testing import FlaskClient, FlaskCliRunner
 
 from app import models as m, db

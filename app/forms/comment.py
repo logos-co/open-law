@@ -5,11 +5,11 @@ from wtforms.validators import DataRequired, Length
 
 class BaseCommentForm(FlaskForm):
     text = StringField("Text", [DataRequired(), Length(3, 256)])
+    tags = StringField("Tags")
 
 
 class CreateCommentForm(BaseCommentForm):
     parent_id = StringField("Text")
-    tags = StringField("Tags")
     submit = SubmitField("Create")
 
 

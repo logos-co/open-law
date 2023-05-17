@@ -1013,7 +1013,6 @@ def qa_view(
         sub_collection=sub_collection if sub_collection_id else None,
         section=section,
         interpretation=interpretation,
-        breadcrumbs=breadcrumbs,
     )
 
 
@@ -1079,7 +1078,6 @@ def create_comment(
         sub_collection_id=sub_collection_id,
         section_id=section_id,
         interpretation_id=interpretation_id,
-        breadcrumbs=breadcrumbs,
     )
     section: m.Section = db.session.get(m.Section, section_id)
     if not section or section.is_deleted:
@@ -1119,7 +1117,7 @@ def create_comment(
             set_comment_tags(comment, tags)
 
         flash("Success!", "success")
-        return redirect(request.referrer)
+        return redirect(redirect_url)
     else:
         log(log.ERROR, "Comment create errors: [%s]", form.errors)
         for field, errors in form.errors.items():
@@ -1127,7 +1125,7 @@ def create_comment(
             for error in errors:
                 flash(error.lower().replace("field", field_label).title(), "danger")
 
-        return redirect(request.referrer)
+        return redirect(redirect_url)
 
 
 @bp.route(
@@ -1200,13 +1198,18 @@ def comment_edit(
     sub_collection_id: int | None = None,
 ):
     form = f.EditCommentForm()
-    comment_id = form.comment_id.data
-    comment: m.Comment = db.session.get(m.Comment, comment_id)
 
     if form.validate_on_submit():
+        comment_id = form.comment_id.data
+        comment: m.Comment = db.session.get(m.Comment, comment_id)
         comment.text = form.text.data
         comment.edited = True
-        log(log.INFO, "Delete comment [%s]", comment)
+        log(log.INFO, "Edit comment [%s]", comment)
+
+        tags = form.tags.data
+        if tags:
+            set_comment_tags(comment, tags)
+
         comment.save()
 
         flash("Success!", "success")
