@@ -2,7 +2,6 @@ const Quill = require('./quill');
 
 export function initQuill() {
   var icons = Quill.import('ui/icons');
-  console.log(icons['header']);
   // prettier-ignore
   icons.header['false'] = '<svg style="scale: 1.6;" xmlns="http://www.w3.org/2000/svg" fill="#000000"viewBox="-8 -7 24 24" preserveAspectRatio="xMinYMin"><path d="M2 4h4V1a1 1 0 1 1 2 0v8a1 1 0 1 1-2 0V6H2v3a1 1 0 1 1-2 0V1a1 1 0 1 1 2 0v3z"/></svg>';
   icons.header[1] = `<svg style="scale: 1.6;" xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="-5 -7 24 24" preserveAspectRatio="xMinYMin"><path d="M2 4h4V1a1 1 0 1 1 2 0v8a1 1 0 1 1-2 0V6H2v3a1 1 0 1 1-2 0V1a1 1 0 1 1 2 0v3zm9.52.779H10V3h3.36v7h-1.84V4.779z"/></svg>`;
