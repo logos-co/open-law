@@ -4,7 +4,7 @@
 {% include 'book/delete_section_modal.html' %}
 {% include 'book/edit_section_modal.html' %}
 
-<!-- show delete section btn on rightside bar -->
+<!-- show delete section btn on right side bar -->
 {% set show_delete_section = True %} {% set show_edit_section = True %}
 
 <!-- prettier-ignore -->
@@ -70,12 +70,13 @@
       {% if current_user.is_authenticated %}
       <!-- prettier-ignore -->
       <form
-      {% if sub_collection %}
-        action="{{ url_for('book.interpretation_create', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id,section_id=section.id) }}"
-      {% else %}
-        action="{{ url_for('book.interpretation_create', book_id=book.id, collection_id=collection.id,section_id=section.id) }}"
-      {% endif %}
-      method="post" class="bg-white rounded-lg shadow dark:bg-gray-700">
+        {% if sub_collection %}
+          action="{{ url_for('book.interpretation_create', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id,section_id=section.id) }}"
+        {% else %}
+          action="{{ url_for('book.interpretation_create', book_id=book.id, collection_id=collection.id,section_id=section.id) }}"
+        {% endif %}
+        method="post" class="prevent-submit-on-enter bg-white rounded-lg shadow dark:bg-gray-700"
+      >
       {{ form_hidden_tag() }}
       <input type="hidden" name="section_id" id="section_id" value="{{section.id}}" />
       <input type="hidden" name="label" id="label" value="{{section.label}}" />
@@ -95,7 +96,21 @@
             <div id="interpretation-text" class="quill-editor dark:text-white h-64"></div>
           </div>
         </div>
+        <label for="tags-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          Tags
+        </label>
+        <input type="text" name="tags" class="hidden create-interpretation-tags">
+        <input
+          type="text"
+          id="tags-input"
+          class="multiple-input mb-3 shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="e.g. Law   (press 'Enter' or Comma to add tag. Click on tag to edit it)"
+          data-save-results-to="create-interpretation-tags"
+        >
+        <div class="multiple-input-items gap-1 flex flex-wrap"></div>
       </div>
+
+
       <!-- Modal footer -->
       <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
         <button name="submit" type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-auto">Submit</button>

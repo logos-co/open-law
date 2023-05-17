@@ -14,7 +14,7 @@ def get_or_create_tag(tag_name: str):
 
     tag = m.Tag.query.filter_by(name=tag_name).first()
     if not tag:
-        log(log.INFO, "Create Tag: [%s]", tag)
+        log(log.INFO, "Create Tag: [%s]", tag_name)
         tag = m.Tag(name=tag_name).save()
 
     return tag

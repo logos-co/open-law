@@ -35,6 +35,23 @@
             </div>
           </div>
         </div>
+
+        <label for="tags-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          Tags
+        </label>
+        <input type="text" name="tags" class="hidden create-interpretation-tags">
+        <input
+          type="text"
+          id="tags-input"
+          class="multiple-input mb-3 shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="e.g. Law   (press 'Enter' or Comma to add tag. Click on tag to edit it)"
+          data-save-results-to="create-interpretation-tags"
+        >
+        <div class="multiple-input-items gap-1 flex flex-wrap">
+          {% for tag in interpretation.tags %}
+            <div class="cursor-pointer multiple-input-word bg-sky-300 hover:bg-sky-400 dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white rounded text-center py-1/2 px-2">{{tag.name}}</div>
+          {% endfor %}
+        </div>
       </div>
       <!-- Modal footer -->
       <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
