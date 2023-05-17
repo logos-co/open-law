@@ -103,6 +103,9 @@ def verify():
             log(log.INFO, "Register new user")
             flash("User created and logged in successful.", "success")
             return redirect(url_for("user.edit_profile"))
+        if user.is_deleted:
+            login_user(user=user)
+            return redirect(url_for("user.profile_reactivate"))
         login_user(user=user)
         log(log.INFO, "Verify success.")
         flash("Verify success.", "success")

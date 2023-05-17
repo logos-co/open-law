@@ -924,7 +924,6 @@ def interpretation_delete(
     ),
     methods=["GET"],
 )
-@login_required
 def qa_view(
     book_id: int,
     collection_id: int,

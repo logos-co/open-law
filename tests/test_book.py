@@ -867,9 +867,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     # edit
 
     m.Interpretation(
-        label="Test",
-        text="Test",
-        section_id=section_in_collection.id,
+        label="Test", text="Test", section_id=section_in_collection.id, user_id=user.id
     ).save()
 
     m.Interpretation(
