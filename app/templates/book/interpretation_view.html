@@ -35,6 +35,22 @@
   </div>
   <div id="myTabContent" class="mt-40">
     <!-- prettier-ignore -->
+    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="section-text" role="tabpanel" aria-labelledby="text-tab">
+      <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+        <div class="flex flex-col w-full">
+          <!-- prettier-ignore -->
+          <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
+            <div class="ql-snow">
+              <div class="ql-editor-readonly">
+                {{ section.about|safe }}
+              </div>
+            </div>
+          </dt>
+        </div>
+      </dl>
+    </div>
+
+    <!-- prettier-ignore -->
     <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="interpretation" role="tabpanel" aria-labelledby="interpretation-tab">
       {% if not current_user.is_authenticated %}
       <div class="bg-white dark:bg-gray-900 max-w-full p-6 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
@@ -71,7 +87,8 @@
       <div class="p-6 pt-0 space-y-6">
         <div class="w-full max-w-6xl mx-auto rounded-xl bg-gray-50 dark:bg-gray-600 shadow-lg text-white-900">
           <div class="overflow-hidden rounded-md bg-gray-50 [&>*]:dark:bg-gray-600 text-black [&>*]:!border-none [&>*]:!stroke-black dark:text-white dark:[&>*]:!stroke-white">
-            <div id="interpretation-text" class="quill-editor dark:text-white h-64"></div>
+            <div id="interpretation-text" class="quill-editor dark:text-white h-64">
+            </div>
           </div>
         </div>
       </div>
@@ -153,7 +170,7 @@
                     </svg>
                     <span>{{ section.label }}</span>
                   </a>
-                  <div class="dark:text-white h-30 ql-editor">
+                  <div class="dark:text-white h-30 ql-editor-readonly">
                     <p>{{ interpretation.text|safe }}</p>
                   </div>
                 </div>

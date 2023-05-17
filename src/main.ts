@@ -8,7 +8,9 @@ import {initVote} from './vote';
 import {initTheme} from './theme';
 import {initApprove} from './approve';
 import {initStar} from './star';
+import {initQuillReadOnly} from './initQuillReadOnly';
 
+initQuillReadOnly();
 initBooks();
 initContributors();
 initQuill();
