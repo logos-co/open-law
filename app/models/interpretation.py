@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from flask_login import current_user
 
 from app import db, models as m
@@ -13,7 +11,6 @@ class Interpretation(BaseModel):
     text = db.Column(db.Text, unique=False, nullable=False)
     approved = db.Column(db.Boolean, default=False)
     marked = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.now)
 
     # Foreign keys
     user_id = db.Column(db.ForeignKey("users.id"))

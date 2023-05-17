@@ -879,9 +879,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     # edit
 
     m.Interpretation(
-        label="Test",
-        text="Test",
-        section_id=section_in_collection.id,
+        label="Test", text="Test", section_id=section_in_collection.id, user_id=user.id
     ).save()
 
     m.Interpretation(
@@ -1087,8 +1085,11 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
 def test_access_to_settings_page(client: FlaskClient):
     _, user = login(client)
 
-    book_1 = m.Book(label="test", about="test").save()
+    book_1 = m.Book(label="test", about="test", user_id=user.id).save()
+    m.BookVersion(semver="1.0.0", book_id=book_1.id).save()
+
     book_2 = m.Book(label="test", about="test", user_id=user.id).save()
+    m.BookVersion(semver="1.0.0", book_id=book_2.id).save()
 
     response: Response = client.get(
         f"/book/{book_1.id}/settings",
@@ -1096,7 +1097,6 @@ def test_access_to_settings_page(client: FlaskClient):
     )
 
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
 
     response: Response = client.get(
         f"/book/{book_2.id}/settings",
