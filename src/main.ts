@@ -9,7 +9,9 @@ import {initTheme} from './theme';
 import {initApprove} from './approve';
 import {initStar} from './star';
 import {initMultipleInput} from './multipleInput';
+import {initQuillReadOnly} from './initQuillReadOnly';
 
+initQuillReadOnly();
 initBooks();
 initContributors();
 initQuill();

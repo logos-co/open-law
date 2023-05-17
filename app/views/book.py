@@ -20,6 +20,13 @@ from app.controllers.tags import (
     set_interpretation_tags,
     set_section_tags,
 )
+from app.controllers.delete_nested_book_entities import (
+    delete_nested_book_entities,
+    delete_nested_collection_entities,
+    delete_nested_section_entities,
+    delete_nested_interpretation_entities,
+    delete_nested_comment_entities,
+)
 from app import models as m, db, forms as f
 from app.logger import log
 
@@ -140,6 +147,7 @@ def delete(book_id: int):
         return redirect(url_for("book.my_library"))
 
     book.is_deleted = True
+    delete_nested_book_entities(book)
     log(log.INFO, "Book deleted: [%s]", book)
     book.save()
     flash("Success!", "success")
@@ -617,8 +625,13 @@ def collection_delete(
         collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
 
     collection.is_deleted = True
-
-    log(log.INFO, "Delete collection [%s]", collection.id)
+    if collection.children:
+        for child in collection.children:
+            child: m.Collection
+            delete_nested_collection_entities(child)
+            log(log.INFO, "Delete subcollection [%s]", collection.id)
+            child.save()
+    delete_nested_collection_entities(collection)
     collection.save()
 
     flash("Success!", "success")
@@ -766,6 +779,7 @@ def section_delete(
     section: m.Section = db.session.get(m.Section, section_id)
 
     section.is_deleted = True
+    delete_nested_section_entities(section)
     if not collection.active_sections:
         log(
             log.INFO,
@@ -929,6 +943,8 @@ def interpretation_delete(
     )
 
     interpretation.is_deleted = True
+    delete_nested_interpretation_entities(interpretation)
+
     log(log.INFO, "Delete interpretation [%s]", interpretation)
     interpretation.save()
 
@@ -952,7 +968,6 @@ def interpretation_delete(
     ),
     methods=["GET"],
 )
-@login_required
 def qa_view(
     book_id: int,
     collection_id: int,
@@ -1144,6 +1159,7 @@ def comment_delete(
 
     if form.validate_on_submit():
         comment.is_deleted = True
+        delete_nested_comment_entities(comment)
         log(log.INFO, "Delete comment [%s]", comment)
         comment.save()
 
