@@ -121,3 +121,62 @@ def test_create_tags_on_comment_create(client: FlaskClient):
 
     tags_from_db: m.Tag = m.Tag.query.all()
     assert len(tags_from_db) == 3
+
+
+def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
+    _, user = login(client)
+    create_test_book(user.id, 1)
+
+    book = m.Book.query.get(1)
+    collection = m.Collection.query.get(1)
+    section = m.Section.query.get(1)
+
+    tags = "tag1,tag2,tag3"
+    label_1 = "Test Interpretation #1 Label"
+    text_1 = "Test Interpretation #1 Text"
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{section.id}/create_interpretation",
+        data=dict(section_id=section.id, label=label_1, text=text_1, tags=tags),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    interpretation: m.Interpretation = m.Interpretation.query.filter_by(
+        label=label_1, section_id=section.id
+    ).first()
+    assert interpretation
+    assert interpretation.tags
+
+    splitted_tags = [tag.title() for tag in tags.split(",")]
+    assert len(interpretation.tags) == 3
+    for tag in interpretation.tags:
+        tag: m.Tag
+        assert tag.name in splitted_tags
+
+    tags_from_db: m.Tag = m.Tag.query.all()
+    assert len(tags_from_db) == 3
+
+    tags = "tag-4,tag5,tag3"
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/{section.id}/{interpretation.id}/edit_interpretation",
+        data=dict(
+            interpretation_id=interpretation.id, label=label_1, text=text_1, tags=tags
+        ),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    interpretation: m.Interpretation = m.Interpretation.query.filter_by(
+        label=label_1, section_id=section.id
+    ).first()
+    assert interpretation
+
+    splitted_tags = [tag.title() for tag in tags.split(",")]
+    assert len(interpretation.tags) == 3
+    for tag in interpretation.tags:
+        tag: m.Tag
+        assert tag.name in splitted_tags
+
+    tags_from_db: m.Tag = m.Tag.query.all()
+    assert len(tags_from_db) == 5

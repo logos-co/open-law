@@ -14,7 +14,11 @@ from app.controllers import (
     register_book_verify_route,
     book_validator,
 )
-from app.controllers.tags import set_book_tags, set_comment_tags
+from app.controllers.tags import (
+    set_book_tags,
+    set_comment_tags,
+    set_interpretation_tags,
+)
 from app import models as m, db, forms as f
 from app.logger import log
 
@@ -819,6 +823,10 @@ def interpretation_create(
         )
         interpretation.save()
 
+        tags = form.tags.data
+        if tags:
+            set_interpretation_tags(interpretation, tags)
+
         flash("Success!", "success")
         return redirect(redirect_url)
     else:
@@ -869,6 +877,9 @@ def interpretation_edit(
             interpretation.label = label
 
         interpretation.text = form.text.data
+        tags = form.tags.data
+        if tags:
+            set_interpretation_tags(interpretation, tags)
 
         log(log.INFO, "Edit interpretation [%s]", interpretation.id)
         interpretation.save()

@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, Length
 class BaseInterpretationForm(FlaskForm):
     label = StringField("Label", [DataRequired(), Length(3, 256)])
     about = StringField("About")
+    tags = StringField("Tags")
 
 
 class CreateInterpretationForm(BaseInterpretationForm):
