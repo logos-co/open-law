@@ -997,15 +997,6 @@ def qa_view(
         flash("Interpretation not found", "danger")
         return redirect(redirect_url)
 
-    breadcrumbs = create_breadcrumbs(
-        book_id=book_id,
-        collection_path=(
-            collection_id,
-            sub_collection_id,
-        ),
-        section_id=section_id,
-        interpretation_id=interpretation.id,
-    )
     return render_template(
         "book/qa_view.html",
         book=book,
@@ -1060,16 +1051,6 @@ def create_comment(
                     collection_id=collection_id,
                 )
             )
-
-    breadcrumbs = create_breadcrumbs(
-        book_id=book_id,
-        collection_path=(
-            collection_id,
-            sub_collection_id,
-        ),
-        section_id=section_id,
-        interpretation_id=interpretation_id,
-    )
 
     redirect_url = url_for(
         "book.qa_view",
