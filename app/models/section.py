@@ -1,4 +1,4 @@
-from sqlalchemy import desc, func, text
+from sqlalchemy import func, text
 
 from app import db
 from app.models.utils import BaseModel
