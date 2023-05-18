@@ -17,7 +17,9 @@ import {deleteCollection} from './deleteCollection';
 import {deleteSubCollection} from './deleteSubCollection';
 import {renameCollection} from './renameCollection';
 import {renameSubCollection} from './renameSubCollection';
+import {initQuillReadOnly} from './initQuillReadOnly';
 
+initQuillReadOnly();
 initBooks();
 initContributors();
 initQuill();

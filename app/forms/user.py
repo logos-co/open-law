@@ -68,3 +68,7 @@ class EditUserForm(FlaskForm):
             .first()
         ):
             raise ValidationError("This username is taken.")
+
+
+class ReactivateUserForm(FlaskForm):
+    submit = SubmitField("Save")

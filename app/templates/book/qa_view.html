@@ -1,22 +1,20 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
 
+
+    
+{% if current_user.is_authenticated %}
 {% include 'book/delete_interpretation_modal.html' %}
 {% include 'book/delete_comment_modal.html' %}
 {% include 'book/edit_comment_modal.html' %}
-
-
 {% include 'book/edit_interpretation_modal.html' %}
-
-<!-- show delete section btn on rightside bar -->
 {% set show_edit_interpretation = True %}
-<!-- prettier-ignore -->
 {% set show_delete_interpretation = True %}
-
-<!-- prettier-ignore -->
 {% block right_sidebar %}
-  {% include 'book/right_sidebar.html' %}
+{% include 'book/right_sidebar.html' %}
 {% endblock %}
+{% endif %}
+
 
 {% block content %}
 {% include 'book/breadcrumbs_navigation.html'%}
@@ -25,10 +23,21 @@
     <h1 class="text-l font-extrabold dark:text-white ml-4 truncate">
       {{ interpretation.label }}
     </h1>
-    <div class="quill-editor text-lg dark:text-white p-3">{{interpretation.text|safe}}</div>
+    <div class="ql-editor-readonly text-lg dark:text-white p-3">{{interpretation.text|safe}}</div>
   </div>
   <div class="p-1">
     <!-- prettier-ignore -->
+    {% if not current_user.is_authenticated %}
+      <div class="bg-white dark:bg-gray-900 max-w-full p-6 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+        <div class="grid gap-6">
+          <div class="col-span-6 sm:col-span-3 truncate">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white ">Connect you wallet to start contributing!</h3>
+          </div>
+        </div>
+      </div>
+      <!-- prettier-ignore -->
+    {% endif %}
+    {% if current_user.is_authenticated %}
     <form {% if sub_collection %}
         action="{{ url_for('book.create_comment', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id,section_id=section.id,interpretation_id=interpretation.id) }}"
       {% else %}
@@ -45,6 +54,8 @@
       <!-- prettier-ignore -->
       <button type="submit" class="ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"> Leave comment </button>
     </form>
+    <!-- prettier-ignore -->
+    {% endif %}
   </div>
   <!-- prettier-ignore -->
   <dl class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
