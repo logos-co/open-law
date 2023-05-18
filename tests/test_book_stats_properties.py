@@ -24,7 +24,7 @@ def test_approved_interpretations(client: FlaskClient):
     section: m.Section = m.Section.query.first()
     assert section
     interpretation: m.Interpretation = m.Interpretation(
-        section_id=section.id, label="231", text="123", approved=True
+        section_id=section.id, text="123", approved=True
     ).save()
 
     assert len(book.approved_interpretations) == 2
@@ -43,7 +43,7 @@ def test_approved_interpretations(client: FlaskClient):
         label="123", collection_id=sub_collection.id, version_id=book.last_version.id
     ).save()
     interpretation: m.Interpretation = m.Interpretation(
-        section_id=section.id, label="231", text="123", approved=True
+        section_id=section.id, text="123", approved=True
     ).save()
 
     assert len(book.approved_interpretations) == 2

@@ -105,7 +105,6 @@ def section_create(
     if form.validate_on_submit():
         section: m.Section = m.Section(
             label=form.label.data,
-            about=form.about.data,
             collection_id=sub_collection_id or collection_id,
             version_id=book.last_version.id,
         )
@@ -157,10 +156,6 @@ def section_edit(
         label = form.label.data
         if label:
             section.label = label
-
-        about = form.about.data
-        if about:
-            section.about = about
 
         log(log.INFO, "Edit section [%s]", section.id)
         section.save()

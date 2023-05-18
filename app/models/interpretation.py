@@ -7,7 +7,6 @@ from app.models.utils import BaseModel
 class Interpretation(BaseModel):
     __tablename__ = "interpretations"
 
-    label = db.Column(db.String(256), unique=False, nullable=False)
     text = db.Column(db.Text, unique=False, nullable=False)
     approved = db.Column(db.Boolean, default=False)
     marked = db.Column(db.Boolean, default=False)
@@ -55,4 +54,4 @@ class Interpretation(BaseModel):
         return self.section.version.book
 
     def __repr__(self):
-        return f"<{self.id}: {self.label}>"
+        return f"<Interpretation: {self.id}>"

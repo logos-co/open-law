@@ -1,13 +1,17 @@
+from sqlalchemy import func, text
+
 from app import db
 from app.models.utils import BaseModel
 from app.controllers import create_breadcrumbs
+from .interpretation import Interpretation
+from .comment import Comment
+from .interpretation_vote import InterpretationVote
 
 
 class Section(BaseModel):
     __tablename__ = "sections"
 
     label = db.Column(db.String(256), unique=False, nullable=False)
-    about = db.Column(db.Text, unique=False, nullable=True)
 
     # Foreign keys
     collection_id = db.Column(db.ForeignKey("collections.id"))
@@ -71,6 +75,51 @@ class Section(BaseModel):
             for interpretation in self.interpretations
             if not interpretation.is_deleted
         ]
+
+    @property
+    def approved_interpretation(self):
+        interpretation = Interpretation.query.filter_by(
+            approved=True, section_id=self.id
+        ).first()
+
+        if interpretation:
+            return interpretation
+
+        # most upvoted
+        result = (
+            db.session.query(
+                Interpretation, func.count(Interpretation.votes).label("total_votes")
+            )
+            .join(InterpretationVote)
+            .filter(Interpretation.section_id == self.id)
+            .group_by(Interpretation.id)
+            .order_by(text("total_votes DESC"))
+        ).first()
+        if result:
+            return result[0]
+
+        # oldest
+        interpretation = (
+            Interpretation.query.filter_by(section_id=self.id)
+            .order_by(Interpretation.created_at)
+            .first()
+        )
+
+        if interpretation:
+            return interpretation
+
+    @property
+    def approved_comments(self):
+        interpretation_ids = [
+            interpretation.id for interpretation in self.interpretations
+        ]
+        comments = (
+            Comment.query.filter_by(approved=True)
+            .filter(Comment.interpretation_id.in_(interpretation_ids))
+            .all()
+        )
+
+        return comments
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"

@@ -121,7 +121,6 @@ def interpretation_create(
 
     if form.validate_on_submit():
         interpretation: m.Interpretation = m.Interpretation(
-            label=form.label.data,
             text=form.text.data,
             section_id=section_id,
             user_id=current_user.id,
@@ -179,10 +178,6 @@ def interpretation_edit(
     )
 
     if form.validate_on_submit():
-        label = form.label.data
-        if label:
-            interpretation.label = label
-
         interpretation.text = form.text.data
 
         log(log.INFO, "Edit interpretation [%s]", interpretation.id)

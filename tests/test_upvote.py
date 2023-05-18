@@ -21,7 +21,6 @@ def test_upvote_interpretation(client: FlaskClient):
     assert response.json["message"] == "Interpretation not found"
 
     interpretation = m.Interpretation(
-        label="Test Interpretation 1 Label",
         text="Test Interpretation 1 Text",
         user_id=user.id,
     ).save()

@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 
 
-    
+
 {% if current_user.is_authenticated %}
 {% include 'book/delete_interpretation_modal.html' %}
 {% include 'book/delete_comment_modal.html' %}
@@ -21,7 +21,7 @@
 <div class="shadow-md mt-5 md:mr-64 h-auto overflow-x-hidden">
   <div class="ql-snow mt-20">
     <h1 class="text-l font-extrabold dark:text-white ml-4 truncate">
-      {{ interpretation.label }}
+      {{ section.label }}
     </h1>
     <div class="ql-editor-readonly text-lg dark:text-white p-3">{{interpretation.text|safe}}</div>
   </div>
