@@ -1,8 +1,11 @@
+from sqlalchemy import desc, func, text
+
 from app import db
 from app.models.utils import BaseModel
 from app.controllers import create_breadcrumbs
 from .interpretation import Interpretation
 from .comment import Comment
+from .interpretation_vote import InterpretationVote
 
 
 class Section(BaseModel):
@@ -79,7 +82,31 @@ class Section(BaseModel):
             approved=True, section_id=self.id
         ).first()
 
-        return interpretation
+        if interpretation:
+            return interpretation
+
+        # most upvoted
+        result = (
+            db.session.query(
+                Interpretation, func.count(Interpretation.votes).label("total_votes")
+            )
+            .join(InterpretationVote)
+            .filter(Interpretation.section_id == self.id)
+            .group_by(Interpretation.id)
+            .order_by(text("total_votes DESC"))
+        ).first()
+        if result:
+            return result[0]
+
+        # oldest
+        interpretation = (
+            Interpretation.query.filter_by(section_id=self.id)
+            .order_by(Interpretation.created_at)
+            .first()
+        )
+
+        if interpretation:
+            return interpretation
 
     @property
     def approved_comments(self):
