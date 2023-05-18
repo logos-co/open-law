@@ -814,7 +814,6 @@ def interpretation_create(
 
     if form.validate_on_submit():
         interpretation: m.Interpretation = m.Interpretation(
-            label=form.label.data,
             text=form.text.data,
             section_id=section_id,
             user_id=current_user.id,

@@ -818,18 +818,17 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
         version_id=book.last_version.id,
     ).save()
 
-    label_1 = "Test Interpretation #1 Label"
     text_1 = "Test Interpretation #1 Text"
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/create_interpretation",
-        data=dict(section_id=section_in_subcollection.id, label=label_1, text=text_1),
+        data=dict(section_id=section_in_subcollection.id, text=text_1),
         follow_redirects=True,
     )
 
     assert response.status_code == 200
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        label=label_1, section_id=section_in_subcollection.id
+        section_id=section_in_subcollection.id, text=text_1
     ).first()
     assert interpretation
     assert interpretation.section_id == section_in_subcollection.id
@@ -837,13 +836,13 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/create_interpretation",
-        data=dict(section_id=section_in_collection.id, label=label_1, text=text_1),
+        data=dict(section_id=section_in_collection.id, text=text_1),
         follow_redirects=True,
     )
 
     assert response.status_code == 200
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        label=label_1, section_id=section_in_collection.id
+        text=text_1, section_id=section_in_collection.id
     ).first()
     assert interpretation
     assert interpretation.section_id == section_in_collection.id
@@ -851,7 +850,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/999/create_section",
-        data=dict(collection_id=999, label=label_1, text=text_1),
+        data=dict(collection_id=999, text=text_1),
         follow_redirects=True,
     )
 
@@ -860,7 +859,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         f"/book/{book.id}/{leaf_collection.id}/999/create_interpretation",
-        data=dict(collection_id=999, label=label_1, text=text_1),
+        data=dict(collection_id=999, text=text_1),
         follow_redirects=True,
     )
 
@@ -869,7 +868,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{sub_collection.id}/888/create_interpretation",
-        data=dict(collection_id=999, label=label_1, text=text_1),
+        data=dict(collection_id=999, text=text_1),
         follow_redirects=True,
     )
 
@@ -879,17 +878,16 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     # edit
 
     m.Interpretation(
-        label="Test", text="Test", section_id=section_in_collection.id, user_id=user.id
+        text="Test", section_id=section_in_collection.id, user_id=user.id
     ).save()
 
     m.Interpretation(
-        label="Test",
         text="Test",
         section_id=section_in_subcollection.id,
     ).save()
 
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        label=label_1, section_id=section_in_collection.id
+        section_id=section_in_collection.id
     ).first()
 
     new_label = "Test Interpretation #1 Label(edited)"
@@ -898,7 +896,6 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     response: Response = client.post(
         f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/{interpretation.id}/edit_interpretation",
         data=dict(
-            label=new_label,
             interpretation_id=interpretation.id,
             text=new_text,
         ),
@@ -908,7 +905,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Success!" in response.data
 
     edited_interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        label=new_label, text=new_text, id=interpretation.id
+        text=new_text, id=interpretation.id
     ).first()
     assert edited_interpretation
 
@@ -916,7 +913,6 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
         f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/999/edit_interpretation",
         data=dict(
             interpretation_id=interpretation.id,
-            label=new_label,
             text=new_text,
         ),
         follow_redirects=True,
@@ -1018,7 +1014,7 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
 
     assert response.status_code == 200
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        label=label_1, section_id=section_in_subcollection.id
+        section_id=section_in_subcollection.id
     ).first()
     assert interpretation
     assert interpretation.section_id == section_in_subcollection.id
@@ -1170,7 +1166,7 @@ def test_interpretation_in_home_last_inter_section(
 
     assert response.status_code == 200
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        label=label_1, section_id=section_in_subcollection.id
+        section_id=section_in_subcollection.id
     ).first()
     assert interpretation
     assert interpretation.section_id == section_in_subcollection.id
@@ -1184,7 +1180,7 @@ def test_interpretation_in_home_last_inter_section(
 
     assert response.status_code == 200
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        label=label_1, section_id=section_in_collection.id
+        section_id=section_in_collection.id
     ).first()
     assert interpretation
     assert interpretation.section_id == section_in_collection.id

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired
 
 
 class BaseInterpretationForm(FlaskForm):
@@ -9,7 +9,6 @@ class BaseInterpretationForm(FlaskForm):
 
 
 class CreateInterpretationForm(BaseInterpretationForm):
-    label = StringField("Label", [DataRequired(), Length(3, 256)])
     section_id = StringField("Interpretation ID", [DataRequired()])
     submit = SubmitField("Create")
 
