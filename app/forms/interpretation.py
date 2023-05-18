@@ -4,17 +4,16 @@ from wtforms.validators import DataRequired, Length
 
 
 class BaseInterpretationForm(FlaskForm):
-    label = StringField("Label", [DataRequired(), Length(3, 256)])
     about = StringField("About")
+    text = StringField("Text")
 
 
 class CreateInterpretationForm(BaseInterpretationForm):
+    label = StringField("Label", [DataRequired(), Length(3, 256)])
     section_id = StringField("Interpretation ID", [DataRequired()])
-    text = StringField("Text")
     submit = SubmitField("Create")
 
 
 class EditInterpretationForm(BaseInterpretationForm):
     interpretation_id = StringField("Interpretation ID", [DataRequired()])
-    text = StringField("Text")
     submit = SubmitField("Edit")

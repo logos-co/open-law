@@ -105,7 +105,7 @@
         {% for interpretation in section.active_interpretations %}
           <!-- prettier-ignore -->
           <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-            <div class="flex flex-row pb-3 p-3 w-2/3 md:w-full">
+            <div class="flex flex-row pb-3 p-3 pt-0 w-2/3 md:w-full">
               <div class="vote-block flex flex-col m-5 mr-8 justify-center items-center">
                 {% if interpretation.user_id != current_user.id %}
                   <div class="vote-button cursor-pointer" data-vote-for="interpretation" data-entity-id="{{ interpretation.id }}" data-positive="true">
@@ -156,25 +156,26 @@
               </div>
               <!-- prettier-ignore -->
               <dt class="flex justify-center w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
-                <div class="ql-snow truncate md:max-w-xl">
+                <div class="flex justify-end">
                   <a
-                    class="flex space-x-2"
+                    class="!cursor-pointer text-no-underline flex items-center"
                     {% if sub_collection %}
                       href="{{ url_for('book.qa_view', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id, section_id=section.id, interpretation_id=interpretation.id) }}"
                     {% else %}
                       href="{{ url_for('book.qa_view', book_id=book.id, collection_id=collection.id, section_id=section.id, interpretation_id=interpretation.id) }}"
                     {% endif %}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
-                    </svg>
-                    <span>{{ section.label }}</span>
+                    <span class="text-sm">View Interpretation</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"> <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /> </svg>
                   </a>
-                  <div class="dark:text-white h-30 ql-editor-readonly">
-                    <p>{{ interpretation.text|safe }}</p>
-                  </div>
                 </div>
-                <div class="flex border-t-2 pt-3 mt-6 align-center justify-between md:w-full">
+                  <div class="ql-snow mb-2 truncate md:max-w-xl">
+                    <div class="dark:text-white h-30 ql-editor-readonly !px-0">
+                      <p>{{ interpretation.text|safe }}</p>
+                    </div>
+                  </div>
+
+                <div class="flex border-t-2 pt-3 align-center justify-between md:w-full">
                   <div>
                     <span class="hidden md:inline-block">Interpretation by</span>
                    <a href="{{url_for('user.profile',user_id=interpretation.user.id)}}" class=" text-blue-500 {% if interpretation.user.is_deleted %}line-through{% endif %}">{{interpretation.user.username}}</a> on {{interpretation.created_at.strftime('%B %d, %Y')}}

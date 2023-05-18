@@ -79,7 +79,9 @@ def my_library():
 def create():
     form = f.CreateBookForm()
     if form.validate_on_submit():
-        book: m.Book = m.Book(label=form.label.data, user_id=current_user.id)
+        book: m.Book = m.Book(
+            label=form.label.data, about=form.about.data, user_id=current_user.id
+        )
         log(log.INFO, "Form submitted. Book: [%s]", book)
         book.save()
         version = m.BookVersion(semver="1.0.0", book_id=book.id).save()
@@ -870,10 +872,6 @@ def interpretation_edit(
     )
 
     if form.validate_on_submit():
-        label = form.label.data
-        if label:
-            interpretation.label = label
-
         interpretation.text = form.text.data
 
         log(log.INFO, "Edit interpretation [%s]", interpretation.id)

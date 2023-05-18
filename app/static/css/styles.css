@@ -1660,6 +1660,10 @@ input:checked + .toggle-bg {
   cursor: pointer;
 }
 
+.\!cursor-pointer {
+  cursor: pointer !important;
+}
+
 .select-none {
   -webkit-user-select: none;
      -moz-user-select: none;
@@ -2211,6 +2215,11 @@ input:checked + .toggle-bg {
   padding-bottom: 1rem;
 }
 
+.\!px-0 {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
 .pb-3 {
   padding-bottom: 0.75rem;
 }
@@ -2257,6 +2266,10 @@ input:checked + .toggle-bg {
 
 .pt-6 {
   padding-top: 1.5rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
 }
 
 .text-left {
