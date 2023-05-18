@@ -235,13 +235,17 @@
       {% for sub_collection in collection.children if not sub_collection.is_deleted%}
       <p>##{{sub_collection.label}}</p>
         {% for section in sub_collection.active_sections %}
-        <div class="bg-inherit max-w-full text-gray-900 dark:text-white mt-6">
+        <div class="bg-inherit max-w-full text-gray-900 dark:text-white mt-1">
             <div class="flex flex-col pb-3 w-full">
-              <div class="flex w-full mb-1 md:text-lg dark:text-gray-100 flex-col">
+              <div class="flex w-full mb-1 dark:text-gray-100 flex-col">
                 <!-- prettier-ignore -->
                 <a href="{{url_for('book.section_view',book_id=book.id,collection_id=collection.id,sub_collection_id=sub_collection.id)}}">
-                <p class="truncate mb-3">{{ section.label }}</p></a>
-                <p class="text-sm mb-3">{{section.approved_interpretation}}</p>
+                <p class="truncate">{{ section.label }}</p></a>
+                <div class="ql-snow truncate md:max-w-xl">
+                    <div class="dark:text-white h-30 ql-editor-readonly !px-0">
+                      <p>{{ section.approved_interpretation.text|safe }}</p>
+                    </div>
+                  </div>
                 <div class="flex w-full ml-auto align-center justify-between space-x-3 border-t py-3">
                   <span class="text-sm">Interpretation by {{section.approved_interpretation.user.username}} on  {{section.approved_interpretation.created_at.strftime('%B %d, %Y')}}</span>
                   <span class="space-x-0.5 flex items-center">
@@ -278,8 +282,13 @@
     {% else %}
       {% for section in collection.active_sections %}
       <a href="{{url_for('book.section_view',book_id=book.id,collection_id=collection.id)}}">
-      <p class="truncate mb-3">{{ section.label }}</p></a>
-      <p class="text-sm mb-3">{{section.approved_interpretation}}</p>
+      <p class="truncate">{{ section.label }}</p></a>
+      <div class="ql-snow truncate md:max-w-xl">
+        <div class="dark:text-white h-30 ql-editor-readonly !px-0">
+          <p>{{ section.approved_interpretation.text|safe }}</p>
+        </div>
+      </div>
+      
       <div class="flex w-full ml-auto align-center justify-between space-x-3 border-t py-3">
         <span class="text-sm">Interpretation by {{section.approved_interpretation.user.username}} on  {{section.approved_interpretation.created_at.strftime('%B %d, %Y')}}</span>
         <span class="space-x-0.5 flex items-center">
