@@ -46,7 +46,6 @@ def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
 
     interpretation: m.Interpretation = m.Interpretation(
         section_id=section.id,
-        label=f"Interpretation {entity_id}",
         text=f"Interpretation Text {entity_id}",
         user_id=owner_id,
     ).save()

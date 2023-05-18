@@ -1,5 +1,5 @@
 <!-- prettier-ignore-->
-<div id="edit_interpretation_modal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-[150] hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full ">
+<div id="edit_interpretation_modal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-[150] hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
   <div class="relative w-full max-w-2xl max-h-full">
     <!-- Modal content -->
     <form
@@ -21,15 +21,7 @@
         <button id="modalAddCloseButton" data-modal-hide="edit_interpretation_modal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"> <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg> </button>
       </div>
       <!-- Modal body -->
-      <div class="p-6 space-y-6">
-        <div class="grid gap-6">
-          <div class="col-span-6 sm:col-span-3">
-            <label for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >Label</label >
-            <input value="{{interpretation.label}}" type="text" name="label" id="label" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Collection label" required />
-          </div>
-        </div>
-      </div>
-      <div class="p-6 pt-0 space-y-6">
+      <div class="p-5">
         <div class="w-full max-w-6xl mx-auto rounded-xl bg-gray-50 dark:bg-gray-600 shadow-lg text-white-900">
           <div class="overflow-hidden rounded-md bg-gray-50 [&>*]:dark:bg-gray-600 text-black [&>*]:!border-none [&>*]:!stroke-black dark:text-white dark:[&>*]:!stroke-white">
             <div id="interpretation-text" class="quill-editor dark:text-white h-40">

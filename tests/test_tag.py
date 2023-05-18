@@ -144,18 +144,17 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
     section = db.session.get(m.Section, 1)
 
     tags = "tag1,tag2,tag3"
-    label_1 = "Test Interpretation #1 Label"
     text_1 = "Test Interpretation #1 Text"
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{section.id}/create_interpretation",
-        data=dict(section_id=section.id, label=label_1, text=text_1, tags=tags),
+        data=dict(section_id=section.id, text=text_1, tags=tags),
         follow_redirects=True,
     )
 
     assert response.status_code == 200
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        label=label_1, section_id=section.id
+        text=text_1, section_id=section.id
     ).first()
     assert interpretation
     assert interpretation.tags
@@ -172,15 +171,13 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
     tags = "tag-4,tag5,tag3"
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{section.id}/{interpretation.id}/edit_interpretation",
-        data=dict(
-            interpretation_id=interpretation.id, label=label_1, text=text_1, tags=tags
-        ),
+        data=dict(interpretation_id=interpretation.id, text=text_1, tags=tags),
         follow_redirects=True,
     )
 
     assert response.status_code == 200
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        label=label_1, section_id=section.id
+        text=text_1, section_id=section.id
     ).first()
     assert interpretation
 

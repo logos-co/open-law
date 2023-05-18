@@ -21,6 +21,7 @@
     "siwe",
     "sqlalchemy",
     "tailwindcss",
+    "upvoted",
     "viewonly",
     "werkzeug",
     "wrongpassword",

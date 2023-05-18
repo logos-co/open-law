@@ -78,7 +78,6 @@ def create_dummy_data():
 
     section_1_1 = m.Section(
         label="Dummy Section 1.1 Label",
-        about="Dummy Section 1.1 About",
         collection_id=collection_1.id,
         version_id=collection_1.version_id,
         user_id=user.id,
@@ -86,7 +85,6 @@ def create_dummy_data():
 
     section_2_1_1 = m.Section(
         label="Dummy Section 2.1.1 Label",
-        about="Dummy Section 2.1.1 About",
         collection_id=subcollection_2_1.id,
         version_id=unexported_version.id,
         user_id=user.id,
@@ -94,7 +92,6 @@ def create_dummy_data():
 
     section_2_1_2 = m.Section(
         label="Dummy Section 2.1.2 Label",
-        about="Dummy Section 2.1.2 About",
         collection_id=subcollection_2_1.id,
         version_id=unexported_version.id,
         user_id=user.id,
@@ -113,14 +110,12 @@ def create_dummy_data():
     #               - interpretation 4
 
     interpretation_1 = m.Interpretation(
-        label="Dummy Interpretation 1 Label",
         text="Dummy Interpretation 1 About",
         section_id=section_1_1.id,
         user_id=user.id,
     ).save()
 
     interpretation_2 = m.Interpretation(
-        label="Dummy Interpretation 2 Label",
         text="Dummy Interpretation 2 About",
         section_id=section_2_1_1.id,
         user_id=user.id,
@@ -128,7 +123,6 @@ def create_dummy_data():
     ).save()
 
     interpretation_3 = m.Interpretation(
-        label="Dummy Interpretation 3 Label",
         text="Dummy Interpretation 3 About",
         section_id=section_2_1_2.id,
         user_id=user.id,
@@ -136,7 +130,6 @@ def create_dummy_data():
     ).save()
 
     m.Interpretation(
-        label="Dummy Interpretation 4 Label",
         text="Dummy Interpretation 4 About",
         section_id=section_2_1_2.id,
         user_id=user.id,
