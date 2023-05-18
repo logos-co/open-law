@@ -241,9 +241,9 @@
                 <!-- prettier-ignore -->
                 <a href="{{url_for('book.section_view',book_id=book.id,collection_id=collection.id,sub_collection_id=sub_collection.id)}}">
                 <p class="truncate mb-3">{{ section.label }}</p></a>
-                <p class="text-sm mb-3">Body of text. Common torts include: assault, battery, damage to personal property, conversion of personal property, and intentional infliction of emotional distress. Injury to people may include emotional harm as well as physical harm.</p>
+                <p class="text-sm mb-3">{{section.approved_interpretation}}</p>
                 <div class="flex w-full ml-auto align-center justify-between space-x-3 border-t py-3">
-                  <span class="text-sm">Interpretation by... </span>
+                  <span class="text-sm">Interpretation by {{section.approved_interpretation.user.username}} on  {{section.approved_interpretation.created_at.strftime('%B %d, %Y')}}</span>
                   <span class="space-x-0.5 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
                   </span>
@@ -257,15 +257,17 @@
                     </button>
                   </h2>
                   <div id="accordion-comments-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-1">
+                    {% for comment in section.approved_comments %}
                     <div class="p-5 ml-6">
-                      <p class="text-sm mb-3">Flowbite is an open-source library of interactive components built on top of Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
+                      <p class="text-sm mb-3">{{comment.text}}</p>
                       <div class="flex w-full ml-auto align-center justify-between space-x-3 border-t py-3">
-                        <span class="text-sm">Created by... </span>
+                        <span class="text-sm">Created by {{comment.user.username}} on {{comment.created_at.strftime('%B %d, %Y')}}</span>
                         <span class="space-x-0.5 flex items-center">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
                         </span>
                       </div>
                     </div>
+                    {% endfor %}
                   </div>
                 </div>
               </div>
