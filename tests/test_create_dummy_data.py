@@ -149,7 +149,7 @@ def test_dummy_data(runner: FlaskCliRunner):
     #               - interpretation 4
 
     interpretation_1: m.Interpretation = m.Interpretation.query.filter_by(
-        label="Dummy Interpretation 1 Label"
+        text="Dummy Interpretation 1 About"
     ).first()
 
     assert interpretation_1
@@ -157,7 +157,7 @@ def test_dummy_data(runner: FlaskCliRunner):
     assert interpretation_1.section == section_1_1
 
     interpretation_2: m.Interpretation = m.Interpretation.query.filter_by(
-        label="Dummy Interpretation 2 Label"
+        text="Dummy Interpretation 2 About"
     ).first()
 
     assert interpretation_2
@@ -166,7 +166,7 @@ def test_dummy_data(runner: FlaskCliRunner):
     assert interpretation_2.section == section_2_1_1
 
     interpretation_3: m.Interpretation = m.Interpretation.query.filter_by(
-        label="Dummy Interpretation 3 Label"
+        text="Dummy Interpretation 3 About"
     ).first()
 
     assert interpretation_3
@@ -175,7 +175,7 @@ def test_dummy_data(runner: FlaskCliRunner):
     assert interpretation_3.section == section_2_1_2
 
     interpretation_4: m.Interpretation = m.Interpretation.query.filter_by(
-        label="Dummy Interpretation 3 Label"
+        text="Dummy Interpretation 3 About"
     ).first()
 
     assert interpretation_4

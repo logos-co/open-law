@@ -99,25 +99,4 @@ def create_breadcrumbs(
                 label=section.label,
             )
         ]
-        if interpretation_id:
-            interpretation: m.Interpretation = db.session.get(
-                m.Interpretation, interpretation_id
-            )
-            crumples += [
-                s.BreadCrumb(
-                    type=s.BreadCrumbType.Interpretation,
-                    url=url_for(
-                        "book.qa_view",
-                        book_id=book_id,
-                        collection_id=collection_path[0],
-                        sub_collection_id=collection_path[-1]
-                        if len(collection_path) == 2
-                        else collection_path[0],
-                        section_id=section_id,
-                        interpretation_id=interpretation_id,
-                    ),
-                    label=interpretation.label,
-                )
-            ]
-
     return crumples

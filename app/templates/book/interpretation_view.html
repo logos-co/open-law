@@ -35,22 +35,6 @@
   </div>
   <div id="myTabContent" class="mt-40">
     <!-- prettier-ignore -->
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="section-text" role="tabpanel" aria-labelledby="text-tab">
-      <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-        <div class="flex flex-col w-full">
-          <!-- prettier-ignore -->
-          <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
-            <div class="ql-snow">
-              <div class="ql-editor-readonly">
-                {{ section.about|safe }}
-              </div>
-            </div>
-          </dt>
-        </div>
-      </dl>
-    </div>
-
-    <!-- prettier-ignore -->
     <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="interpretation" role="tabpanel" aria-labelledby="interpretation-tab">
       {% if not current_user.is_authenticated %}
       <div class="bg-white dark:bg-gray-900 max-w-full p-6 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
@@ -105,7 +89,7 @@
         {% for interpretation in section.active_interpretations %}
           <!-- prettier-ignore -->
           <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-            <div class="flex flex-row pb-3 p-3 w-2/3 md:w-full">
+            <div class="flex flex-row pb-3 p-3 pt-0 w-2/3 md:w-full">
               <div class="vote-block flex flex-col m-5 mr-8 justify-center items-center">
                 {% if interpretation.user_id != current_user.id %}
                   <div class="vote-button cursor-pointer" data-vote-for="interpretation" data-entity-id="{{ interpretation.id }}" data-positive="true">
@@ -156,25 +140,13 @@
               </div>
               <!-- prettier-ignore -->
               <dt class="flex justify-center w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
-                <div class="ql-snow truncate md:max-w-xl">
-                  <a
-                    class="flex space-x-2"
-                    {% if sub_collection %}
-                      href="{{ url_for('book.qa_view', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id, section_id=section.id, interpretation_id=interpretation.id) }}"
-                    {% else %}
-                      href="{{ url_for('book.qa_view', book_id=book.id, collection_id=collection.id, section_id=section.id, interpretation_id=interpretation.id) }}"
-                    {% endif %}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
-                    </svg>
-                    <span>{{ section.label }}</span>
-                  </a>
-                  <div class="dark:text-white h-30 ql-editor-readonly">
-                    <p>{{ interpretation.text|safe }}</p>
+                  <div class="ql-snow mb-2 truncate md:max-w-xl">
+                    <div class="dark:text-white h-30 ql-editor-readonly !px-0">
+                      <p>{{ interpretation.text|safe }}</p>
+                    </div>
                   </div>
-                </div>
-                <div class="flex border-t-2 pt-3 mt-6 align-center justify-between md:w-full">
+
+                <div class="flex border-t-2 pt-3 align-center justify-between md:w-full">
                   <div>
                     <span class="hidden md:inline-block">Interpretation by</span>
                    <a href="{{url_for('user.profile',user_id=interpretation.user.id)}}" class=" text-blue-500 {% if interpretation.user.is_deleted %}line-through{% endif %}">{{interpretation.user.username}}</a> on {{interpretation.created_at.strftime('%B %d, %Y')}}
@@ -184,8 +156,17 @@
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
                     </span>
                     <div class="space-x-0.5 flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /> </svg>
-                      <p class="select-none">{{interpretation.active_comments | length}}</p>
+                      <a
+                        class="!cursor-pointer text-no-underline flex items-center"
+                        {% if sub_collection %}
+                          href="{{ url_for('book.qa_view', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id, section_id=section.id, interpretation_id=interpretation.id) }}"
+                        {% else %}
+                          href="{{ url_for('book.qa_view', book_id=book.id, collection_id=collection.id, section_id=section.id, interpretation_id=interpretation.id) }}"
+                        {% endif %}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /> </svg>
+                        <p class="select-none">{{interpretation.active_comments | length}}</p>
+                      </a>
                     </div>
                   </div>
                 </div>
