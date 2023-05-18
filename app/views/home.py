@@ -12,7 +12,7 @@ bp = Blueprint("home", __name__, url_prefix="/home")
 def get_all():
     books: m.Book = (
         m.Book.query.filter_by(is_deleted=False).order_by(m.Book.id).limit(5)
-    )
+    ).all()
     interpretations = (
         db.session.query(
             m.Interpretation,
