@@ -14,210 +14,272 @@
 
 
 {% block content %}
-
-<div
-  id="accordion-collapse"
-  data-accordion="open"
-  class="p-3 w-2/6 border-t border-r border-gray-200 dark:border-gray-700 h-screen">
-  <div class="flex justify-between">
-    <h1 class="text-l font-extrabold dark:text-white ml-4 mb-3">
-      Table of contents
-    </h1>
-    <div class="flex text-white">
-      <!-- prettier-ignore -->
-      <svg id="dropdownDefaultButton" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /> </svg>
-        <!-- Dropdown menu -->
-        <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-              <li>
-                 <button type="button" data-modal-target="add-collection-modal" data-modal-toggle="add-collection-modal" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Collection</button>
-              </li>
-              <li>
-                 <button type="button" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Subcollection</button>
-              </li>
-              <li>
-                 <button type="button" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
-              </li>
-            </ul>
-        </div>
-      <!-- prettier-ignore -->
-      <a href="{{ url_for("book.settings", book_id=book.id) }}" type="button" class="ml-2" >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
-      </a>
-    </div>
-  </div>
-  <!-- prettier-ignore -->
-  {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
-  <div>
-    <div class="flex items-center justify-start w-full p-5 font-medium text-left text-gray-500 border border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400">
-      <button type="button" data-accordion-target="#accordion-collapse-body-{{loop.index}}" aria-expanded="true" aria-controls="accordion-collapse-body-{{loop.index}}">
-      <!-- prettier-ignore -->
-      <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
-      </button>
-      <a  id="accordion-collapse-heading-{{loop.index}}" class=" text-black dark:text-white ">
-        <form id="rename-collection-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" method="post" class="mb-0">
-           {{ form_hidden_tag() }}
-          <input class=" bg-inherit border-none " value="{{collection.label}}" type="text" name="label" id="edit-collection-label-{{loop.index}}" placeholder="Collection label" required readonly/>
-          <button name="submit" type="submit"></button>
-        </form>
-      </a>
+<div class="flex">
+  <div
+    id="accordion-collapse"
+    data-accordion="open"
+    class="p-3 w-2/6 border-t border-r border-gray-200 dark:border-gray-700 h-screen">
+    <div class="flex justify-between">
+      <div class="flex dark:text-white">
+      <svg id="tabGoBackButton" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer"> <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /> </svg>
+      <h1 class="text-l font-extrabold dark:text-white ml-4 mb-3">
+        Table of contents
+      </h1>
       </div>
-  <svg id="dropdownCollectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
-  </div>
-  <div data="collection-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-      <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-        <li>
-            <button type="button" data-modal-target="add-collection-modal" data-modal-toggle="add-collection-modal" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Collection</button>
-        </li>
+      <div class="flex text-white">
+        <!-- prettier-ignore -->
+        <a href="{{ url_for("book.settings", book_id=book.id) }}" type="button" class="ml-2" >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
+        </a>
+      </div>
+    </div>
+    <!-- prettier-ignore -->
+    {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
+    <div>
+      <div class="flex items-center justify-start w-full p-5 font-medium text-left text-gray-500 border border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400">
+        <button class="bg-inherit" type="button" data-accordion-target="#accordion-collapse-body-{{loop.index}}" aria-expanded="true" aria-controls="accordion-collapse-body-{{loop.index}}">
+        <!-- prettier-ignore -->
+        <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
+        </button>
+        <a  id="accordion-collapse-heading-{{loop.index}}" class=" text-black dark:text-white ">
+          <form id="rename-collection-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" method="post" class="mb-0">
+            {{ form_hidden_tag() }}
+            <input class=" bg-inherit border-none " value="{{collection.label}}" type="text" name="label" id="edit-collection-label-{{loop.index}}" placeholder="Collection label" required readonly/>
+            <button name="submit" type="submit"></button>
+          </form>
+        </a>
+        </div>
+    <svg id="dropdownCollectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
+    </div>
+    <div data="collection-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+          <li>
+              <button type="button" data-modal-target="add-collection-modal" data-modal-toggle="add-collection-modal" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Collection</button>
+          </li>
+          {% if not collection.is_leaf %}
+          <li>
+              <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Subcollection</button>
+          </li>
+          {% endif %}
+          {% if collection.children|length ==0  or collection.children|length ==0 and collection.is_leaf %}
+          <li>
+              <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="_"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+          <li>
+              <button type="button" id="rename-collection-button-{{loop.index}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Collection</button>
+          </li>
+          <li>
+              <button type="button" id="callDeleteCollectionModal" data-modal-target="delete-collection-modal" data-modal-toggle="delete-collection-modal" data-collection-id="{{collection.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Collection</button>
+          </li>
+          <li>
+              <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Collection and contents</button>
+          </li>
+        </ul>
+            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+          <li>
+              <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Collection</button>
+          </li>
+        </ul>
+    </div>
+    <!-- prettier-ignore -->
+    <div id="accordion-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{loop.index}}">
+      <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700">
         {% if not collection.is_leaf %}
-        <li>
-            <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Subcollection</button>
-        </li>
-        {% endif %}
-        {% if collection.children|length ==0  or collection.children|length ==0 and collection.is_leaf %}
-        <li>
-            <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="_"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
-        </li>
-        {% endif %}
-      </ul>
-      <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-        <li>
-            <button type="button" id="rename-collection-button-{{loop.index}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Collection</button>
-        </li>
-        <li>
-            <button type="button" id="callDeleteCollectionModal" data-modal-target="delete-collection-modal" data-modal-toggle="delete-collection-modal" data-collection-id="{{collection.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Collection</button>
-        </li>
-        <li>
-            <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Collection and contents</button>
-        </li>
-      </ul>
-          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-        <li>
-            <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Collection</button>
-        </li>
-      </ul>
-  </div>
-  <!-- prettier-ignore -->
-  <div id="accordion-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{loop.index}}">
-    <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700">
-      {% if not collection.is_leaf %}
-      <!-- if collection has sub_collection make for loop for it -->
-      <!-- Nested accordion -->
-      {% for sub_collection in collection.children if not sub_collection.is_deleted%}
-      <div id="accordion-nested-collapse" data-accordion="open">
-          <div class="flex items-center justify-start w-full p-5 rounded-t-xl font-medium text-left text-gray-500 border border-b-0 border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400">
-            <button
-            type="button"
-            data-accordion-target="#accordion-nested-collapse-body-{{loop.index}}"
-            aria-expanded="true"
-            aria-controls="accordion-nested-collapse-body-{{loop.index}}">
-            <!-- prettier-ignore -->
-            <svg data-accordion-icon class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
-            </button>
-            <a  id="accordion-nested-collapse-heading-{{loop.index}}" class=" text-black dark:text-white ">
-              <form id="rename-sub-collection-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" method="post" class="mb-0">
-                {{ form_hidden_tag() }}
-                <input class=" bg-inherit border-none " value="{{sub_collection.label}}" type="text" name="label" id="edit-sub-collection-label-{{loop.index}}" placeholder="Sub collection label" required readonly/>
+        <!-- if collection has sub_collection make for loop for it -->
+        <!-- Nested accordion -->
+        {% for sub_collection in collection.children if not sub_collection.is_deleted%}
+        <div id="accordion-nested-collapse" data-accordion="open">
+            <div class="flex items-center justify-start w-full p-5 rounded-t-xl font-medium text-left text-gray-500 border border-b-0 border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400">
+              <button
+              class="bg-inherit"
+              type="button"
+              data-accordion-target="#accordion-nested-collapse-body-{{loop.index}}"
+              aria-expanded="true"
+              aria-controls="accordion-nested-collapse-body-{{loop.index}}">
+              <!-- prettier-ignore -->
+              <svg data-accordion-icon class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
+              </button>
+              <a  id="accordion-nested-collapse-heading-{{loop.index}}" class=" text-black dark:text-white ">
+                <form id="rename-sub-collection-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" method="post" class="mb-0">
+                  {{ form_hidden_tag() }}
+                  <input class=" bg-inherit border-none " value="{{sub_collection.label}}" type="text" name="label" id="edit-sub-collection-label-{{loop.index}}" placeholder="Sub collection label" required readonly/>
+                  <button name="submit" type="submit"></button>
+                </form>
+              </a>
+            </div>
+            <svg id="dropdownSubCollectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
+            <div data="sub-collection-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
+                  </li>
+                </ul>
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button" id="rename-sub-collection-button-{{loop.index}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Sub Collection</button>
+                  </li>
+                  <li>
+                      <button type="button" id="callDeleteSubCollectionModal" data-modal-target="delete-sub-collection-modal" data-modal-toggle="delete-sub-collection-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Sub Collection</button>
+                  </li>
+                  <li>
+                      <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Sub Collection and contents</button>
+                  </li>
+                </ul>
+                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Sub Collection</button>
+                  </li>
+                </ul>
+            </div>
+          <!-- prettier-ignore -->
+          <div id="accordion-nested-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-nested-collapse-heading-{{loop.index}}">
+            <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700">
+              <!-- here comes for loop for all section in this sub_collection-->
+              {% for section in sub_collection.active_sections %}
+              <div class="mb-10">
+              <a id="section-heading-{{loop.index}}" class="text-gray-500 dark:text-gray-400">
+                <form id="rename-section-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" data-section-id="{{section.id}}" method="post">
+                  {{ form_hidden_tag() }}
+                <input class=" bg-inherit border-none " value="{{section.label}}" type="text" name="label" id="edit-section-label-{{loop.index}}" placeholder="Section label" required readonly/>
                 <button name="submit" type="submit"></button>
               </form>
-            </a>
-          </div>
-          <svg id="dropdownSubCollectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
-          <div data="sub-collection-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-              <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                <li>
-                    <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
-                </li>
-              </ul>
-              <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                <li>
-                    <button type="button" id="rename-sub-collection-button-{{loop.index}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Sub Collection</button>
-                </li>
-                <li>
-                    <button type="button" id="callDeleteSubCollectionModal" data-modal-target="delete-sub-collection-modal" data-modal-toggle="delete-sub-collection-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Sub Collection</button>
-                </li>
-                <li>
-                    <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Sub Collection and contents</button>
-                </li>
-              </ul>
-                  <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                <li>
-                    <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Sub Collection</button>
-                </li>
-              </ul>
-          </div>
-        <!-- prettier-ignore -->
-        <div id="accordion-nested-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-nested-collapse-heading-{{loop.index}}">
-          <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700">
-            <!-- here comes for loop for all section in this sub_collection-->
-            {% for section in sub_collection.active_sections %}
-            <div class="mb-10">
-            <a id="section-heading-{{loop.index}}" class="text-gray-500 dark:text-gray-400">
-              <form id="rename-section-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" data-section-id="{{section.id}}" method="post">
-                {{ form_hidden_tag() }}
-              <input class=" bg-inherit border-none " value="{{section.label}}" type="text" name="label" id="edit-section-label-{{loop.index}}" placeholder="Section label" required readonly/>
-              <button name="submit" type="submit"></button>
-            </form>
-            </a>
-            <svg id="dropdownSectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
-            <div data="section-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-              <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                <li>
-                    <button type="button" id="rename-section-button-{{loop.index}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Section</button>
-                </li>
-                <li>
-                    <button type="button" data-modal-target="delete-section-modal" data-modal-toggle="delete-section-modal" id="callDeleteSectionModal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" data-section-id="{{section.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Section</button>
-                </li>
-              </ul>
-              <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                <li>
-                    <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Section</button>
-                </li>
-              </ul>
+              </a>
+              <svg id="dropdownSectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
+              <div data="section-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button" id="rename-section-button-{{loop.index}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Section</button>
+                  </li>
+                  <li>
+                      <button type="button" data-modal-target="delete-section-modal" data-modal-toggle="delete-section-modal" id="callDeleteSectionModal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" data-section-id="{{section.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Section</button>
+                  </li>
+                </ul>
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Section</button>
+                  </li>
+                </ul>
+              </div>
+              </div>
+              {% endfor %}
             </div>
-            </div>
-            {% endfor %}
           </div>
         </div>
-      </div>
-      {% endfor %}
-      <!-- End: Nested accordion -->
-      {% else %}
-      <!-- if collection doesn't have sub_collection -->
-      <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700">
-            <!-- here comes for loop for all section in this collection-->
-            {% for section in collection.active_sections %}
-            <a id="section-heading-{{loop.index}}" class="text-gray-500 dark:text-gray-400">
-              <form id="rename-section-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="_" data-section-id="{{section.id}}" method="post">
-                {{ form_hidden_tag() }}
-              <input class=" bg-inherit border-none " value="{{section.label}}" type="text" name="label" id="edit-section-label-{{loop.index}}" placeholder="Section label" required readonly/>
-              <button name="submit" type="submit"></button>
-            </form>
-            </a>
-            <svg id="dropdownSectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
-            <div data="section-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-              <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                <li>
-                    <button type="button" id="rename-section-button-{{loop.index}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Section</button>
-                </li>
-                <li>
-                    <button type="button" data-modal-target="delete-collection-modal" data-modal-toggle="delete-collection-modal" id="callDeleteSectionModal" data-collection-id="{{collection.id}}" data-sub-collection-id="_" data-section-id="{{section.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Section</button>
-                </li>
-              </ul>
-              <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                <li>
-                    <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Section</button>
-                </li>
-              </ul>
+        {% endfor %}
+        <!-- End: Nested accordion -->
+        {% else %}
+        <!-- if collection doesn't have sub_collection -->
+        <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700">
+              <!-- here comes for loop for all section in this collection-->
+              {% for section in collection.active_sections %}
+              <a id="section-heading-{{loop.index}}" class="text-gray-500 dark:text-gray-400">
+                <form id="rename-section-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="_" data-section-id="{{section.id}}" method="post">
+                  {{ form_hidden_tag() }}
+                <input class=" bg-inherit border-none " value="{{section.label}}" type="text" name="label" id="edit-section-label-{{loop.index}}" placeholder="Section label" required readonly/>
+                <button name="submit" type="submit"></button>
+              </form>
+              </a>
+              <svg id="dropdownSectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
+              <div data="section-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button" id="rename-section-button-{{loop.index}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Section</button>
+                  </li>
+                  <li>
+                      <button type="button" data-modal-target="delete-collection-modal" data-modal-toggle="delete-collection-modal" id="callDeleteSectionModal" data-collection-id="{{collection.id}}" data-sub-collection-id="_" data-section-id="{{section.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Section</button>
+                  </li>
+                </ul>
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Section</button>
+                  </li>
+                </ul>
+              </div>
+              {% endfor %}
             </div>
-            {% endfor %}
-          </div>
-      {% endif %}
+        {% endif %}
+      </div>
     </div>
+    {% endfor %}
   </div>
-  {% endfor %}
+  <div class="p-3 px-6 w-4/6 h-screen dark:text-white">
+    <p class="text-xs mb-3">Created by <a href="{{url_for('user.profile',user_id=book.owner.id)}}" class=" text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">{{book.owner.username}}</a> on {{book.created_at.strftime('%B %d, %Y')}}. Last updated on {{book.created_at.strftime('%B %d, %Y')}}</p>
+    <div class="flex justify-between item-center">
+      <h1 class="hidden md:inline font-extrabold text-lg dark:text-white">{{book.label}}</h1>
+    <div class="ml-auto flex">
+      <div class="space-x-0.5  mr-3">
+        <a href={{ url_for('book.statistic_view', book_id=book.id ) }} class="flex items-center">
+        <svg class="w-4 h-4 inline-flex mr-1 {% if book.current_user_has_star %}fill-yellow-300{% endif %}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /> </svg>
+        {{ book.stars|length }}</a>
+      </div>
+      <div class="space-x-0.5  mr-3">
+        <a href={{ url_for('book.statistic_view', book_id=book.id,active_tab='contributors' ) }} class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor" class="w-4 h-4 mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /> </svg>
+        {{ book.contributors|length }}</a>
+      </div>
+      <div class="space-x-0.5  mr-3">
+        <a href={{ url_for('book.statistic_view', book_id=book.id,active_tab='forks' ) }} class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor" class="w-4 h-4 mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /> </svg>
+        {{ book.versions|length }}</a>
+      </div>
+    </div>
+    </div>
+    <p class=" text-sm mb-3">{% if book.about==None %}About text{% else %}{{book.about}}{% endif %}</p>
+    {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
+    <p>#{{collection.label}}</p>
+    {% if not collection.is_leaf %}
+      <!-- if collection has sub_collection make for loop for it -->
+      {% for sub_collection in collection.children if not sub_collection.is_deleted%}
+      <p>##{{sub_collection.label}}</p>
+        {% for section in sub_collection.active_sections %}
+        <div class="bg-inherit max-w-full text-gray-900 dark:text-white mt-6">
+            <div class="flex flex-col pb-3 w-full">
+              <div class="flex w-full mb-1 md:text-lg dark:text-gray-100 flex-col">
+                <!-- prettier-ignore -->
+                <a href="{{url_for('book.section_view',book_id=book.id,collection_id=collection.id,sub_collection_id=sub_collection.id)}}">
+                <p class="truncate mb-3">{{ section.label }}</p></a>
+                <p class="text-sm mb-3">Body of text. Common torts include: assault, battery, damage to personal property, conversion of personal property, and intentional infliction of emotional distress. Injury to people may include emotional harm as well as physical harm.</p>
+                <div class="flex w-full ml-auto align-center justify-between space-x-3 border-t py-3">
+                  <span class="text-sm">Interpretation by... </span>
+                  <span class="space-x-0.5 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+                  </span>
+                </div>
+                <!--Comments-->
+                <div id="accordion-comments-collapse" data-accordion="collapse">
+                  <h2 id="accordion-comments-collapse-heading-{{loop.index}}">
+                    <button type="button" class="flex items-center bg-inherit justify-start w-full p-5 font-medium text-left" data-accordion-target="#accordion-comments-collapse-body-{{loop.index}}" aria-expanded="false" aria-controls="accordion-collapse-body-1">
+                      <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                      <span><i>Comments:</i></span>
+                    </button>
+                  </h2>
+                  <div id="accordion-comments-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-1">
+                    <div class="p-5 ml-6">
+                      <p class="text-sm mb-3">Flowbite is an open-source library of interactive components built on top of Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
+                      <div class="flex w-full ml-auto align-center justify-between space-x-3 border-t py-3">
+                        <span class="text-sm">Created by... </span>
+                        <span class="space-x-0.5 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    {% else %}
+      {% for section in collection.active_sections %}
+      <p>{{section.label}}</p>
+      {% endfor %}
+    {% endif %}
+    {% endfor %}
 </div>
-
 <!-- prettier-ignore -->
 {% endblock %}
 <!-- prettier-ignore -->

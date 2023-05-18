@@ -162,7 +162,8 @@ def statistic_view(book_id: int):
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.my_library"))
-    return render_template("book/stat.html", book=book)
+    active_tab = request.args.get("active_tab")
+    return render_template("book/stat.html", book=book, active_tab=active_tab)
 
 
 @bp.route("/<int:book_id>/<int:collection_id>/subcollections", methods=["GET"])
@@ -465,7 +466,8 @@ def collection_create(book_id: int, collection_id: int | None = None):
             )
 
         redirect_url = url_for(
-            "book.collection_view", book_id=book_id,
+            "book.collection_view",
+            book_id=book_id,
         )
 
     form = f.CreateCollectionForm()

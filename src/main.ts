@@ -18,6 +18,7 @@ import {deleteSubCollection} from './deleteSubCollection';
 import {renameCollection} from './renameCollection';
 import {renameSubCollection} from './renameSubCollection';
 import {initQuillReadOnly} from './initQuillReadOnly';
+import {initGoBack} from './tabGoBackBtn';
 
 initQuillReadOnly();
 initBooks();
@@ -39,3 +40,4 @@ deleteCollection();
 renameCollection();
 deleteSubCollection();
 renameSubCollection();
+initGoBack();
