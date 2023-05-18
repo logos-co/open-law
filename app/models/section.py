@@ -1,6 +1,8 @@
 from app import db
 from app.models.utils import BaseModel
 from app.controllers import create_breadcrumbs
+from .interpretation import Interpretation
+from .comment import Comment
 
 
 class Section(BaseModel):
@@ -70,6 +72,27 @@ class Section(BaseModel):
             for interpretation in self.interpretations
             if not interpretation.is_deleted
         ]
+
+    @property
+    def approved_interpretation(self):
+        interpretation = Interpretation.query.filter_by(
+            approved=True, section_id=self.id
+        ).first()
+
+        return interpretation
+
+    @property
+    def approved_comments(self):
+        interpretation_ids = [
+            interpretation.id for interpretation in self.interpretations
+        ]
+        comments = (
+            Comment.query.filter_by(approved=True)
+            .filter(Comment.interpretation_id.in_(interpretation_ids))
+            .all()
+        )
+
+        return comments
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"
