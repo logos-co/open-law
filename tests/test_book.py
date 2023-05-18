@@ -663,14 +663,12 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
 
     m.Section(
         label="Test",
-        about="Test",
         collection_id=leaf_collection.id,
         version_id=book.last_version.id,
     ).save()
 
     m.Section(
         label="Test",
-        about="Test",
         collection_id=sub_collection.id,
         version_id=book.last_version.id,
     ).save()
@@ -703,7 +701,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Success!" in response.data
 
     edited_section: m.Section = m.Section.query.filter_by(
-        label=new_label, about=new_about, id=section.id
+        label=new_label, id=section.id
     ).first()
     assert edited_section
 
@@ -732,7 +730,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Success!" in response.data
 
     edited_section: m.Section = m.Section.query.filter_by(
-        label=new_label, about=new_about, id=section_2.id
+        label=new_label, id=section_2.id
     ).first()
     assert edited_section
 
@@ -797,7 +795,6 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     ).save()
     section_in_collection: m.Section = m.Section(
         label="Test Section in Collection #1 Label",
-        about="Test Section in Collection #1 About",
         collection_id=leaf_collection.id,
         version_id=book.last_version.id,
     ).save()
@@ -813,7 +810,6 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     ).save()
     section_in_subcollection: m.Section = m.Section(
         label="Test Section in Subcollection #1 Label",
-        about="Test Section in Subcollection #1 About",
         collection_id=sub_collection.id,
         version_id=book.last_version.id,
     ).save()
@@ -982,7 +978,6 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
     ).save()
     section_in_collection: m.Section = m.Section(
         label="Test Section in Collection #1 Label",
-        about="Test Section in Collection #1 About",
         collection_id=leaf_collection.id,
         version_id=book.last_version.id,
     ).save()
@@ -998,7 +993,6 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
     ).save()
     section_in_subcollection: m.Section = m.Section(
         label="Test Section in Subcollection #1 Label",
-        about="Test Section in Subcollection #1 About",
         collection_id=sub_collection.id,
         version_id=book.last_version.id,
     ).save()
@@ -1134,7 +1128,6 @@ def test_interpretation_in_home_last_inter_section(
     ).save()
     section_in_collection: m.Section = m.Section(
         label="Test Section in Collection #1 Label",
-        about="Test Section in Collection #1 About",
         collection_id=leaf_collection.id,
         version_id=book.last_version.id,
     ).save()
@@ -1150,7 +1143,6 @@ def test_interpretation_in_home_last_inter_section(
     ).save()
     section_in_subcollection: m.Section = m.Section(
         label="Test Section in Subcollection #1 Label",
-        about="Test Section in Subcollection #1 About",
         collection_id=sub_collection.id,
         version_id=book.last_version.id,
     ).save()

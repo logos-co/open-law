@@ -78,7 +78,6 @@ def create_dummy_data():
 
     section_1_1 = m.Section(
         label="Dummy Section 1.1 Label",
-        about="Dummy Section 1.1 About",
         collection_id=collection_1.id,
         version_id=collection_1.version_id,
         user_id=user.id,
@@ -86,7 +85,6 @@ def create_dummy_data():
 
     section_2_1_1 = m.Section(
         label="Dummy Section 2.1.1 Label",
-        about="Dummy Section 2.1.1 About",
         collection_id=subcollection_2_1.id,
         version_id=unexported_version.id,
         user_id=user.id,
@@ -94,7 +92,6 @@ def create_dummy_data():
 
     section_2_1_2 = m.Section(
         label="Dummy Section 2.1.2 Label",
-        about="Dummy Section 2.1.2 About",
         collection_id=subcollection_2_1.id,
         version_id=unexported_version.id,
         user_id=user.id,
