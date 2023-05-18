@@ -54,4 +54,4 @@ class Interpretation(BaseModel):
         return self.section.version.book
 
     def __repr__(self):
-        return f"<{self.id}: {self.text[:15]}>"
+        return f"<Interpretation: {self.id}>"
