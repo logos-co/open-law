@@ -263,14 +263,14 @@
     {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
     <p class="my-3 underline">#{{collection.label}}</p>
     {% if not collection.is_leaf and not collection.children %}
-    <p class="my-3">Collection is empty</p> 
+    <p class="ml-3 my-3 italic text-sm">Collection is empty</p> 
     {% endif %}
     {% if not collection.is_leaf %}
       <!-- if collection has sub_collection make for loop for it -->
       {% for sub_collection in collection.children if not sub_collection.is_deleted%}
       <p class="my-3">##{{sub_collection.label}}</p>
         {% if not sub_collection.active_sections %}
-        <p>This sub collection is empty</p>
+        <p class="ml-3 my-3 italic text-sm">This sub collection is empty</p>
         {% endif %}
         {% for section in sub_collection.active_sections %}
         <div class="bg-inherit max-w-full text-gray-900 dark:text-white mt-1">
@@ -280,7 +280,7 @@
                 <a  href="{{url_for('book.interpretation_view',book_id=book.id,collection_id=collection.id,sub_collection_id=sub_collection.id,section_id=section.id)}}">
                 <p id="section-{{section.label}}" class="truncate my-3">{{ section.label }}</p></a>
                 {% if not section.active_interpretations %}
-                <p>This section is empty</p>
+                <p class="ml-3 my-3 italic text-sm">This section is empty</p>
                 {% else %}
                 <div class="ql-snow truncate md:max-w-xl">
                   <div class="dark:text-white h-30 ql-editor-readonly !px-0">
@@ -330,7 +330,7 @@
       <a  href="{{url_for('book.interpretation_view',book_id=book.id,collection_id=collection.id,section_id=section.id)}}">
       <p id="section-{{section.label}}" class="truncate my-3">{{ section.label }}</p></a>
       {% if not section.active_interpretations %}
-      <p>This section is empty</p>
+      <p class="ml-3 my-3 italic text-sm">This section is empty</p>
       {% else %}
       <div class="ql-snow truncate md:max-w-xl mb-3">
         <div class="dark:text-white h-30 ql-editor-readonly !px-0">

@@ -1,4 +1,4 @@
-import {Dropdown} from 'flowbite';
+import {Dropdown, DropdownInterface} from 'flowbite';
 import type {DropdownOptions} from 'flowbite';
 
 // Triggers and elements for collections
@@ -20,11 +20,21 @@ const sectionContextMenu: NodeListOf<HTMLElement> = document.querySelectorAll(
 const contextSectionMenuTriggers: NodeListOf<HTMLElement> =
   document.querySelectorAll('[id^="dropdownSectionContextButton"]');
 
+let currentElement: DropdownInterface | null = null;
+
 const options: DropdownOptions = {
   offsetSkidding: 410,
   offsetDistance: 0,
   onHide: () => {},
-  onShow: () => {},
+  onShow: tooltip => {
+    // this will close opened menu if you trigger another one
+    if (currentElement) {
+      currentElement.hide();
+      currentElement = tooltip;
+    } else {
+      currentElement = tooltip;
+    }
+  },
   onToggle: () => {},
 };
 
