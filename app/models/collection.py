@@ -22,7 +22,7 @@ class Collection(BaseModel):
         "Collection",
         backref=db.backref("parent", remote_side=[id]),
         viewonly=True,
-        order_by="desc(Collection.id)",
+        order_by="asc(Collection.id)",
     )
     sections = db.relationship("Section")
 

@@ -512,7 +512,8 @@ def collection_create(book_id: int, collection_id: int | None = None):
         flash("Success!", "success")
         if collection_id:
             redirect_url = url_for(
-                "book.sub_collection_view", book_id=book_id, collection_id=collection_id
+                "book.collection_view",
+                book_id=book_id,
             )
         return redirect(redirect_url)
     else:
@@ -583,10 +584,8 @@ def collection_edit(
         flash("Success!", "success")
         if sub_collection_id:
             redirect_url = url_for(
-                "book.section_view",
+                "book.collection_view",
                 book_id=book_id,
-                collection_id=collection_id,
-                sub_collection_id=sub_collection_id,
             )
         return redirect(redirect_url)
     else:

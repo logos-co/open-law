@@ -1221,6 +1221,11 @@ input:checked + .toggle-bg {
   margin-bottom: auto;
 }
 
+.my-3 {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
 .-mb-px {
   margin-bottom: -1px;
 }
@@ -1351,6 +1356,14 @@ input:checked + .toggle-bg {
 
 .mt-auto {
   margin-top: auto;
+}
+
+.mt-\[135\] {
+  margin-top: 135;
+}
+
+.box-border {
+  box-sizing: border-box;
 }
 
 .block {
@@ -1833,8 +1846,16 @@ input:checked + .toggle-bg {
   align-self: center;
 }
 
+.overflow-auto {
+  overflow: auto;
+}
+
 .overflow-hidden {
   overflow: hidden;
+}
+
+.overflow-scroll {
+  overflow: scroll;
 }
 
 .overflow-x-auto {
@@ -1851,6 +1872,10 @@ input:checked + .toggle-bg {
 
 .overflow-x-scroll {
   overflow-x: scroll;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll;
 }
 
 .truncate {
@@ -2293,6 +2318,10 @@ input:checked + .toggle-bg {
 
 .pt-6 {
   padding-top: 1.5rem;
+}
+
+.pt-\[135\] {
+  padding-top: 135;
 }
 
 .text-left {
