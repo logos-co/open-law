@@ -2,15 +2,16 @@
 {% extends 'base.html' %}
 
 {% if current_user.is_authenticated %}
-{% include 'book/delete_section_modal.html' %}
-{% include 'book/edit_section_modal.html' %}
+  {% include 'book/delete_section_modal.html' %}
+  {% include 'book/edit_section_modal.html' %}
+  {% include 'book/approve_interpretation_modal.html' %}
 <!-- prettier-ignore -->
 {% set show_delete_section = True %}
 <!-- prettier-ignore -->
 {% set show_edit_section = True %}
-{% block right_sidebar %}
-  {% include 'book/right_sidebar.html' %}
-{% endblock %}
+  {% block right_sidebar %}
+    {% include 'book/right_sidebar.html' %}
+  {% endblock %}
 {% endif %}
 
 
@@ -170,6 +171,12 @@
             </div>
           </dl>
         {% endfor %}
+
+        <span class="approved-interpretation-id hidden">
+          {% if section.approved_interpretation.approved %}
+            {{ section.approved_interpretation.id }}
+          {% endif %}
+        </span>
       </dl>
     </div>
   </div>

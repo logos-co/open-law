@@ -15,7 +15,7 @@ def build_qa_url_using_interpretation(interpretation: m.Interpretation):
     section: m.Section = interpretation.section
     collection: m.Collection = section.collection
     sub_collection = None
-    if not collection.parent.is_root:
+    if collection.parent and not collection.parent.is_root:
         sub_collection: m.Collection = collection
         collection: m.Collection = collection.parent
     book: m.Book = section.version.book
