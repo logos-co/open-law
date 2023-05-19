@@ -191,8 +191,6 @@ def collection_edit(
         collection.save()
 
         flash("Success!", "success")
-        if sub_collection_id:
-            redirect_url = url_for(redirect_url)
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Collection edit errors: [%s]", form.errors)

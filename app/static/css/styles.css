@@ -958,6 +958,30 @@ input:checked + .toggle-bg {
   --tw-backdrop-sepia:  ;
 }
 
+/* Firefox */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: inherit gray ;
+}
+
+/* Chrome, Edge, and Safari */
+
+*::-webkit-scrollbar {
+  width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: inherit;
+  border-radius: 1px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 14px;
+  border: 1px solid inherit;
+}
+
 .container {
   width: 100%;
 }
@@ -1211,6 +1235,11 @@ input:checked + .toggle-bg {
   margin-right: auto;
 }
 
+.my-3 {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -1221,9 +1250,9 @@ input:checked + .toggle-bg {
   margin-bottom: auto;
 }
 
-.my-3 {
-  margin-top: 0.75rem;
-  margin-bottom: 0.75rem;
+.my-52 {
+  margin-top: 13rem;
+  margin-bottom: 13rem;
 }
 
 .-mb-px {
@@ -1356,14 +1385,6 @@ input:checked + .toggle-bg {
 
 .mt-auto {
   margin-top: auto;
-}
-
-.mt-\[135\] {
-  margin-top: 135;
-}
-
-.box-border {
-  box-sizing: border-box;
 }
 
 .block {
@@ -1846,16 +1867,8 @@ input:checked + .toggle-bg {
   align-self: center;
 }
 
-.overflow-auto {
-  overflow: auto;
-}
-
 .overflow-hidden {
   overflow: hidden;
-}
-
-.overflow-scroll {
-  overflow: scroll;
 }
 
 .overflow-x-auto {
@@ -2320,10 +2333,6 @@ input:checked + .toggle-bg {
   padding-top: 1.5rem;
 }
 
-.pt-\[135\] {
-  padding-top: 135;
-}
-
 .text-left {
   text-align: left;
 }
@@ -2465,6 +2474,10 @@ input:checked + .toggle-bg {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.underline {
+  text-decoration-line: underline;
 }
 
 .line-through {
@@ -3260,3 +3273,4 @@ input:checked + .toggle-bg {
 :is(.dark .dark\:\[\&\>\*\]\:\!stroke-white>*) {
   stroke: #ffffff !important;
 }
+
