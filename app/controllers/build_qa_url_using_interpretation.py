@@ -1,23 +1,15 @@
-from flask_wtf import FlaskForm
 from flask import url_for
 
 from app import models as m
 
 
-# Using: {{ form_hidden_tag() }}
-def form_hidden_tag():
-    form = FlaskForm()
-    return form.hidden_tag()
-
-
-# Using: {{ build_qa_url(interpretation) }}
 def build_qa_url_using_interpretation(interpretation: m.Interpretation):
     section: m.Section = interpretation.section
     collection: m.Collection = section.collection
     sub_collection = None
-    if collection.parent and not collection.parent.is_root:
-        sub_collection: m.Collection = collection
+    if collection.is_leaf and collection.parent.is_root:
         collection: m.Collection = collection.parent
+        sub_collection: m.Collection = collection
     book: m.Book = section.version.book
 
     url = url_for(
