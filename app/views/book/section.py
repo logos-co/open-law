@@ -14,7 +14,6 @@ from app.controllers.delete_nested_book_entities import (
     delete_nested_section_entities,
 )
 from app import models as m, db, forms as f
-from app.controllers.tags import set_section_tags
 from app.logger import log
 from .bp import bp
 
@@ -116,10 +115,6 @@ def section_create(
         log(log.INFO, "Create section [%s]. Collection: [%s]", section, collection_id)
         section.save()
 
-        tags = form.tags.data
-        if tags:
-            set_section_tags(section, tags)
-
         flash("Success!", "success")
         return redirect(redirect_url)
     else:
@@ -161,10 +156,6 @@ def section_edit(
         label = form.label.data
         if label:
             section.label = label
-
-        tags = form.tags.data
-        if tags:
-            set_section_tags(section, tags)
 
         log(log.INFO, "Edit section [%s]", section.id)
         section.save()

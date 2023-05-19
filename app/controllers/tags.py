@@ -98,28 +98,3 @@ def set_interpretation_tags(interpretation: m.InterpretationTag, tags: str):
         log(log.INFO, "Create InterpretationTag: [%s]", interpretation_tag)
         interpretation_tag.save(False)
     db.session.commit()
-
-
-def set_section_tags(section: m.SectionTag, tags: str):
-    section_tags = m.SectionTag.query.filter_by(section_id=section.id).all()
-    for tag in section_tags:
-        db.session.delete(tag)
-    tags_names = [tag.title() for tag in tags.split(",") if len(tag)]
-
-    for tag_name in tags_names:
-        try:
-            tag = get_or_create_tag(tag_name)
-        except ValueError as e:
-            if str(e) == "Exceeded name length":
-                continue
-            log(
-                log.CRITICAL,
-                "Unexpected error [%s]",
-                str(e),
-            )
-            raise e
-
-        section_tag = m.SectionTag(tag_id=tag.id, section_id=section.id)
-        log(log.INFO, "Create SectionTag: [%s]", section_tag)
-        section_tag.save(False)
-    db.session.commit()

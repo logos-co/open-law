@@ -9,7 +9,6 @@ from app.logger import log
 class BaseSectionForm(FlaskForm):
     label = StringField("Label", [DataRequired(), Length(3, 256)])
     about = StringField("About")
-    tags = StringField("Tags")
 
 
 class CreateSectionForm(BaseSectionForm):
