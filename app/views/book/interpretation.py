@@ -3,6 +3,7 @@ from flask import (
     flash,
     redirect,
     url_for,
+    current_app,
 )
 from flask_login import login_required, current_user
 
@@ -121,8 +122,10 @@ def interpretation_create(
     )
 
     if form.validate_on_submit():
+        text = form.text.data
+
         interpretation: m.Interpretation = m.Interpretation(
-            text=form.text.data,
+            text=text,
             section_id=section_id,
             user_id=current_user.id,
         )
@@ -134,7 +137,7 @@ def interpretation_create(
         )
         interpretation.save()
 
-        tags = form.tags.data
+        tags = current_app.config["TAG_REGEX"].findall(text)
         if tags:
             set_interpretation_tags(interpretation, tags)
 
@@ -183,9 +186,10 @@ def interpretation_edit(
     )
 
     if form.validate_on_submit():
-        interpretation.text = form.text.data
+        text = form.text.data
+        interpretation.text = text
 
-        tags = form.tags.data
+        tags = current_app.config["TAG_REGEX"].findall(text)
         if tags:
             set_interpretation_tags(interpretation, tags)
 

@@ -5,7 +5,6 @@ from wtforms.validators import DataRequired
 
 class BaseInterpretationForm(FlaskForm):
     about = StringField("About")
-    tags = StringField("Tags")
     text = StringField("Text")
 
 

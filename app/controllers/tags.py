@@ -71,13 +71,13 @@ def set_comment_tags(comment: m.Comment, tags: str):
     db.session.commit()
 
 
-def set_interpretation_tags(interpretation: m.InterpretationTag, tags: str):
+def set_interpretation_tags(interpretation: m.InterpretationTag, tags: list[str]):
     interpretation_tags = m.InterpretationTag.query.filter_by(
         interpretation_id=interpretation.id
     ).all()
     for tag in interpretation_tags:
         db.session.delete(tag)
-    tags_names = [tag.title() for tag in tags.split(",") if len(tag)]
+    tags_names = [tag.lower().replace("[", "").replace("]", "") for tag in tags]
 
     for tag_name in tags_names:
         try:

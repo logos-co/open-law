@@ -73,7 +73,7 @@
                     <p>{{ interpretation.section.label }}</p>
                   </a>
                   <div class="dark:text-white h-30 ql-editor-readonly">
-                    <p>{{ interpretation.text|safe }}</p>
+                    <p>{{ display_tags(interpretation.text)|safe }}</p>
                   </div>
                 </div>
                 <div class="flex mt-auto align-center justify-between md:w-full">

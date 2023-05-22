@@ -68,9 +68,10 @@ def create_app(environment="development"):
     login_manager.anonymous_user = AnonymousUser
 
     # Jinja globals
-    from app.controllers.jinja_globals import form_hidden_tag
+    from app.controllers.jinja_globals import form_hidden_tag, display_tags
 
     app.jinja_env.globals["form_hidden_tag"] = form_hidden_tag
+    app.jinja_env.globals["display_tags"] = display_tags
 
     # Error handlers.
     @app.errorhandler(HTTPException)
