@@ -29,7 +29,9 @@ const options: DropdownOptions = {
   onShow: tooltip => {
     // this will close opened menu if you trigger another one
     if (currentElement) {
-      currentElement.hide();
+      if (tooltip !== currentElement) {
+        currentElement.hide();
+      }
       currentElement = tooltip;
     } else {
       currentElement = tooltip;
