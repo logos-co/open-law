@@ -1,80 +1,374 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
+{% block right_sidebar %}  
+{% endblock %}
 
-{% if book.owner.id == current_user.id %}
-
-<!-- show create collection btn on rightside bar -->
-{% set show_create_collection = True %}
-
-<!-- prettier-ignore -->
+{% if current_user.is_authenticated %}
 {% include 'book/add_collection_modal.html' %}
+{% include 'book/delete_collection_modal.html' %}
+{% include 'book/add_sub_collection_modal.html' %}
+{% include 'book/delete_sub_collection_modal.html' %}
+{% include 'book/add_section_modal.html' %}
+{% include 'book/delete_section_modal.html' %}
 {% endif %}
 
 
-{% block right_sidebar %}
-  {% include 'book/right_sidebar.html' %}
-{% endblock %}
-
-
 {% block content %}
-<div class="overflow-x-auto shadow-md sm:rounded-lg md:mr-64">
-  <!-- prettier-ignore -->
-  <div class="fixed z-40 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-    <!-- prettier-ignore -->
-    <h1 class="font-extrabold text-lg dark:text-white ml-4"> {{book.label}} </h1>
-    <!-- prettier-ignore -->
-    <div class="mb-1">
-    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
-      <li class="mr-2" role="presentation">
-        <button class="flex items-center space-x-2 p-4 border-b-2 rounded-t-lg" id="files-tab" data-tabs-target="#files" type="button" role="tab" aria-controls="files" aria-selected="false">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /> </svg>
-          <span>Files</span>
-        </button>
-      </li>
-      <li class="mr-2" role="presentation">
-        <button class="flex items-center space-x-2  p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="about-tab" data-tabs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="false">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /> </svg>
-          <span>About</span>
-        </button>
-      </li>
-    </ul>
-  </div>
-  </div>
-  <div id="myTabContent" class="overflow-y-auto mt-24">
-    <!-- prettier-ignore -->
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="files" role="tabpanel" aria-labelledby="files-tab">
-      <dl class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
+<div class="flex overflow-hidden">
+  <div
+    id="accordion-collapse"
+    data-accordion="open"
+    class="p-3 w-2/6 border-t border-r border-gray-200 dark:border-gray-700 overflow-y-scroll h-box">
+    <div class="flex justify-between">
+      <div class="flex dark:text-white">
+      <svg id="tabGoBackButton" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer"> <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /> </svg>
+      <h1 class="text-l font-extrabold dark:text-white ml-4 mb-3">
+        Table of contents
+      </h1>
+      </div>
+      <div class="flex text-white">
         <!-- prettier-ignore -->
-        {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
+        <a href="{{ url_for("book.settings", book_id=book.id) }}" type="button" class="ml-2" >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
+        </a>
+      </div>
+    </div>
+    <!-- prettier-ignore -->
+    {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
+    <div>
+      <div class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
+        <button class="bg-inherit" type="button" data-accordion-target="#accordion-collapse-body-{{loop.index}}" aria-expanded="true" aria-controls="accordion-collapse-body-{{loop.index}}">
         <!-- prettier-ignore -->
-        <a href="{{url_for('book.sub_collection_view',book_id=book.id,collection_id=collection.id)}}" >
-            <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-              <div class="flex flex-col pb-3 p-3 w-full">
-                <!-- prettier-ignore -->
-                <dt class="flex w-full truncate mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
-                  <p>{{ collection.label }}</p>
-                  <div class="flex ml-auto align-center justify-center space-x-3">
-                    <span class="space-x-0.5 flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor" class="w-4 h-4 inline-flex mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
-                      <p>55</p>
-                    </span>
-                    <span class="space-x-0.5 flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor" class="w-4 h-4 inline-flex mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
-                      <p>55</p>
-                    </span>
-                  </div>
-                </dt>
+        <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
+        </button>
+        <a  id="accordion-collapse-heading-{{loop.index}}" class=" text-black dark:text-white ">
+          <form id="rename-collection-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" method="post" class="mb-0">
+            {{ form_hidden_tag() }}
+            <input class=" bg-inherit border-none " value="{{collection.label}}" type="text" name="label" id="edit-collection-label-{{loop.index}}" placeholder="Collection label" required readonly/>
+            <button name="submit" type="submit"></button>
+          </form>
+        </a>
+        </div>
+    <svg id="dropdownCollectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
+    </div>
+    <div data="collection-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+        {% if current_user.is_authenticated %}
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+          <li>
+              <button type="button" data-modal-target="add-collection-modal" data-modal-toggle="add-collection-modal" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Collection</button>
+          </li>
+          {% if not collection.is_leaf %}
+          <li>
+              <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Subcollection</button>
+          </li>
+          {% endif %}
+          {% if collection.children|length ==0  or collection.children|length ==0 and collection.is_leaf %}
+          <li>
+              <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="_"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+          <li>
+              <button type="button" id="rename-collection-button-{{loop.index}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Collection</button>
+          </li>
+          <li>
+              <button type="button" id="callDeleteCollectionModal" data-modal-target="delete-collection-modal" data-modal-toggle="delete-collection-modal" data-collection-id="{{collection.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Collection</button>
+          </li>
+        </ul>
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+          <li>
+              <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Collection</button>
+          </li>
+        </ul>
+        {% else %}
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+          <li>
+              <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Connect you wallet to do this</button>
+          </li>
+        </ul>
+        {% endif %}
+    </div>
+    <!-- prettier-ignore -->
+    <div id="accordion-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{loop.index}}">
+      <div class="ml-6">
+        {% if not collection.is_leaf %}
+        <!-- if collection has sub_collection make for loop for it -->
+        <!-- Nested accordion -->
+        {% for sub_collection in collection.children if not sub_collection.is_deleted%}
+        <div id="accordion-nested-collapse" data-accordion="open">
+            <div class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
+              <button
+              class="bg-inherit"
+              type="button"
+              data-accordion-target="#accordion-nested-collapse-body-{{loop.index}}"
+              aria-expanded="true"
+              aria-controls="accordion-nested-collapse-body-{{loop.index}}">
+              <!-- prettier-ignore -->
+              <svg data-accordion-icon class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
+              </button>
+              <a  id="accordion-nested-collapse-heading-{{loop.index}}" class=" text-black dark:text-white ">
+                <form id="rename-sub-collection-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" method="post" class="mb-0">
+                  {{ form_hidden_tag() }}
+                  <input class=" bg-inherit border-none " value="{{sub_collection.label}}" type="text" name="label" id="edit-sub-collection-label-{{loop.index}}" placeholder="Sub collection label" required readonly/>
+                  <button name="submit" type="submit"></button>
+                </form>
+              </a>
+            </div>
+            <svg id="dropdownSubCollectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
+            <div data="sub-collection-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+              {% if current_user.is_authenticated %}
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
+                  </li>
+                </ul>
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button" id="rename-sub-collection-button-{{loop.index}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Sub Collection</button>
+                  </li>
+                  <li>
+                      <button type="button" id="callDeleteSubCollectionModal" data-modal-target="delete-sub-collection-modal" data-modal-toggle="delete-sub-collection-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Sub Collection</button>
+                  </li>
+                </ul>
+                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Sub Collection</button>
+                  </li>
+                </ul>
+                {% else %}
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Connect your wallet to do this</button>
+                  </li>
+                </ul>
+                {% endif %}
+            </div>
+          <!-- prettier-ignore -->
+          <div id="accordion-nested-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-nested-collapse-heading-{{loop.index}}">
+            <div class="ml-6">
+              <!-- here comes for loop for all section in this sub_collection-->
+              {% for section in sub_collection.active_sections %}
+              <div class="">
+              <button type="button" href="#section-{{section.label}}" id="section-heading-{{loop.index}}" class="text-gray-500 dark:text-gray-400">
+                <form id="rename-section-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" data-section-id="{{section.id}}" method="post">
+                  {{ form_hidden_tag() }}
+                <input class=" bg-inherit border-none underline" value="{{section.label}}" type="text" name="label" id="edit-section-label-{{loop.index}}" placeholder="Section label" required readonly/>
+                <button name="submit" type="submit"></button>
+              </form>
+              </button>
+              <svg id="dropdownSectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
+              <div data="section-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                {% if current_user.is_authenticated %}
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button" id="rename-section-button-{{loop.index}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Section</button>
+                  </li>
+                  <li>
+                      <button type="button" data-modal-target="delete-section-modal" data-modal-toggle="delete-section-modal" id="callDeleteSectionModal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" data-section-id="{{section.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Section</button>
+                  </li>
+                </ul>
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Section</button>
+                  </li>
+                </ul>
+                {% else %}
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <li>
+                      <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Connect your wallet to do this</button>
+                  </li>
+                </ul>
+                {% endif %}
               </div>
-            </dl>
-          </a >
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
         {% endfor %}
-      </dl>
+        <!-- End: Nested accordion -->
+        {% else %}
+        <!-- if collection doesn't have sub_collection -->
+        <div class="ml-6">
+          <!-- here comes for loop for all section in this collection-->
+          {% for section in collection.active_sections %}
+          <button type="button" href="#section-{{section.label}}" id="section-heading-{{loop.index}}" class="text-gray-500 dark:text-gray-400">
+            <form id="rename-section-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="_" data-section-id="{{section.id}}" method="post">
+              {{ form_hidden_tag() }}
+            <input class=" bg-inherit border-none underline" value="{{section.label}}" type="text" name="label" id="edit-section-label-{{loop.index}}" placeholder="Section label" required readonly/>
+            <button name="submit" type="submit"></button>
+          </form>
+          </button>
+          <svg id="dropdownSectionContextButton{{loop.index}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
+          <div data="section-context-menu-{{loop.index}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+            {% if current_user.is_authenticated %}
+            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+              <li>
+                  <button type="button" id="rename-section-button-{{loop.index}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Section</button>
+              </li>
+              <li>
+                  <button type="button" data-modal-target="delete-collection-modal" data-modal-toggle="delete-collection-modal" id="callDeleteSectionModal" data-collection-id="{{collection.id}}" data-sub-collection-id="_" data-section-id="{{section.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Section</button>
+              </li>
+            </ul>
+            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+              <li>
+                  <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Section</button>
+              </li>
+            </ul>
+            {% else %}
+            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+              <li>
+                  <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Connect your wallet to do this</button>
+              </li>
+            </ul>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
     </div>
-    <!-- prettier-ignore -->
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="about" role="tabpanel" aria-labelledby="about-tab">
-      <p class="text-sm text-gray-500 dark:text-gray-400"> This is about {{book.label}} </p>
-    </div>
+    {% endfor %}
   </div>
+  <div class="p-3 px-6 w-4/6 dark:text-white overflow-y-scroll h-box ">
+    <p class="text-xs mb-3">Created by <a href="{{url_for('user.profile',user_id=book.owner.id)}}" class=" text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">{{book.owner.username}}</a> on {{book.created_at.strftime('%B %d, %Y')}}. Last updated on {{book.created_at.strftime('%B %d, %Y')}}</p>
+    <div class="flex justify-between item-center">
+      <h1 class="hidden md:inline font-extrabold text-lg dark:text-white">{{book.label}}</h1>
+      <div class="ml-auto flex">
+        <div class="space-x-0.5  mr-3">
+          <a href={{ url_for('book.statistic_view', book_id=book.id ) }} class="flex items-center">
+          <svg class="w-4 h-4 inline-flex mr-1 {% if book.current_user_has_star %}fill-yellow-300{% endif %}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /> </svg>
+          {{ book.stars|length }}</a>
+        </div>
+        <div class="space-x-0.5  mr-3">
+          <a href={{ url_for('book.statistic_view', book_id=book.id,active_tab='contributors' ) }} class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor" class="w-4 h-4 mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /> </svg>
+          {{ book.contributors|length }}</a>
+        </div>
+        <div class="space-x-0.5  mr-3">
+          <a href={{ url_for('book.statistic_view', book_id=book.id,active_tab='forks' ) }} class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor" class="w-4 h-4 mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /> </svg>
+          {{ book.versions|length }}</a>
+        </div>
+      </div>
+    </div>
+    <p class=" text-sm mb-3">{% if book.about==None %}About text{% else %}{{book.about}}{% endif %}</p>
+    {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
+    <p class="my-3 underline">#{{collection.label}}</p>
+    {% if not collection.is_leaf and not collection.children %}
+    <p class="ml-3 my-3 italic text-sm">Collection is empty</p> 
+    {% endif %}
+    {% if not collection.is_leaf %}
+      <!-- if collection has sub_collection make for loop for it -->
+      {% for sub_collection in collection.children if not sub_collection.is_deleted%}
+      <p class="my-3">##{{sub_collection.label}}</p>
+        {% if not sub_collection.active_sections %}
+        <p class="ml-3 my-3 italic text-sm">This sub collection is empty</p>
+        {% endif %}
+        {% for section in sub_collection.active_sections %}
+        <div class="bg-inherit max-w-full text-gray-900 dark:text-white mt-1">
+            <div class="flex flex-col pb-3 w-full">
+              <div class="flex w-full mb-1 dark:text-gray-100 flex-col">
+                <!-- prettier-ignore -->
+                <a  href="{{url_for('book.interpretation_view',book_id=book.id,collection_id=collection.id,sub_collection_id=sub_collection.id,section_id=section.id)}}">
+                <p id="section-{{section.label}}" class="truncate my-3">{{ section.label }}</p></a>
+                {% if not section.active_interpretations %}
+                <p class="ml-3 my-3 italic text-sm">This section is empty</p>
+                {% else %}
+                <div class="ql-snow truncate md:max-w-xl">
+                  <div class="dark:text-white h-30 ql-editor-readonly !px-0">
+                    <p>{{ section.approved_interpretation.text|safe }}</p>
+                  </div>
+                </div>
+                <div class="flex w-full ml-auto align-center justify-between space-x-3 border-t py-3"> 
+                  <span class="text-sm">Interpretation by <a href="{{url_for('user.profile',user_id=section.approved_interpretation.user.id)}}" class=" text-blue-500 {% if section.approved_interpretation.user.is_deleted %}line-through{% endif %}">{{section.approved_interpretation.user.username}}</a> on  {{section.approved_interpretation.created_at.strftime('%B %d, %Y')}}</span>
+                  <span class="space-x-0.5 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+                  </span>
+                </div>
+                <!--Comments-->
+                {% if not section.approved_comments %}
+                <p>No comments for current section</p>
+                {% else %}
+                <div id="accordion-comments-collapse-{{loop.index}}" data-accordion="collapse">
+                  <h2 id="accordion-comments-collapse-{{loop.index}}-heading-{{loop.index}}">
+                    <button type="button" class="flex items-center bg-inherit justify-start w-full p-5 font-medium text-left" data-accordion-target="#accordion-comments-collapse-{{loop.index}}-body-{{loop.index}}" aria-expanded="false" aria-controls="accordion-collapse-body-1">
+                      <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                      <span><i>Comments:</i></span>
+                    </button>
+                  </h2>
+                  <div id="accordion-comments-collapse-{{loop.index}}-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{loop.index}}">
+                    {% for comment in section.approved_comments %}
+                    <div class="p-5 ml-6">
+                      <p class="text-sm mb-3">{{comment.text}}</p>
+                      <div class="flex w-full ml-auto align-center justify-between space-x-3 border-t py-3">
+                        <span class="text-sm">Created by <a href="{{url_for('user.profile',user_id=comment.user.id)}}" class=" text-blue-500 {% if comment.user.is_deleted %}line-through{% endif %}">{{comment.user.username}}</a> on {{comment.created_at.strftime('%B %d, %Y')}}</span>
+                        <span class="space-x-0.5 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+                        </span>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    {% else %}
+      {% for section in collection.active_sections %}
+      <a  href="{{url_for('book.interpretation_view',book_id=book.id,collection_id=collection.id,section_id=section.id)}}">
+      <p id="section-{{section.label}}" class="truncate my-3">{{ section.label }}</p></a>
+      {% if not section.active_interpretations %}
+      <p class="ml-3 my-3 italic text-sm">This section is empty</p>
+      {% else %}
+      <div class="ql-snow truncate md:max-w-xl mb-3">
+        <div class="dark:text-white h-30 ql-editor-readonly !px-0">
+          <p>{{ section.approved_interpretation.text|safe }}</p>
+        </div>
+      </div>
+      <div class="flex w-full ml-auto align-center justify-between space-x-3 border-t py-3">
+        <span class="text-sm">Interpretation by <a href="{{url_for('user.profile',user_id=section.approved_interpretation.user.id)}}" class=" text-blue-500 {% if section.approved_interpretation.user.is_deleted %}line-through{% endif %}">{{section.approved_interpretation.user.username}}</a> on  {{section.approved_interpretation.created_at.strftime('%B %d, %Y')}}</span>
+        <span class="space-x-0.5 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+        </span>
+      </div>
+          <!--Comments-->
+          {% if not section.approved_comments %}
+          <div class="mb-3">
+          <p>No comments for current section</p>
+          </div>
+          {% else %}
+          <div id="accordion-comments-collapse-nest{{loop.inde}}" data-accordion="collapse" class="mb-3">
+            <h2 id="accordion-comments-collapse-nest{{loop.inde}}-heading-{{loop.index}}">
+              <button type="button" class="flex items-center bg-inherit justify-start w-full p-5 font-medium text-left" data-accordion-target="#accordion-comments-collapse-nest{{loop.inde}}-body-{{loop.index}}" aria-expanded="false" aria-controls="accordion-collapse-body-1">
+                <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                <span><i>Comments:</i></span>
+              </button>
+            </h2>
+            <div id="accordion-comments-collapse-nest{{loop.inde}}-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-1">
+              {% for comment in section.approved_comments %}
+              <div class="p-5 ml-6">
+                <p class="text-sm mb-3">{{comment.text}}</p>
+                <div class="flex w-full ml-auto align-center justify-between space-x-3 border-t py-3">
+                  <span class="text-sm">Created by <a href="{{url_for('user.profile',user_id=comment.user.id)}}" class=" text-blue-500 {% if comment.user.is_deleted %}line-through{% endif %}">{{comment.user.username}}</a> on {{comment.created_at.strftime('%B %d, %Y')}}</span>
+                  <span class="space-x-0.5 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+                  </span>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
+      {% endfor %}
+    {% endif %}
+    {% endfor %}
 </div>
 <!-- prettier-ignore -->
 {% endblock %}

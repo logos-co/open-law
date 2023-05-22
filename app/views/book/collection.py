@@ -124,9 +124,7 @@ def collection_create(book_id: int, collection_id: int | None = None):
 
         flash("Success!", "success")
         if collection_id:
-            redirect_url = url_for(
-                "book.sub_collection_view", book_id=book_id, collection_id=collection_id
-            )
+            redirect_url = url_for("book.collection_view", book_id=book_id)
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Collection/Subcollection create errors: [%s]", form.errors)
@@ -153,9 +151,8 @@ def collection_edit(
 
     form = f.EditCollectionForm()
     redirect_url = url_for(
-        "book.sub_collection_view",
+        "book.collection_view",
         book_id=book_id,
-        collection_id=collection_id,
     )
 
     if form.validate_on_submit():
@@ -194,13 +191,6 @@ def collection_edit(
         collection.save()
 
         flash("Success!", "success")
-        if sub_collection_id:
-            redirect_url = url_for(
-                "book.section_view",
-                book_id=book_id,
-                collection_id=collection_id,
-                sub_collection_id=sub_collection_id,
-            )
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Collection edit errors: [%s]", form.errors)

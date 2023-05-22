@@ -12,11 +12,16 @@ class BaseSectionForm(FlaskForm):
 
 class CreateSectionForm(BaseSectionForm):
     collection_id = StringField("Collection ID", [DataRequired()])
+    sub_collection_id = StringField("Sub collection ID")
     submit = SubmitField("Create")
 
     def validate_collection_id(self, field):
         collection_id = field.data
         collection: m.Collection = db.session.get(m.Collection, collection_id)
+        if self.sub_collection_id.data and self.sub_collection_id.data != "_":
+            collection: m.Collection = db.session.get(
+                m.Collection, self.sub_collection_id.data
+            )
 
         if not collection or collection.sub_collections:
             log(log.WARNING, "Collection [%s] it not leaf", collection)

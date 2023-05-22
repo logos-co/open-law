@@ -1,4 +1,26 @@
 @tailwind base;
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: inherit gray ;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+    background: inherit;
+    border-radius: 1px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 14px;
+    border: 1px solid inherit;
+}
+
 @tailwind components;
 @tailwind utilities;
 
@@ -12,3 +34,7 @@
 .w-box{
     width: calc(100vw - 255px);
 }
+.mt-135{
+    margin-top:135px;
+}
+
