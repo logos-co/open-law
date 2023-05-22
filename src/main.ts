@@ -21,6 +21,7 @@ import {initQuillReadOnly} from './initQuillReadOnly';
 import {initGoBack} from './tabGoBackBtn';
 import {scroll} from './scroll';
 import {copyLink} from './copyLink';
+import {slashSearch} from './slashSearch';
 
 initQuillReadOnly();
 initBooks();
@@ -45,3 +46,4 @@ renameSubCollection();
 initGoBack();
 scroll();
 copyLink();
+slashSearch();
