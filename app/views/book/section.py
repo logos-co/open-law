@@ -94,10 +94,8 @@ def section_create(
     redirect_url = url_for("book.collection_view", book_id=book_id)
     if collection_id:
         redirect_url = url_for(
-            "book.section_view",
+            "book.collection_view",
             book_id=book_id,
-            collection_id=collection_id,
-            sub_collection_id=sub_collection_id,
         )
 
     form = f.CreateSectionForm()
