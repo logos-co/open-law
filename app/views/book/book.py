@@ -6,6 +6,7 @@ from flask import (
     request,
 )
 from flask_login import login_required, current_user
+from sqlalchemy import and_, or_
 
 from app.controllers import (
     create_pagination,
@@ -37,25 +38,20 @@ def get_all():
     )
 
 
-@bp.route("/", methods=["GET"])
+@bp.route("/my_library", methods=["GET"])
 def my_library():
     if current_user.is_authenticated:
-        q = request.args.get("q", type=str, default=None)
         books: m.Book = m.Book.query.order_by(m.Book.id)
         books = books.filter_by(user_id=current_user.id, is_deleted=False)
-        if q:
-            books = books.filter(m.Book.label.like(f"{q}"))
-
         pagination = create_pagination(total=books.count())
 
         return render_template(
-            "book/index.html",
+            "book/my_library.html",
             books=books.paginate(page=pagination.page, per_page=pagination.per_page),
             page=pagination,
-            search_query=q,
         )
     return render_template(
-        "book/index.html",
+        "book/my_library.html",
         books=[],
     )
 
@@ -137,3 +133,66 @@ def statistic_view(book_id: int):
         flash("Book not found", "danger")
         return redirect(url_for("book.my_library"))
     return render_template("book/stat.html", book=book)
+
+
+@bp.route("/favorite_books", methods=["GET"])
+def favorite_books():
+    if current_user.is_authenticated:
+        books = (
+            db.session.query(
+                m.Book,
+            )
+            .filter(
+                and_(
+                    m.Book.id == m.BookStar.book_id,
+                    m.BookStar.user_id == current_user.id,
+                    m.Book.is_deleted.is_(False),
+                )
+            )
+            .order_by(m.Book.created_at.desc())
+        )
+
+        books = books.filter_by(is_deleted=False)
+        pagination = create_pagination(total=books.count())
+
+        return render_template(
+            "book/favorite_books.html",
+            books=books.paginate(page=pagination.page, per_page=pagination.per_page),
+            page=pagination,
+        )
+    return render_template("book/favorite_books.html", books=[])
+
+
+@bp.route("/my_contributions", methods=["GET"])
+def my_contributions():
+    interpretations = (
+        db.session.query(
+            m.Interpretation,
+        )
+        .filter(
+            or_(
+                and_(
+                    m.Interpretation.id == m.Comment.interpretation_id,
+                    m.Comment.user_id == current_user.id,
+                    m.Comment.is_deleted.is_(False),
+                    m.Interpretation.is_deleted.is_(False),
+                ),
+                and_(
+                    m.Interpretation.user_id == current_user.id,
+                    m.Interpretation.is_deleted.is_(False),
+                ),
+            )
+        )
+        .group_by(m.Interpretation.id)
+        .order_by(m.Interpretation.created_at.desc())
+    )
+
+    pagination = create_pagination(total=interpretations.count())
+
+    return render_template(
+        "book/my_contributions.html",
+        interpretations=interpretations.paginate(
+            page=pagination.page, per_page=pagination.per_page
+        ),
+        page=pagination,
+    )
