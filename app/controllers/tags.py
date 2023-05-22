@@ -46,11 +46,11 @@ def set_book_tags(book: m.Book, tags: str):
     db.session.commit()
 
 
-def set_comment_tags(comment: m.Comment, tags: str):
+def set_comment_tags(comment: m.Comment, tags: list[str]):
     comment_tags = m.CommentTags.query.filter_by(comment_id=comment.id).all()
     for tag in comment_tags:
         db.session.delete(tag)
-    tags_names = [tag.title() for tag in tags.split(",") if len(tag)]
+    tags_names = [tag.lower().replace("[", "").replace("]", "") for tag in tags]
 
     for tag_name in tags_names:
         try:

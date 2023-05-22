@@ -87,24 +87,25 @@ def test_create_tags_on_comment_create_and_edit(client: FlaskClient):
     section = db.session.get(m.Section, 1)
     interpretation = db.session.get(m.Interpretation, 1)
 
-    tags = "tag1,tag2,tag3"
+    tags = "[tag1] [tag2] [tag3]"
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{section.id}/{interpretation.id}/create_comment",
         data=dict(
             section_id=section.id,
-            text="some text",
+            text="some text" + tags,
             interpretation_id=interpretation.id,
-            tags=tags,
         ),
         follow_redirects=True,
     )
     assert response.status_code == 200
 
-    comment: m.Comment = m.Comment.query.filter_by(text="some text").first()
+    comment: m.Comment = m.Comment.query.filter_by(text="some text" + tags).first()
     assert comment
     assert comment.tags
 
-    splitted_tags = [tag.title() for tag in tags.split(",")]
+    splitted_tags = [
+        tag.lower().replace("[", "").replace("]", "") for tag in tags.split()
+    ]
     assert len(comment.tags) == 3
     for tag in comment.tags:
         tag: m.Tag
@@ -113,19 +114,21 @@ def test_create_tags_on_comment_create_and_edit(client: FlaskClient):
     tags_from_db: m.Tag = m.Tag.query.all()
     assert len(tags_from_db) == 3
 
-    tags = "tag1,tag5,tag7"
+    tags = "[tag1] [tag5] [tag7]"
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{section.id}/{interpretation.id}/comment_edit",
-        data=dict(text=comment.text, tags=tags, comment_id=comment.id),
+        data=dict(text="some text" + tags, comment_id=comment.id),
         follow_redirects=True,
     )
     assert response.status_code == 200
 
-    comment: m.Comment = m.Comment.query.filter_by(text="some text").first()
+    comment: m.Comment = m.Comment.query.filter_by(text="some text" + tags).first()
     assert comment
     assert comment.tags
 
-    splitted_tags = [tag.title() for tag in tags.split(",")]
+    splitted_tags = [
+        tag.lower().replace("[", "").replace("]", "") for tag in tags.split()
+    ]
     assert len(comment.tags) == 3
     for tag in comment.tags:
         tag: m.Tag
@@ -143,23 +146,25 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
     collection = db.session.get(m.Collection, 1)
     section = db.session.get(m.Section, 1)
 
-    tags = "tag1,tag2,tag3"
+    tags = "[tag1] [tag2] [tag3]"
     text_1 = "Test Interpretation #1 Text"
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{section.id}/create_interpretation",
-        data=dict(section_id=section.id, text=text_1, tags=tags),
+        data=dict(section_id=section.id, text=text_1 + tags),
         follow_redirects=True,
     )
 
     assert response.status_code == 200
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        text=text_1, section_id=section.id
+        text=text_1 + tags, section_id=section.id
     ).first()
     assert interpretation
     assert interpretation.tags
 
-    splitted_tags = [tag.title() for tag in tags.split(",")]
+    splitted_tags = [
+        tag.lower().replace("[", "").replace("]", "") for tag in tags.split()
+    ]
     assert len(interpretation.tags) == 3
     for tag in interpretation.tags:
         tag: m.Tag
@@ -168,20 +173,22 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
     tags_from_db: m.Tag = m.Tag.query.all()
     assert len(tags_from_db) == 3
 
-    tags = "tag-4,tag5,tag3"
+    tags = "[tag-4] [tag5] [tag3]"
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/{section.id}/{interpretation.id}/edit_interpretation",
-        data=dict(interpretation_id=interpretation.id, text=text_1, tags=tags),
+        data=dict(interpretation_id=interpretation.id, text=text_1 + tags),
         follow_redirects=True,
     )
 
     assert response.status_code == 200
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        text=text_1, section_id=section.id
+        text=text_1 + tags, section_id=section.id
     ).first()
     assert interpretation
 
-    splitted_tags = [tag.title() for tag in tags.split(",")]
+    splitted_tags = [
+        tag.lower().replace("[", "").replace("]", "") for tag in tags.split()
+    ]
     assert len(interpretation.tags) == 3
     for tag in interpretation.tags:
         tag: m.Tag

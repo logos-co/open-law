@@ -1,8 +1,4 @@
-from flask import (
-    flash,
-    redirect,
-    url_for,
-)
+from flask import flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
 
 from app.controllers import (
@@ -87,8 +83,9 @@ def create_comment(
     form = f.CreateCommentForm()
 
     if form.validate_on_submit():
+        text = form.text.data
         comment: m.Comment = m.Comment(
-            text=form.text.data,
+            text=text,
             user_id=current_user.id,
             interpretation_id=interpretation_id,
         )
@@ -103,9 +100,11 @@ def create_comment(
             section,
         )
         comment.save()
-        tags = form.tags.data
+
+        tags = current_app.config["TAG_REGEX"].findall(text)
         if tags:
             set_comment_tags(comment, tags)
+
         flash("Success!", "success")
         return redirect(redirect_url)
     else:
@@ -191,15 +190,17 @@ def comment_edit(
     form = f.EditCommentForm()
 
     if form.validate_on_submit():
+        text = form.text.data
         comment_id = form.comment_id.data
         comment: m.Comment = db.session.get(m.Comment, comment_id)
-        comment.text = form.text.data
+        comment.text = text
         comment.edited = True
         log(log.INFO, "Edit comment [%s]", comment)
 
-        tags = form.tags.data
+        tags = current_app.config["TAG_REGEX"].findall(text)
         if tags:
             set_comment_tags(comment, tags)
+
         comment.save()
 
         flash("Success!", "success")
