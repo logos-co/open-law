@@ -33,6 +33,24 @@ def approve_interpretation(interpretation_id: int):
         )
         return jsonify({"message": "You dont have permission"}), 404
 
+    already_approved_interpretations = (
+        m.Interpretation.query.filter_by(
+            approved=True, section_id=interpretation.section_id
+        )
+        .filter(m.Interpretation.id != interpretation.id)
+        .all()
+    )
+    for approved_interpretation in already_approved_interpretations:
+        approved_interpretation: m.Interpretation
+        approved_interpretation.approved = False
+        log(
+            log.INFO,
+            "User [%s] revoked the approval of the interpretation: [%s]",
+            current_user,
+            interpretation,
+        )
+        approved_interpretation.save(False)
+
     interpretation.approved = not interpretation.approved
     log(
         log.INFO,

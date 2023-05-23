@@ -19,7 +19,10 @@ class Collection(BaseModel):
     # Relationships
     version = db.relationship("BookVersion")
     children = db.relationship(
-        "Collection", backref=db.backref("parent", remote_side=[id]), viewonly=True
+        "Collection",
+        backref=db.backref("parent", remote_side=[id]),
+        viewonly=True,
+        order_by="asc(Collection.id)",
     )
     sections = db.relationship("Section")
 

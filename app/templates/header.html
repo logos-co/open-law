@@ -130,16 +130,16 @@
               <span class="text-center md:text-left">My Library</span>
             </a>
           </li>
-          <li class="my-auto">
+          <li class="mx-2 {% if selected_tab == 'my_contributions' %} bg-slate-300 dark:bg-slate-700 rounded-lg {% endif %}">
             <a
-              href="#"
+              href="{{url_for('book.my_contributions')}}"
               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
               <span class="text-center md:text-left">My Contributions</span>
             </a>
           </li>
-          <li>
+          <li class="mx-2 {% if selected_tab == 'favorite_books' %} bg-slate-300 dark:bg-slate-700 rounded-lg {% endif %}">
             <a
-              href="#"
+              href="{{ url_for('book.favorite_books')}}"
               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
               <span class="text-center md:text-left">Favorite Books</span>
             </a>

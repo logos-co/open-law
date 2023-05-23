@@ -84,7 +84,7 @@ class Section(BaseModel):
     @property
     def approved_interpretation(self):
         interpretation = Interpretation.query.filter_by(
-            approved=True, section_id=self.id
+            approved=True, section_id=self.id, is_deleted=False
         ).first()
 
         if interpretation:
@@ -96,7 +96,9 @@ class Section(BaseModel):
                 Interpretation, func.count(Interpretation.votes).label("total_votes")
             )
             .join(InterpretationVote)
-            .filter(Interpretation.section_id == self.id)
+            .filter(
+                Interpretation.section_id == self.id, Interpretation.is_deleted is False
+            )
             .group_by(Interpretation.id)
             .order_by(text("total_votes DESC"))
         ).first()
@@ -105,7 +107,7 @@ class Section(BaseModel):
 
         # oldest
         interpretation = (
-            Interpretation.query.filter_by(section_id=self.id)
+            Interpretation.query.filter_by(section_id=self.id, is_deleted=False)
             .order_by(Interpretation.created_at)
             .first()
         )

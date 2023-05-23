@@ -82,12 +82,15 @@
                      <a href="{{url_for('user.profile',user_id=interpretation.user.id)}}" class=" text-blue-500 {% if interpretation.user.is_deleted %}line-through{% endif %}">{{interpretation.user.username}}</a> on {{interpretation.created_at.strftime('%B %d, %Y')}}
                   </div>
                   <div class="flex ml-auto justify-between w-24">
-                    <span class="space-x-0.5 flex items-center">
+                    <button data-tooltip-target="tooltip-click" data-tooltip-trigger="click" id="copyLinkButton" type="button" class="hover:text-white focus:ring-2 rounded-full font-medium text-sm p-2.5 text-center inline-flex items-center dark:hover:text-white" data-link="{{ build_qa_url(interpretation) }}">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
-                    </span>
+                    </button>
+                    <div id="tooltip-click" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"> Link copied! <div class="tooltip-arrow" data-popper-arrow></div> </div>
                     <div class="space-x-0.5 flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /> </svg>
-                      <p>{{interpretation.active_comments | length}}</p>
+                      <a class="!cursor-pointer text-no-underline flex items-center" href="{{ build_qa_url(interpretation) }}" >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /> </svg>
+                        <p>{{interpretation.active_comments | length}}</p>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -102,7 +105,7 @@
  {% for book in books if not book.is_deleted %}
   <!-- prettier-ignore -->
   <dl class=" bg-white dark:bg-gray-900 max-w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-      <dt class="mb-2"><a class="flex flex-col pb-4" href="{{url_for('book.collection_view',book_id=book.id)}}">{{book.owner.username}}/{{book.label}}</a></dt>
+      <dt class="mb-2"><a class="flex flex-col pb-4" href="{{url_for('book.collection_view',book_id=book.id)}}">{{book.label}}</a></dt>
       <dd class="flex flex-col md:flex-row text-lg font-semibold text-gray-500 md:text-lg dark:text-gray-400">
         {% if book.versions %}
         <p> Last updated by  <a href="{{url_for('user.profile',user_id=book.owner.id)}}" class=" text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">{{book.owner.username}}</a> on {{book.versions[-1].updated_at.strftime('%B %d, %Y')}} </p>
