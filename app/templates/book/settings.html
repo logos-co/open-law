@@ -2,6 +2,7 @@
 {% extends 'base.html' %}
 {% include 'book/add_contributor_modal.html' %}
 {% include 'book/delete_book_modal.html' %}
+{% include 'book/access_level_modal.html' %}
 
 {% block content %}
 <!-- Hide right_sidebar -->
@@ -108,7 +109,7 @@
                 </form>
               </td>
               <td class="px-4 py-4 flex justify-center">
-                <button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                <button type="button" data-book-id="{{book.id}}" data-user-id="{{contributor.user.id}}" data-modal-target="access-level-modal" data-modal-toggle="access-level-modal" class="edit-permissions-btn text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
                   Edit
                 </button>
               </td>

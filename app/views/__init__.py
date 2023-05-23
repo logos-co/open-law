@@ -8,3 +8,4 @@ from .section import bp as section_blueprint
 from .vote import bp as vote_blueprint
 from .approve import bp as approve_blueprint
 from .star import bp as star_blueprint
+from .permission import bp as permissions_blueprint

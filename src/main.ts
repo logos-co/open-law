@@ -20,6 +20,8 @@ import {renameSubCollection} from './renameSubCollection';
 import {initQuillReadOnly} from './initQuillReadOnly';
 import {initGoBack} from './tabGoBackBtn';
 import {scroll} from './scroll';
+import {initCheckBoxTree} from './checkBoxTree';
+import {initPermissions} from './permissions';
 
 initQuillReadOnly();
 initBooks();
@@ -43,3 +45,5 @@ deleteSubCollection();
 renameSubCollection();
 initGoBack();
 scroll();
+initCheckBoxTree();
+initPermissions();
