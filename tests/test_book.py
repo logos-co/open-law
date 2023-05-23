@@ -1,5 +1,5 @@
 # flake8: noqa F501
-from flask import current_app as Response
+from flask import current_app as Response, url_for
 from flask.testing import FlaskClient, FlaskCliRunner
 
 from app import models as m, db
@@ -1017,7 +1017,7 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
     comment_text = "Some comment text"
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/{interpretation.id}/preview/create_comment",
+        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/{interpretation.id}/create_comment",
         data=dict(
             section_id=section_in_subcollection.id,
             text=comment_text,

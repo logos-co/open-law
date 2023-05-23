@@ -2,6 +2,7 @@ const quillValueToInput = (quillElementId: string): undefined => {
   const inputElement: HTMLInputElement = document.querySelector(
     `#${quillElementId}-input`,
   );
+
   if (!inputElement) {
     return;
   }

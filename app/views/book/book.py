@@ -12,6 +12,9 @@ from app.controllers import (
     create_pagination,
     register_book_verify_route,
 )
+from app.controllers.tags import (
+    set_book_tags,
+)
 from app.controllers.delete_nested_book_entities import (
     delete_nested_book_entities,
 )
@@ -70,6 +73,9 @@ def create():
         m.Collection(
             label="Root Collection", version_id=version.id, is_root=True
         ).save()
+        tags = form.tags.data
+        if tags:
+            set_book_tags(book, tags)
 
         flash("Book added!", "success")
         return redirect(url_for("book.my_library"))
@@ -91,6 +97,9 @@ def edit(book_id: int):
         book: m.Book = db.session.get(m.Book, book_id)
         label = form.label.data
         about = form.about.data
+        tags = form.tags.data
+        if tags:
+            set_book_tags(book, tags)
 
         book.label = label
         book.about = about

@@ -8,10 +8,12 @@
       {% else %}
         action="{{ url_for('book.interpretation_edit', book_id=book.id, collection_id=collection.id, section_id=section.id, interpretation_id=interpretation.id) }}"
       {% endif %}
-      method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+      method="post"
+      class="prevent-submit-on-enter relative bg-white rounded-lg shadow dark:bg-gray-700"
+    >
       {{ form_hidden_tag() }}
       <input type="hidden" name="interpretation_id" id="interpretation_id" value="{{interpretation.id}}" />
-      <input type="hidden" name="text" id="interpretation-text-input" value={{interpretation.text}} />
+      <input type="hidden" name="text" id="interpretation-text-input" value="{{interpretation.text}}" />
 
       <!-- Modal header -->
       <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -22,7 +24,7 @@
       <div class="p-5">
         <div class="w-full max-w-6xl mx-auto rounded-xl bg-gray-50 dark:bg-gray-600 shadow-lg text-white-900">
           <div class="overflow-hidden rounded-md bg-gray-50 [&>*]:dark:bg-gray-600 text-black [&>*]:!border-none [&>*]:!stroke-black dark:text-white dark:[&>*]:!stroke-white">
-            <div id="interpretation-text" class="quill-editor dark:text-white h-80">
+            <div id="interpretation-text" class="quill-editor dark:text-white h-40">
               {{ interpretation.text|safe }}
             </div>
           </div>

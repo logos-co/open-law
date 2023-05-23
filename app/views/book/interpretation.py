@@ -3,6 +3,7 @@ from flask import (
     flash,
     redirect,
     url_for,
+    current_app,
 )
 from flask_login import login_required, current_user
 
@@ -11,6 +12,7 @@ from app.controllers.delete_nested_book_entities import (
     delete_nested_interpretation_entities,
 )
 from app import models as m, db, forms as f
+from app.controllers.tags import set_interpretation_tags
 from app.logger import log
 from .bp import bp
 
@@ -117,9 +119,11 @@ def interpretation_create(
     )
 
     if form.validate_on_submit():
+        text = form.text.data
+
         interpretation: m.Interpretation = m.Interpretation(
-            text=form.text.data,
-            plain_text=clean_html(form.text.data),
+            plain_text=clean_html(text),
+            text=text,
             section_id=section_id,
             user_id=current_user.id,
         )
@@ -130,6 +134,10 @@ def interpretation_create(
             section,
         )
         interpretation.save()
+
+        tags = current_app.config["TAG_REGEX"].findall(text)
+        if tags:
+            set_interpretation_tags(interpretation, tags)
 
         flash("Success!", "success")
         return redirect(redirect_url)
@@ -176,8 +184,13 @@ def interpretation_edit(
     )
 
     if form.validate_on_submit():
-        interpretation.text = form.text.data
-        interpretation.plain_text = clean_html(form.text.data)
+        text = form.text.data
+        interpretation.plain_text = clean_html(text)
+        interpretation.text = text
+
+        tags = current_app.config["TAG_REGEX"].findall(text)
+        if tags:
+            set_interpretation_tags(interpretation, tags)
 
         log(log.INFO, "Edit interpretation [%s]", interpretation.id)
         interpretation.save()
