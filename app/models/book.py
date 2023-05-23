@@ -18,7 +18,12 @@ class Book(BaseModel):
     owner = db.relationship("User", viewonly=True)
     stars = db.relationship("User", secondary="books_stars", back_populates="stars")
     contributors = db.relationship("BookContributor")
-    versions = db.relationship("BookVersion", order_by="asc(BookVersion.id)")
+    versions = db.relationship("BookVersion")
+    tags = db.relationship(
+        "Tag",
+        secondary="book_tags",
+        back_populates="books",
+    )
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"

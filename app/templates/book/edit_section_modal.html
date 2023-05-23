@@ -8,7 +8,9 @@
         {% else %}
         action="{{ url_for('book.section_edit', book_id=book.id, collection_id=collection.id, section_id=section.id) }}"
       {% endif %}
-      method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+      method="post"
+      class="relative bg-white rounded-lg shadow dark:bg-gray-700"
+    >
       {{ form_hidden_tag() }}
       <input type="hidden" name="section_id" id="section_id" value="{{section.id}}" />
 
@@ -23,6 +25,15 @@
           <div class="col-span-6 sm:col-span-3">
             <label for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >Label</label >
             <input value="{{section.label}}" type="text" name="label" id="label" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Collection label" required />
+          </div>
+        </div>
+      </div>
+      <div class="p-6 pt-0 space-y-6">
+        <div class="w-full max-w-6xl mx-auto rounded-xl bg-gray-50 dark:bg-gray-600 shadow-lg text-white-900">
+          <div class="overflow-hidden rounded-md bg-gray-50 [&>*]:dark:bg-gray-600 text-black [&>*]:!border-none [&>*]:!stroke-black dark:text-white dark:[&>*]:!stroke-white">
+            <div id="new-section-about" class="quill-editor dark:text-white h-40">
+              {{ section.about|safe }}
+            </div>
           </div>
         </div>
       </div>

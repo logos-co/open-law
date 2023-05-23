@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, Length
 
 
 class BaseCommentForm(FlaskForm):
-    text = StringField("Text", [DataRequired(), Length(3, 256)])
+    text = StringField("Text", [DataRequired(), Length(3)])
 
 
 class CreateCommentForm(BaseCommentForm):

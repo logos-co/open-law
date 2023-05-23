@@ -1,4 +1,5 @@
 import os
+import re
 from functools import lru_cache
 from pydantic import BaseSettings
 from flask import Flask
@@ -27,6 +28,9 @@ class BaseConfig(BaseSettings):
 
     # HTTPProvider for SIWE
     HTTP_PROVIDER_URL: str
+
+    # regex
+    TAG_REGEX = re.compile(r"\[.*?\]")
 
     @staticmethod
     def configure(app: Flask):

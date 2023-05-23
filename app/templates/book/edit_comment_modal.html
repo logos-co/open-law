@@ -19,9 +19,17 @@
         </div>
         <input type="hidden" name="comment_id" id="edit_comment_id" value="" />
         <div class="col-span-6 sm:col-span-3">
-            <label for="text" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >Text</label >
-            <input type="text" name="text" id="edit_comment_text" value="" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+          <label for="text" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >Text</label >
+
+          <input type="hidden" name="text" id="edit-comment-text-input"/>
+
+          <div class="w-full max-w-6xl mx-auto rounded-xl bg-gray-50 dark:bg-gray-600 shadow-lg text-white-900">
+            <div class="overflow-hidden rounded-md bg-gray-50 [&>*]:dark:bg-gray-600 text-black [&>*]:!border-none [&>*]:!stroke-black dark:text-white dark:[&>*]:!stroke-white">
+              <div id="edit-comment-text" class="quill-editor dark:text-white h-40">
+              </div>
+            </div>
           </div>
+        </div>
       </div>
         <!-- Modal footer -->
       <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">

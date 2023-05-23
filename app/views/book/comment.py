@@ -1,30 +1,26 @@
-from flask import (
-    flash,
-    redirect,
-    url_for,
-)
+from flask import flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
 
 from app.controllers import (
-    create_breadcrumbs,
     register_book_verify_route,
 )
 from app.controllers.delete_nested_book_entities import (
     delete_nested_comment_entities,
 )
 from app import models as m, db, forms as f
+from app.controllers.tags import set_comment_tags
 from app.logger import log
 from .bp import bp
 
 
 @bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:section_id>/<int:interpretation_id>/preview/create_comment",
+    "/<int:book_id>/<int:collection_id>/<int:section_id>/<int:interpretation_id>/create_comment",
     methods=["POST"],
 )
 @bp.route(
     (
         "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/"
-        "<int:section_id>/<int:interpretation_id>/preview/create_comment"
+        "<int:section_id>/<int:interpretation_id>/create_comment"
     ),
     methods=["POST"],
 )
@@ -62,16 +58,6 @@ def create_comment(
                 )
             )
 
-    breadcrumbs = create_breadcrumbs(
-        book_id=book_id,
-        collection_path=(
-            collection_id,
-            sub_collection_id,
-        ),
-        section_id=section_id,
-        interpretation_id=interpretation_id,
-    )
-
     redirect_url = url_for(
         "book.qa_view",
         book_id=book_id,
@@ -79,7 +65,6 @@ def create_comment(
         sub_collection_id=sub_collection_id,
         section_id=section_id,
         interpretation_id=interpretation_id,
-        breadcrumbs=breadcrumbs,
     )
     section: m.Section = db.session.get(m.Section, section_id)
     if not section or section.is_deleted:
@@ -98,8 +83,9 @@ def create_comment(
     form = f.CreateCommentForm()
 
     if form.validate_on_submit():
+        text = form.text.data
         comment: m.Comment = m.Comment(
-            text=form.text.data,
+            text=text,
             user_id=current_user.id,
             interpretation_id=interpretation_id,
         )
@@ -114,6 +100,10 @@ def create_comment(
             section,
         )
         comment.save()
+
+        tags = current_app.config["TAG_REGEX"].findall(text)
+        if tags:
+            set_comment_tags(comment, tags)
 
         flash("Success!", "success")
         return redirect(redirect_url)
@@ -198,13 +188,19 @@ def comment_edit(
     sub_collection_id: int | None = None,
 ):
     form = f.EditCommentForm()
-    comment_id = form.comment_id.data
-    comment: m.Comment = db.session.get(m.Comment, comment_id)
 
     if form.validate_on_submit():
-        comment.text = form.text.data
+        text = form.text.data
+        comment_id = form.comment_id.data
+        comment: m.Comment = db.session.get(m.Comment, comment_id)
+        comment.text = text
         comment.edited = True
-        log(log.INFO, "Delete comment [%s]", comment)
+        log(log.INFO, "Edit comment [%s]", comment)
+
+        tags = current_app.config["TAG_REGEX"].findall(text)
+        if tags:
+            set_comment_tags(comment, tags)
+
         comment.save()
 
         flash("Success!", "success")

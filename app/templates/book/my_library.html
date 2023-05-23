@@ -3,6 +3,11 @@
 {% set selected_tab='my_library' %}
 {% block content %}
 
+{% if current_user.is_authenticated %}
+  {% include 'book/add_book_modal.html' %}
+{% endif %}
+
+
 <div
   class="md:mr-64 relative overflow-x-auto shadow-md sm:rounded-lg mt-1 h-box w-box flex">
   {% if not current_user.is_authenticated %}
