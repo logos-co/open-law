@@ -32,7 +32,6 @@ export function initComments() {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-edit-comment-id');
         const text = btn.getAttribute('data-edit-comment-text');
-        console.log('text', text);
         editCommentInputOnModal.value = id;
         editCommentTextInputOnModal.value = text;
         editCommentTextQuillOnModal.innerHTML = text;
