@@ -6,10 +6,7 @@ from flask import (
 )
 from flask_login import login_required, current_user
 
-from app.controllers import (
-    register_book_verify_route,
-    create_breadcrumbs,
-)
+from app.controllers import register_book_verify_route, create_breadcrumbs, clean_html
 from app.controllers.delete_nested_book_entities import (
     delete_nested_interpretation_entities,
 )
@@ -122,6 +119,7 @@ def interpretation_create(
     if form.validate_on_submit():
         interpretation: m.Interpretation = m.Interpretation(
             text=form.text.data,
+            plain_text=clean_html(form.text.data),
             section_id=section_id,
             user_id=current_user.id,
         )
@@ -179,6 +177,7 @@ def interpretation_edit(
 
     if form.validate_on_submit():
         interpretation.text = form.text.data
+        interpretation.plain_text = clean_html(form.text.data)
 
         log(log.INFO, "Edit interpretation [%s]", interpretation.id)
         interpretation.save()

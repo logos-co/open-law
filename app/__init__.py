@@ -26,6 +26,7 @@ def create_app(environment="development"):
         vote_blueprint,
         approve_blueprint,
         star_blueprint,
+        search_blueprint,
     )
     from app.models import (
         User,
@@ -57,6 +58,7 @@ def create_app(environment="development"):
     app.register_blueprint(vote_blueprint)
     app.register_blueprint(approve_blueprint)
     app.register_blueprint(star_blueprint)
+    app.register_blueprint(search_blueprint)
 
     # Set up flask login.
     @login_manager.user_loader

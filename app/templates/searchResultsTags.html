@@ -1,0 +1,67 @@
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="border-b border-gray-200 dark:border-gray-700 md:mr-64">
+  <!-- prettier-ignore -->
+  <h1 class="hidden md:inline font-extrabold text-lg dark:text-white ml-4 mt-5">Search results</h1>
+  <!-- prettier-ignore -->
+  <p class="hidden md:block text-sm ml-4 w-1/2 text-gray-500 text-center md:text-left dark:text-gray-400"> Search result for {{query}} </p>
+  <!-- prettier-ignore -->
+  <p class="hidden md:block text-sm ml-4 w-1/2 text-gray-500 text-center md:text-left dark:text-gray-400"> Showing {{count}} results </p>
+  <!-- prettier-ignore -->
+  <div class="border-b border-gray-200 dark:border-gray-700">
+    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">   
+        <li class="mr-2">
+            <a href="{{url_for('search.search_interpretations',q=query)}}" class="inline-flex p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" > 
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5" > <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /> </svg>
+                Interpretations
+            </a>
+        </li>
+        <li class="mr-2">
+            <a href="{{url_for('search.search_books',q=query)}}"   class="inline-flex p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group">
+                <svg aria-hidden="true" class="w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
+                Books
+            </a>
+        </li>
+        <li class="mr-2">
+            <a href="{{url_for('search.search_users'q=query)}}" class="inline-flex p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group">
+                <svg aria-hidden="true"  class="w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
+                Users
+            </a>
+        </li>
+        <li class="mr-2">
+            <a  class="inline-flex p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 group" aria-current="page">
+                <svg aria-hidden="true" class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" /> </svg>
+                Tags
+            </a>
+        </li>
+    </ul>
+</div>
+</div>
+<!-- prettier-ignore -->
+<div class="md:mr-64 p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="users" role="tabpanel" aria-labelledby="users-tab">
+{% if count<1 %}
+<h1 class="hidden md:inline font-extrabold text-lg dark:text-white ml-4 mt-5">No {{query}} in any user name, try another search query.</h1>
+{% else %}
+<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+  <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"> <tr> <th scope="col" class="px-6 py-3">Username</th> <th scope="col" class="px-6 py-3">Action</th> </tr> </thead>
+        <tbody>
+          {% for user in users if not user.is_deleted %}
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                    <img class="w-10 h-10 rounded-full" src="data:image/jpeg;base64,{{user.avatar_img}}" alt="User's avatar">
+                    <div class="pl-3">
+                        <div class="text-base font-semibold">{{user.username}}</div>
+                        <div class="font-normal text-gray-500">{{user.wallet_id}}</div>
+                    </div>  
+                </th>
+                <td class="px-6 py-4">
+                    <a href="{{ url_for('user.profile',user_id=user.id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Go to {{user.username}}'s library</a>
+                </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+</div>
+{% endblock %}

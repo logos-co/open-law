@@ -1,0 +1,119 @@
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="border-b border-gray-200 dark:border-gray-700 md:mr-64">
+  <!-- prettier-ignore -->
+  <h1 class="hidden md:inline font-extrabold text-lg dark:text-white ml-4 mt-5">Search results</h1>
+  <!-- prettier-ignore -->
+  <p class="hidden md:block text-sm ml-4 w-1/2 text-gray-500 text-center md:text-left dark:text-gray-400"> Search result for {{query}} </p>
+  <!-- prettier-ignore -->
+  <p class="hidden md:block text-sm ml-4 w-1/2 text-gray-500 text-center md:text-left dark:text-gray-400"> Showing {{count}} results </p>
+  <!-- prettier-ignore -->
+<div class="border-b border-gray-200 dark:border-gray-700">
+    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">   
+        <li class="mr-2">
+            <a  class="inline-flex p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 group" aria-current="page"> 
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5" class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-500"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /> </svg>
+                Interpretations
+            </a>
+        </li>
+        <li class="mr-2">
+            <a href="{{url_for('search.search_books',q=query)}}" class="inline-flex p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" >
+                <svg aria-hidden="true" class="w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
+                Books
+            </a>
+        </li>
+        <li class="mr-2">
+            <a href="{{url_for('search.search_users', q=query) }}" class="inline-flex p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group">
+                <svg aria-hidden="true" class="w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
+                Users
+            </a>
+        </li>
+        <li class="mr-2">
+            <a href="{{url_for('search.search_tags',q=query)}}" class="inline-flex p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group">
+                <svg aria-hidden="true" class="w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" /> </svg>
+                Tags
+            </a>
+        </li>
+    </ul>
+</div>
+</div>
+<!-- prettier-ignore -->
+<div class="md:mr-64 p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="interpretations" role="tabpanel" aria-labelledby="interpretations-tab">
+  {% if count <1 %}
+  <h1 class="hidden md:inline font-extrabold text-lg dark:text-white ml-4 mt-5">No {{query}} in any interpretation, try another search query.</h1>
+  {% else %}
+    {% for interpretation in interpretations %}
+  <!-- prettier-ignore -->
+        <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+          <div class="flex flex-row pb-3 p-3 w-2/3 md:w-10/12">
+            <div class="vote-block flex flex-col m-5 justify-center items-center">
+              {% if interpretation.user_id != current_user.id %}
+                <div class="vote-button cursor-pointer" data-vote-for="interpretation" data-entity-id="{{ interpretation.id }}" data-positive="true">
+                  <svg class="w-6 h-6 select-none
+                  {% if interpretation.current_user_vote %}
+                    stroke-green-500
+                  {% endif %}
+                  " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" > <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /> </svg>
+                </div>
+              {% endif %}
+
+              <span
+                class="vote-count text-3xl select-none
+                  {% if interpretation.vote_count < 0 %}
+                    text-red-500
+                  {% elif interpretation.vote_count > 0 %}
+                    text-green-500
+                  {% endif %}
+                "
+              >
+                {{ interpretation.vote_count }}
+              </span>
+
+              {% if interpretation.user_id != current_user.id %}
+                <div class="vote-button cursor-pointer" data-vote-for="interpretation" data-entity-id="{{ interpretation.id }}" data-positive="false">
+                  <svg class="w-6 h-6 select-none
+                  {% if interpretation.current_user_vote == False %}
+                    stroke-red-500
+                  {% endif %}
+                  " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /> </svg>
+                </div>
+              {% endif %}
+            </div>
+            <!-- prettier-ignore -->
+            <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
+              <div class="ql-snow md:max-w-xl">
+                {% set local_breadcrumbs = interpretation.section.breadcrumbs_path %}
+                {% include 'book/local_breadcrumbs_navigation.html'%}
+                  <p>{{ interpretation.section.label }}</p>
+                </a>
+                <div class="dark:text-white h-30 ql-editor-readonly">
+                  <p>{{ interpretation.text|safe }}</p>
+                </div>
+              </div>
+              <div class="flex mt-auto align-center justify-between md:w-full">
+                <div>
+                  <span class="hidden md:inline-block">Interpretation by</span>
+                    <a href="{{url_for('user.profile',user_id=interpretation.user.id)}}" class=" text-blue-500 {% if interpretation.user.is_deleted %}line-through{% endif %}">{{interpretation.user.username}}</a> on {{interpretation.created_at.strftime('%B %d, %Y')}}
+                </div>
+                <div class="flex ml-auto justify-between w-24">
+                  <button data-tooltip-target="tooltip-click" data-tooltip-trigger="click" id="copyLinkButton" type="button" class="hover:text-white focus:ring-2 rounded-full font-medium text-sm p-2.5 text-center inline-flex items-center dark:hover:text-white" data-link="{{ build_qa_url(interpretation) }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+                  </button>
+                  <div id="tooltip-click" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"> Link copied! <div class="tooltip-arrow" data-popper-arrow></div> </div>
+                  <div class="space-x-0.5 flex items-center">
+                    <a class="!cursor-pointer text-no-underline flex items-center" href="{{ build_qa_url(interpretation) }}" >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /> </svg>
+                      <p>{{interpretation.active_comments | length}}</p>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </dt>
+          </div>
+        </dl>
+
+  {% endfor %}
+  {% endif %}
+</div>
+{% endblock %}
