@@ -120,9 +120,14 @@ def interpretation_create(
 
     if form.validate_on_submit():
         text = form.text.data
+        plain_text = clean_html(text).lower()
+        tags = current_app.config["TAG_REGEX"].findall(text)
+        for tag in tags:
+            word = tag.lower().replace("[", "").replace("]", "")
+            plain_text = plain_text.replace(tag.lower(), word)
 
         interpretation: m.Interpretation = m.Interpretation(
-            plain_text=clean_html(text),
+            plain_text=plain_text,
             text=text,
             section_id=section_id,
             user_id=current_user.id,
@@ -185,9 +190,14 @@ def interpretation_edit(
 
     if form.validate_on_submit():
         text = form.text.data
-        interpretation.plain_text = clean_html(text)
-        interpretation.text = text
+        plain_text = clean_html(text).lower()
+        tags = current_app.config["TAG_REGEX"].findall(text)
+        for tag in tags:
+            word = tag.lower().replace("[", "").replace("]", "")
+            plain_text = plain_text.replace(tag.lower(), word)
 
+        interpretation.plain_text = plain_text
+        interpretation.text = text
         tags = current_app.config["TAG_REGEX"].findall(text)
         if tags:
             set_interpretation_tags(interpretation, tags)
