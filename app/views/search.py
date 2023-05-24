@@ -110,9 +110,7 @@ def search_users():
 @bp.route("/search_tags", methods=["GET"])
 def search_tags():
     q = request.args.get("q", type=str, default="")
-    tags = m.Tag.query.order_by(m.Tag.id)
-    if q:
-        tags = tags.filter(func.lower(m.Tag.name).like(f"%{q}%"))
+    tags = m.Tag.query.order_by(m.Tag.id).filter(func.lower(m.Tag.name).like(f"%{q}%"))
     count = tags.count()
     pagination = create_pagination(total=tags.count())
 
@@ -122,4 +120,62 @@ def search_tags():
         tags=tags.paginate(page=pagination.page, per_page=pagination.per_page),
         page=pagination,
         count=count,
+    )
+
+
+@bp.route("/tag_search_interpretations", methods=["GET"])
+def tag_search_interpretations():
+    tag_name = request.args.get("tag_name", type=str, default="")
+    interpretations = (
+        db.session.query(m.Interpretation)
+        .filter(
+            and_(
+                func.lower(m.Tag.name) == (tag_name),
+                m.InterpretationTag.tag_id == m.Tag.id,
+                m.Interpretation.id == m.InterpretationTag.interpretation_id,
+                m.Interpretation.is_deleted == False,  # noqa: E712
+            )
+        )
+        .order_by(m.Interpretation.created_at.asc())
+        .group_by(m.Interpretation.id)
+    )
+
+    pagination = create_pagination(total=interpretations.count())
+
+    return render_template(
+        "tagSearchResultsInterpretations.html",
+        tag_name=tag_name,
+        interpretations=interpretations.paginate(
+            page=pagination.page, per_page=pagination.per_page
+        ),
+        page=pagination,
+        count=interpretations.count(),
+    )
+
+
+@bp.route("/tag_search_books", methods=["GET"])
+def tag_search_books():
+    tag_name = request.args.get("tag_name", type=str, default="")
+    books = (
+        db.session.query(m.Book)
+        .filter(
+            and_(
+                func.lower(m.Tag.name) == (tag_name),
+                m.BookTags.tag_id == m.Tag.id,
+                m.Book.id == m.BookTags.book_id,
+                m.Book.is_deleted == False,  # noqa: E712
+            )
+        )
+        .order_by(m.Book.created_at.asc())
+        .group_by(m.Book.id)
+    )
+
+    pagination = create_pagination(total=books.count())
+
+    return render_template(
+        "tagSearchResultsBooks.html",
+        tag_name=tag_name,
+        books=books.paginate(page=pagination.page, per_page=pagination.per_page),
+        page=pagination,
+        count=books.count(),
     )

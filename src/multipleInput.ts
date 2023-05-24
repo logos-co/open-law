@@ -75,7 +75,7 @@ const multipleInputJs = () => {
         if (!multipleInput.value) {
           return;
         }
-        let inputValue = multipleInput.value.trim();
+        let inputValue = multipleInput.value.trim().toLowerCase();
         if (!inputValue) {
           return;
         } else if (inputValue.length > 32) {
@@ -84,7 +84,6 @@ const multipleInputJs = () => {
         }
 
         // prettier-ignore
-        inputValue = inputValue.charAt(0).toUpperCase() + inputValue.substr(1).toLowerCase();
         if (
           inputValue.substring(inputValue.length - 1, inputValue.length) == ','
         ) {
