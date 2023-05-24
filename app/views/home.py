@@ -12,7 +12,7 @@ bp = Blueprint("home", __name__, url_prefix="/home")
 def get_all():
     books: m.Book = (
         m.Book.query.filter_by(is_deleted=False).order_by(m.Book.id).limit(5)
-    )
+    ).all()
     interpretations = (
         db.session.query(
             m.Interpretation,
@@ -23,11 +23,11 @@ def get_all():
                 m.Collection.id == m.Section.collection_id,
                 m.BookVersion.id == m.Section.version_id,
                 m.Book.id == m.BookVersion.book_id,
-                m.Book.is_deleted.is_(False),
-                m.BookVersion.is_deleted.is_(False),
-                m.Interpretation.is_deleted.is_(False),
-                m.Section.is_deleted.is_(False),
-                m.Collection.is_deleted.is_(False),
+                m.Book.is_deleted == False,  # noqa: E712
+                m.BookVersion.is_deleted == False,  # noqa: E712
+                m.Interpretation.is_deleted == False,  # noqa: E712
+                m.Section.is_deleted == False,  # noqa: E712
+                m.Collection.is_deleted == False,  # noqa: E712
             )
         )
         .order_by(m.Interpretation.created_at.desc())

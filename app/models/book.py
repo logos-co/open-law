@@ -26,6 +26,11 @@ class Book(BaseModel):
         "AccessGroup",
         secondary="books_access_groups",
     )  # access_groups related to current entity
+    tags = db.relationship(
+        "Tag",
+        secondary="book_tags",
+        back_populates="books",
+    )
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"

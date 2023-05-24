@@ -23,3 +23,5 @@ from .permission import (
     SectionAccessGroups,
     InterpretationAccessGroups,
 )
+from .book_tag import BookTags
+from .section_tag import SectionTag

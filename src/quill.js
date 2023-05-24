@@ -14683,7 +14683,7 @@
 
         SnowTooltip.TEMPLATE = [
           '<a class="ql-preview" target="_blank" href="about:blank"></a>',
-          '<input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL">',
+          '<input type="text" data-formula="" data-link="" data-video="">',
           '<a class="ql-action"></a>',
           '<a class="ql-remove"></a>',
         ].join('');

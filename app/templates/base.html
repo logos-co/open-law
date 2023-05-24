@@ -46,7 +46,7 @@
     {% for category, message in messages %}
     <!-- Flash message markup -->
     <!-- prettier-ignore -->
-    <div id="toast-{{category}}" class="absolute top-10 left-10 z-50 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"role="alert">
+    <div id="toast-{{category}}" class="absolute top-10 left-10 z-[150] flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"role="alert">
         <!-- prettier-ignore -->
         {% if category == 'success' %}
         <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
@@ -76,9 +76,11 @@
 
     {% block body %}
 
-    {% if current_user.is_authenticated %}    
-    {% block right_sidebar %} {% include 'right_sidebar.html' %} {% endblock %}
-    {% include 'book/add_book_modal.html' %}
+    {% if current_user.is_authenticated %}
+      {% block right_sidebar %}
+        {% include 'right_sidebar.html' %}
+      {% endblock %}
+      {% include 'book/add_book_modal.html' %}
     {% endif %}
 
     <!-- prettier-ignore -->
@@ -91,5 +93,9 @@
     {% endblock %}
     <!-- scripts -->
     {% block scripts %} {% endblock %}
+
+    <!-- DO NOT REMOVE THIS! -->
+    <!-- Adding tailwind classes that are not in html, but will be added by jinja -->
+    <span class="hidden text-orange-500 !no-underline"></span>
   </body>
 </html>

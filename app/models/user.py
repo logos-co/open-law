@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from app.models.utils import BaseModel
 from app.logger import log
-from app import schema as s
+from app import schema as s, models as m
 
 
 def gen_uniq_id() -> str:
@@ -57,6 +57,17 @@ class User(BaseModel, UserMixin):
     def json(self):
         u = s.User.from_orm(self)
         return u.json()
+
+    @property
+    def contributions(self):
+        contributions = m.Interpretation.query.filter_by(user_id=self.id).all()
+        comments = m.Comment.query.filter_by(user_id=self.id).all()
+        for comment in comments:
+            if comment.parent:
+                contributions.append(comment.parent.interpretation)
+            else:
+                contributions.append(comment.interpretation)
+        return contributions
 
 
 class AnonymousUser(AnonymousUserMixin):

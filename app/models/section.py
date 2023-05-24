@@ -30,6 +30,11 @@ class Section(BaseModel):
         "AccessGroup",
         secondary="sections_access_groups",
     )  # access_groups related to current entity
+    tags = db.relationship(
+        "Tag",
+        secondary="section_tags",
+        back_populates="sections",
+    )
 
     @property
     def path(self):
