@@ -127,6 +127,7 @@ def test_add_contributor(client: FlaskClient):
     assert b"You are not owner of this book!" in response.data
 
     book = m.Book(label="Test Book", user_id=user.id).save()
+    m.BookVersion(semver="1.0.0", book_id=book.id).save()
 
     response: Response = client.post(
         f"/book/{book.id}/add_contributor",
