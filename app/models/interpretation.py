@@ -25,6 +25,10 @@ class Interpretation(BaseModel):
         secondary="interpretation_tags",
         back_populates="interpretations",
     )
+    access_groups = db.relationship(
+        "AccessGroup",
+        secondary="interpretations_access_groups",
+    )  # access_groups related to current entity
 
     @property
     def vote_count(self):

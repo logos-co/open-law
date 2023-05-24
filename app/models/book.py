@@ -19,6 +19,13 @@ class Book(BaseModel):
     stars = db.relationship("User", secondary="books_stars", back_populates="stars")
     contributors = db.relationship("BookContributor")
     versions = db.relationship("BookVersion", order_by="asc(BookVersion.id)")
+    list_access_groups = db.relationship(
+        "AccessGroup"
+    )  # all access_groups in current book(in nested entities)
+    access_groups = db.relationship(
+        "AccessGroup",
+        secondary="books_access_groups",
+    )  # access_groups related to current entity
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"

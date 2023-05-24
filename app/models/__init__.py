@@ -18,4 +18,8 @@ from .permission import (
     AccessGroup,
     UserAccessGroups,
     PermissionAccessGroups,
+    BookAccessGroups,
+    CollectionAccessGroups,
+    SectionAccessGroups,
+    InterpretationAccessGroups,
 )
