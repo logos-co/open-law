@@ -13,3 +13,9 @@ from .interpretation_vote import InterpretationVote
 from .tag import Tag
 from .interpretation_tag import InterpretationTag
 from .comment_tag import CommentTags
+from .permission import (
+    Permission,
+    AccessGroup,
+    UserAccessGroups,
+    PermissionAccessGroups,
+)
