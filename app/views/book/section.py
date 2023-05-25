@@ -113,6 +113,13 @@ def section_create(
         log(log.INFO, "Create section [%s]. Collection: [%s]", section, collection_id)
         section.save()
 
+        # access groups
+        for access_group in section.collection.access_groups:
+            m.SectionAccessGroups(
+                section_id=section.id, access_group_id=access_group.id
+            ).save()
+        # -------------
+
         flash("Success!", "success")
         return redirect(redirect_url)
     else:

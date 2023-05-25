@@ -41,21 +41,10 @@ def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
         label="Root", version_id=version.id, is_root=True
     ).save()
 
-    # access groups
-    editor_access_group = create_editor_group(book_id=book.id)
-    moderator_access_group = create_moderator_group(book_id=book.id)
-    access_groups = [editor_access_group, moderator_access_group]
-
-    for access_group in access_groups:
-        m.BookAccessGroups(book_id=book.id, access_group_id=access_group.id).save()
-        m.CollectionAccessGroups(
-            collection_id=root_collection.id, access_group_id=access_group.id
-        ).save()
-    # -------------
-
     collection: m.Collection = m.Collection(
         label=f"Collection {entity_id}",
         version_id=version.id,
+        is_leaf=True,
         parent_id=root_collection.id,
     ).save()
 
@@ -77,6 +66,47 @@ def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
         user_id=owner_id,
         interpretation_id=interpretation.id,
     ).save()
+
+    # subcollection
+    collection_2: m.Collection = m.Collection(
+        label=f"Collection {entity_id}",
+        version_id=version.id,
+        parent_id=root_collection.id,
+    ).save()
+
+    subcollection: m.Collection = m.Collection(
+        label=f"subCollection {entity_id}",
+        version_id=version.id,
+        parent_id=collection_2.id,
+        is_leaf=True,
+    ).save()
+
+    # access groups
+    editor_access_group = create_editor_group(book_id=book.id)
+    moderator_access_group = create_moderator_group(book_id=book.id)
+    access_groups = [editor_access_group, moderator_access_group]
+
+    for access_group in access_groups:
+        m.BookAccessGroups(book_id=book.id, access_group_id=access_group.id).save()
+        # root
+        m.CollectionAccessGroups(
+            collection_id=root_collection.id, access_group_id=access_group.id
+        ).save()
+        # leaf
+        m.CollectionAccessGroups(
+            collection_id=collection.id, access_group_id=access_group.id
+        ).save()
+
+        m.CollectionAccessGroups(
+            collection_id=collection_2.id, access_group_id=access_group.id
+        ).save()
+        # subcollection
+        m.CollectionAccessGroups(
+            collection_id=subcollection.id, access_group_id=access_group.id
+        ).save()
+
+    # -------------
+
     return book
 
 
