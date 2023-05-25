@@ -23,9 +23,13 @@ def display_tags(text: str):
     classes = " ".join(classes)
 
     for tag in tags:
+        url = url_for(
+            "search.tag_search_interpretations",
+            tag_name=tag.lower().replace("[", "").replace("]", ""),
+        )
         text = text.replace(
             tag,
-            f"<a href='#' target='_blank' class='{classes}'>{tag}</a>",
+            f"<a href='{url}' class='{classes}'>{tag}</a>",
         )
 
     return text

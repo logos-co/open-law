@@ -4,14 +4,14 @@
 {% block content %}
 
 <div
-  class="md:mr-64 relative overflow-x-auto shadow-md sm:rounded-lg mt-1 h-box w-box flex">
+  class="md:mr-64 pt-1 relative overflow-x-auto shadow-md sm:rounded-lg mt-1 h-box w-box flex">
   {% if not current_user.is_authenticated %}
   <!-- prettier-ignore -->
   <div class="mx-auto my-auto h-full w-full p-2">
   <button type="button" id="connectWalletBtn" class="w-full h-full text-black dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-100 font-medium rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center border border-gray-200 dark:border-gray-700"><div class="my-auto"></div> Connect you wallet to see your favorite books! </div></button></div>
   <!-- prettier-ignore -->
   {% endif %}
-  {% if current_user.is_authenticated and not books %}
+  {% if current_user.is_authenticated and current_user.stars|length==0 %}
   <!-- prettier-ignore -->
   <div class="mx-auto my-auto h-full w-full p-2">
   <button type="button" data-modal-target="add-book-modal" data-modal-toggle="add-book-modal" class="w-full h-full text-black dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-100 font-medium rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center border border-gray-200 dark:border-gray-700"><div class="my-auto"></div><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /> </svg> You don't have favorite books start to create your own! </div></button></div>
@@ -19,8 +19,10 @@
   {% endif %}
   <!-- prettier-ignore -->
   <div class="flex flex-col w-4/5">
-    <h1 class=" text-lg font-extrabold dark:text-white ml-4">Fav books</h1>
   {% for book in books %}
+  {% if loop.index==1 %}
+  <h1 class=" text-lg font-extrabold dark:text-white ml-4">Fav books</h1>
+  {% endif %}
   <!-- prettier-ignore -->
   <dl class="bg-white dark:bg-gray-900 h-max w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
       <dt class="mb-2"><a class="flex flex-col pb-4" href="{{url_for('book.collection_view',book_id=book.id)}}">{{book.label}}</a></dt>
