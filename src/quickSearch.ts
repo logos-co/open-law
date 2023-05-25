@@ -8,6 +8,7 @@ const searchDiv: HTMLElement = document.querySelector('#quickSearchModal');
 
 const modalOptions: ModalOptions = {
   closable: true,
+  backdrop: 'static',
   onHide: () => {},
   onShow: () => {},
   onToggle: () => {},
@@ -18,9 +19,6 @@ const quickSearchModal: ModalInterface = new Modal(searchDiv, modalOptions);
 export function quickSearch() {
   if (currentSearchInput && searchDiv) {
     currentSearchInput.addEventListener('input', debounce(onInputChange, 500));
-    currentSearchInput.addEventListener('blur', () => {
-      quickSearchModal.hide();
-    });
     currentSearchInput.addEventListener('keypress', async e => {
       if (e.key === 'Enter') {
         const urlParams = new URLSearchParams({
