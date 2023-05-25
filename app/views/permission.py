@@ -1,6 +1,6 @@
 import json
 
-from flask import redirect, url_for, Blueprint, request, flash
+from flask import redirect, url_for, Blueprint, flash
 from flask_login import current_user
 
 from app import forms as f, models as m, db
@@ -35,6 +35,6 @@ def set():
             flash("User are not contributor of this book!", "danger")
             return redirect(url_for("book.my_library"))
 
-        permissions = json.loads(form.permissions.data)
+        # permissions = json.loads(form.permissions.data)
 
     return {"status": "ok"}

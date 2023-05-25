@@ -32,8 +32,9 @@ def add_contributor(book_id: int):
     form = f.AddContributorForm()
 
     if form.validate_on_submit():
+        user_id = form.user_id.data
         book_contributor = m.BookContributor.query.filter_by(
-            user_id=form.user_id.data, book_id=book_id
+            user_id=user_id, book_id=book_id
         ).first()
         if book_contributor:
             log(log.INFO, "Contributor: [%s] already exists", book_contributor)
@@ -41,11 +42,21 @@ def add_contributor(book_id: int):
             return redirect(url_for("book.settings", book_id=book_id))
 
         role = m.BookContributor.Roles(int(form.role.data))
-        contributor = m.BookContributor(
-            user_id=form.user_id.data, book_id=book_id, role=role
-        )
+        contributor = m.BookContributor(user_id=user_id, book_id=book_id, role=role)
         log(log.INFO, "New contributor [%s]", contributor)
         contributor.save()
+
+        groups = (
+            db.session.query(m.AccessGroup)
+            .filter(
+                m.BookAccessGroups.book_id == book_id,
+                m.AccessGroup.id == m.BookAccessGroups.access_group_id,
+                m.AccessGroup.name == role.name.lower(),
+            )
+            .all()
+        )
+        for group in groups:
+            m.UserAccessGroups(user_id=user_id, access_group_id=group.id).save()
 
         flash("Contributor was added!", "success")
         return redirect(url_for("book.settings", book_id=book_id))
