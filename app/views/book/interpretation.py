@@ -87,11 +87,6 @@ def interpretation_view(
         )
 
 
-#####################
-# Interpretation CRUD
-#####################
-
-
 @bp.route(
     "/<int:book_id>/<int:collection_id>/<int:section_id>/create_interpretation",
     methods=["POST"],
@@ -139,6 +134,13 @@ def interpretation_create(
             section,
         )
         interpretation.save()
+
+        # access groups
+        for access_group in interpretation.section.access_groups:
+            m.InterpretationAccessGroups(
+                interpretation_id=interpretation.id, access_group_id=access_group.id
+            ).save()
+        # -------------
 
         tags = current_app.config["TAG_REGEX"].findall(text)
         if tags:

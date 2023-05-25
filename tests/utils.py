@@ -81,6 +81,13 @@ def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
         is_leaf=True,
     ).save()
 
+    section_in_subcollection: m.Section = m.Section(
+        label=f"Section in sub {entity_id}",
+        user_id=owner_id,
+        collection_id=subcollection.id,
+        version_id=version.id,
+    ).save()
+
     # access groups
     editor_access_group = create_editor_group(book_id=book.id)
     moderator_access_group = create_moderator_group(book_id=book.id)
@@ -103,6 +110,16 @@ def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
         # subcollection
         m.CollectionAccessGroups(
             collection_id=subcollection.id, access_group_id=access_group.id
+        ).save()
+
+        m.SectionAccessGroups(
+            section_id=section.id, access_group_id=access_group.id
+        ).save()
+        m.SectionAccessGroups(
+            section_id=section_in_subcollection.id, access_group_id=access_group.id
+        ).save()
+        m.InterpretationAccessGroups(
+            interpretation_id=section.id, access_group_id=access_group.id
         ).save()
 
     # -------------

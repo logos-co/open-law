@@ -782,43 +782,35 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Section not found" in response.data
 
 
-def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
+def test_crud_interpretation(client: FlaskClient):
     _, user = login(client)
     user: m.User
+    book = create_test_book(user.id)
 
-    # add dummmy data
-    runner.invoke(args=["db-populate"])
-
-    book: m.Book = db.session.get(m.Book, 1)
-    book.user_id = user.id
-    book.save()
-
-    leaf_collection: m.Collection = m.Collection(
-        label="Test Leaf Collection #1 Label",
+    collection: m.Collection = m.Collection.query.filter_by(
         version_id=book.last_version.id,
         is_leaf=True,
         parent_id=book.last_version.root_collection.id,
-    ).save()
-    section_in_collection: m.Section = m.Section(
-        label="Test Section in Collection #1 Label",
-        collection_id=leaf_collection.id,
+    ).first()
+    section_in_collection: m.Section = m.Section.query.filter_by(
+        collection_id=collection.id,
         version_id=book.last_version.id,
-    ).save()
+    ).first()
 
-    collection: m.Collection = m.Collection(
-        label="Test Collection #1 Label", version_id=book.last_version.id
-    ).save()
-    sub_collection: m.Collection = m.Collection(
-        label="Test SubCollection #1 Label",
+    collection: m.Collection = m.Collection.query.filter_by(
         version_id=book.last_version.id,
-        parent_id=collection.id,
+        is_leaf=False,
+        parent_id=book.last_version.root_collection.id,
+    ).first()
+    sub_collection: m.Collection = m.Collection.query.filter_by(
+        version_id=book.last_version.id,
         is_leaf=True,
-    ).save()
-    section_in_subcollection: m.Section = m.Section(
-        label="Test Section in Subcollection #1 Label",
+        parent_id=collection.id,
+    ).first()
+    section_in_subcollection: m.Section = m.Section.query.filter_by(
         collection_id=sub_collection.id,
         version_id=book.last_version.id,
-    ).save()
+    ).first()
 
     text_1 = "Test Interpretation #1 Text"
 
@@ -836,8 +828,14 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert interpretation.section_id == section_in_subcollection.id
     assert not interpretation.comments
 
+    assert interpretation.access_groups
+    assert len(interpretation.access_groups) == 2
+    for access_group in interpretation.access_groups:
+        access_group: m.AccessGroup
+        assert access_group.book_id == interpretation.section.version.book_id
+
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/create_interpretation",
+        f"/book/{book.id}/{sub_collection.id}/{section_in_collection.id}/create_interpretation",
         data=dict(section_id=section_in_collection.id, text=text_1),
         follow_redirects=True,
     )
@@ -860,7 +858,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Subcollection not found" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/999/create_interpretation",
+        f"/book/{book.id}/{sub_collection.id}/999/create_interpretation",
         data=dict(collection_id=999, text=text_1),
         follow_redirects=True,
     )
@@ -896,7 +894,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     new_text = "Test Interpretation #1 Text(edited)"
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/{interpretation.id}/edit_interpretation",
+        f"/book/{book.id}/{sub_collection.id}/{section_in_collection.id}/{interpretation.id}/edit_interpretation",
         data=dict(
             interpretation_id=interpretation.id,
             text=new_text,
@@ -912,7 +910,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert edited_interpretation
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/999/edit_interpretation",
+        f"/book/{book.id}/{sub_collection.id}/{section_in_collection.id}/999/edit_interpretation",
         data=dict(
             interpretation_id=interpretation.id,
             text=new_text,
@@ -923,7 +921,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Interpretation not found" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/999/delete_interpretation",
+        f"/book/{book.id}/{sub_collection.id}/{section_in_collection.id}/999/delete_interpretation",
         follow_redirects=True,
     )
 
@@ -949,7 +947,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         (
-            f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/"
+            f"/book/{book.id}/{sub_collection.id}/{section_in_collection.id}/"
             f"{section_in_collection.interpretations[0].id}/delete_interpretation"
         ),
         follow_redirects=True,
