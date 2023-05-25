@@ -22,6 +22,7 @@ import {initQuillReadOnly} from './initQuillReadOnly';
 import {initGoBack} from './tabGoBackBtn';
 import {scroll} from './scroll';
 import {copyLink} from './copyLink';
+import {flash} from './flash';
 import {slashSearch} from './slashSearch';
 
 initQuillReadOnly();
@@ -48,4 +49,5 @@ renameSubCollection();
 initGoBack();
 scroll();
 copyLink();
+flash();
 slashSearch();

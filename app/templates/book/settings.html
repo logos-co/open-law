@@ -35,7 +35,7 @@
 </div>
 <div id="myTabContent">
   <!-- prettier-ignore -->
-  <div class="hidden pl-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+  <div class="hidden pl-4 rounded-lg bg-inherit" id="settings" role="tabpanel" aria-labelledby="settings-tab">
     <form action="{{ url_for('book.edit', book_id=book.id) }}" method="post" class="prevent-submit-on-enter settings-form mb-0 flex flex-col space-y-2 w-1/2">
       {{ form_hidden_tag() }}
       <input value="{{book.id}}" type="text" name="book_id" id="book_id" class="hidden" placeholder="Book id" required>
@@ -47,9 +47,7 @@
         <label for="about" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
           Book about
         </label>
-        <textarea type="text" name="about" id="about" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="About my Book">
-          {{book.about if not book.about==None}}
-        </textarea>
+        <textarea type="text" name="about" id="about" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">{{book.about if not book.about==None}}</textarea>
       </div>
       <div class="multiple-input-block mb-6">
         <label for="tags-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
