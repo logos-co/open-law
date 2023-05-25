@@ -39,7 +39,7 @@ def create_breadcrumbs(
         crumples += [
             s.BreadCrumb(
                 type=s.BreadCrumbType.AuthorBookList,
-                url="#",
+                url="",
                 label=book.owner.username + "'s books",
             )
         ]
@@ -60,11 +60,7 @@ def create_breadcrumbs(
             crumples += [
                 s.BreadCrumb(
                     type=s.BreadCrumbType.Collection,
-                    url=url_for(
-                        "book.sub_collection_view",
-                        book_id=book_id,
-                        collection_id=collection_id,
-                    ),
+                    url="",
                     label=collection.label,
                 )
             ]
@@ -72,12 +68,7 @@ def create_breadcrumbs(
             crumples += [
                 s.BreadCrumb(
                     type=s.BreadCrumbType.Section,
-                    url=url_for(
-                        "book.section_view",
-                        book_id=book_id,
-                        collection_id=collection_path[0],
-                        sub_collection_id=collection_path[-1],
-                    ),
+                    url="",
                     label=collection.label,
                 )
             ]
