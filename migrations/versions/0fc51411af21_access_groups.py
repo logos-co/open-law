@@ -7,6 +7,7 @@ Create Date: 2023-05-25 12:44:41.843011
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
 
 
 # revision identifiers, used by Alembic.
@@ -167,4 +168,15 @@ def downgrade():
     op.drop_table("books_access_groups")
     op.drop_table("access_groups")
     op.drop_table("permissions")
+
+    entity = postgresql.ENUM(
+        "UNKNOWN",
+        "BOOK",
+        "COLLECTION",
+        "SECTION",
+        "INTERPRETATION",
+        "COMMENT",
+        name="entity",
+    )
+    entity.drop(op.get_bind())
     # ### end Alembic commands ###
