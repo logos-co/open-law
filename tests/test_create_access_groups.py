@@ -6,7 +6,7 @@ from app import models as m
 
 
 def test_init_moderator_group(client):
-    create_moderator_group()
+    create_moderator_group(book_id=0)
 
     group: m.AccessGroup = m.AccessGroup.query.filter_by(name="moderator").first()
     assert group
@@ -29,13 +29,13 @@ def test_init_moderator_group(client):
     assert comment_DA
     assert comment_DA in permissions
 
-    create_moderator_group()
+    create_moderator_group(book_id=0)
     groups: list[m.AccessGroup] = m.AccessGroup.query.filter_by(name="moderator").all()
     assert len(groups) == 2
 
 
 def test_init_editor_group(client):
-    create_editor_group()
+    create_editor_group(book_id=0)
 
     group: m.AccessGroup = m.AccessGroup.query.filter_by(name="editor").first()
     assert group
@@ -79,6 +79,6 @@ def test_init_editor_group(client):
     assert book_U
     assert book_U in permissions
 
-    create_editor_group()
+    create_editor_group(book_id=0)
     groups: list[m.AccessGroup] = m.AccessGroup.query.filter_by(name="editor").all()
     assert len(groups) == 2

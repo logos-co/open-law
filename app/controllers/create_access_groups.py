@@ -3,9 +3,9 @@ from app.logger import log
 from .get_or_create_permission import get_or_create_permission
 
 
-def create_moderator_group():
+def create_moderator_group(book_id: int):
     log(log.INFO, "Create moderator access group")
-    group: m.AccessGroup = m.AccessGroup(name="moderator").save()
+    group: m.AccessGroup = m.AccessGroup(name="moderator", book_id=book_id).save()
     permissions = []
 
     comment_DA = get_or_create_permission(
@@ -29,9 +29,9 @@ def create_moderator_group():
     return group
 
 
-def create_editor_group():
+def create_editor_group(book_id: int):
     log(log.INFO, "Create editor access group")
-    group: m.AccessGroup = m.AccessGroup(name="editor").save()
+    group: m.AccessGroup = m.AccessGroup(name="editor", book_id=book_id).save()
     permissions = []
 
     comment_DA = get_or_create_permission(

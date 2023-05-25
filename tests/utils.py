@@ -1,4 +1,8 @@
 from app import models as m
+from app.controllers.create_access_groups import (
+    create_editor_group,
+    create_moderator_group,
+)
 
 from random import randint
 
@@ -33,8 +37,26 @@ def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
 
     version: m.BookVersion = m.BookVersion(semver="1.0.0", book_id=book.id).save()
 
+    root_collection: m.Collection = m.Collection(
+        label="Root", version_id=version.id, is_root=True
+    ).save()
+
+    # access groups
+    editor_access_group = create_editor_group(book_id=book.id)
+    moderator_access_group = create_moderator_group(book_id=book.id)
+    access_groups = [editor_access_group, moderator_access_group]
+
+    for access_group in access_groups:
+        m.BookAccessGroups(book_id=book.id, access_group_id=access_group.id).save()
+        m.CollectionAccessGroups(
+            collection_id=root_collection.id, access_group_id=access_group.id
+        ).save()
+    # -------------
+
     collection: m.Collection = m.Collection(
-        label=f"Collection {entity_id}", version_id=version.id
+        label=f"Collection {entity_id}",
+        version_id=version.id,
+        parent_id=root_collection.id,
     ).save()
 
     section: m.Section = m.Section(
@@ -55,6 +77,7 @@ def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
         user_id=owner_id,
         interpretation_id=interpretation.id,
     ).save()
+    return book
 
 
 def check_if_nested_book_entities_is_deleted(book: m.Book, is_deleted: bool = True):

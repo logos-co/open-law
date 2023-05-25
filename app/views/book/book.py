@@ -18,6 +18,10 @@ from app.controllers.tags import (
 from app.controllers.delete_nested_book_entities import (
     delete_nested_book_entities,
 )
+from app.controllers.create_access_groups import (
+    create_editor_group,
+    create_moderator_group,
+)
 from app import models as m, db, forms as f
 from app.logger import log
 from .bp import bp
@@ -70,12 +74,24 @@ def create():
         log(log.INFO, "Form submitted. Book: [%s]", book)
         book.save()
         version = m.BookVersion(semver="1.0.0", book_id=book.id).save()
-        m.Collection(
+        root_collection = m.Collection(
             label="Root Collection", version_id=version.id, is_root=True
         ).save()
         tags = form.tags.data
         if tags:
             set_book_tags(book, tags)
+
+        # access groups
+        editor_access_group = create_editor_group(book_id=book.id)
+        moderator_access_group = create_moderator_group(book_id=book.id)
+        access_groups = [editor_access_group, moderator_access_group]
+
+        for access_group in access_groups:
+            m.BookAccessGroups(book_id=book.id, access_group_id=access_group.id).save()
+            m.CollectionAccessGroups(
+                collection_id=root_collection.id, access_group_id=access_group.id
+            ).save()
+        # -------------
 
         flash("Book added!", "success")
         return redirect(url_for("book.my_library"))

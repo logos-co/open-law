@@ -10,6 +10,7 @@ from tests.utils import (
     check_if_nested_collection_entities_is_deleted,
     check_if_nested_section_entities_is_deleted,
     check_if_nested_interpretation_entities_is_deleted,
+    create_test_book,
 )
 
 
@@ -30,7 +31,7 @@ def test_create_edit_delete_book(client: FlaskClient):
     assert response.status_code == 200
     assert b"Label must be between 6 and 256 characters long." in response.data
 
-    book = m.Book.query.filter_by(label=BOOK_NAME).first()
+    book: m.Book = m.Book.query.filter_by(label=BOOK_NAME).first()
 
     assert not book
     assert not m.Book.query.count()
@@ -47,7 +48,7 @@ def test_create_edit_delete_book(client: FlaskClient):
     assert response.status_code == 200
     assert b"Label must be between 6 and 256 characters long." in response.data
 
-    book = m.Book.query.filter_by(label=BOOK_NAME).first()
+    book: m.Book = m.Book.query.filter_by(label=BOOK_NAME).first()
 
     assert not book
     assert not m.Book.query.count()
@@ -63,11 +64,18 @@ def test_create_edit_delete_book(client: FlaskClient):
     assert response.status_code == 200
     assert b"Book added!" in response.data
 
-    book = m.Book.query.filter_by(label=BOOK_NAME).first()
+    book: m.Book = m.Book.query.filter_by(label=BOOK_NAME).first()
 
     assert book
     assert book.versions
     assert len(book.versions) == 1
+    assert book.access_groups
+    assert len(book.access_groups) == 2
+
+    root_collection: m.Collection = book.last_version.collections[0]
+    assert root_collection
+    assert root_collection.access_groups
+    assert len(root_collection.access_groups) == 2
 
     response: Response = client.post(
         "/book/999/edit",
@@ -116,7 +124,7 @@ def test_add_contributor(client: FlaskClient):
 
     moderator = m.User(username="Moderator", password="test").save()
 
-    moderators_book = m.Book(label="Test Book", user_id=moderator.id).save()
+    moderators_book: m.Book = m.Book(label="Test Book", user_id=moderator.id).save()
     response: Response = client.post(
         f"/book/{moderators_book.id}/add_contributor",
         data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
@@ -126,7 +134,7 @@ def test_add_contributor(client: FlaskClient):
     assert response.status_code == 200
     assert b"You are not owner of this book!" in response.data
 
-    book = m.Book(label="Test Book", user_id=user.id).save()
+    book: m.Book = m.Book(label="Test Book", user_id=user.id).save()
     m.BookVersion(semver="1.0.0", book_id=book.id).save()
 
     response: Response = client.post(
@@ -245,7 +253,7 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
 
     moderator = m.User(username="Moderator", password="test").save()
 
-    moderators_book = m.Book(label="Test Book", user_id=moderator.id).save()
+    moderators_book: m.Book = m.Book(label="Test Book", user_id=moderator.id).save()
     response: Response = client.post(
         f"/book/{moderators_book.id}/add_contributor",
         data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
@@ -265,16 +273,10 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
     assert b"You are not owner of this book!" in response.data
 
 
-def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
+def test_crud_collection(client: FlaskClient):
     _, user = login(client)
     user: m.User
-
-    # add dummmy data
-    runner.invoke(args=["db-populate"])
-
-    book = db.session.get(m.Book, 1)
-    book.user_id = user.id
-    book.save()
+    book = create_test_book(user.id)
 
     response: Response = client.post(
         f"/book/{book.id}/create_collection",
@@ -305,6 +307,14 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
     collection: m.Collection = m.Collection.query.filter_by(
         label="Test Collection #1 Label"
     ).first()
+
+    assert collection
+    assert collection.access_groups
+    assert len(collection.access_groups) == 2
+    for access_group in collection.access_groups:
+        access_group: m.AccessGroup
+        assert access_group.book_id == collection.version.book_id
+
     m.Collection(
         label="Test Collection #2 Label",
         version_id=collection.version_id,
@@ -398,9 +408,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     # add dummy data
     runner.invoke(args=["db-populate"])
 
-    book: m.Book = db.session.get(m.Book, 1)
-    book.user_id = user.id
-    book.save()
+    book = create_test_book(user.id)
 
     leaf_collection: m.Collection = m.Collection(
         label="Test Leaf Collection #1 Label",
@@ -461,6 +469,12 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     assert sub_collection
     assert sub_collection.is_leaf
     assert sub_collection.parent_id == collection.id
+
+    assert sub_collection.access_groups
+    assert len(sub_collection.access_groups) == 2
+    for access_group in sub_collection.access_groups:
+        access_group: m.AccessGroup
+        assert access_group.book_id == sub_collection.version.book_id
 
     m.Collection(
         label="Test SubCollection #2 Label",

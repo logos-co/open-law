@@ -114,6 +114,7 @@ def collection_create(book_id: int, collection_id: int | None = None):
             label=label,
             about=form.about.data,
             parent_id=book.versions[-1].root_collection.id,
+            version_id=book.versions[-1].id,
         )
         if collection_id:
             collection.parent_id = collection_id
@@ -121,6 +122,11 @@ def collection_create(book_id: int, collection_id: int | None = None):
 
         log(log.INFO, "Create collection [%s]. Book: [%s]", collection, book.id)
         collection.save()
+
+        for access_group in collection.parent.access_groups:
+            m.CollectionAccessGroups(
+                collection_id=collection.id, access_group_id=access_group.id
+            ).save()
 
         flash("Success!", "success")
         if collection_id:
