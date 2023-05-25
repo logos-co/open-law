@@ -45,7 +45,7 @@
 {% else %}
 {% for tag in tags %}
  <dl class="bg-white dark:bg-gray-900 w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-      <dt><a class="flex flex-col" href="#">{{tag.name}}</a></dt>
+      <dt><a class="flex flex-col" href="{{url_for('search.tag_search_interpretations',tag_name=tag.name)}}">{{tag.name}}</a></dt>
   </dl>
 {% endfor %}
 <!-- prettier-ignore -->
