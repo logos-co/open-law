@@ -9,3 +9,4 @@ from .vote import bp as vote_blueprint
 from .approve import bp as approve_blueprint
 from .star import bp as star_blueprint
 from .permission import bp as permissions_blueprint
+from .search import bp as search_blueprint

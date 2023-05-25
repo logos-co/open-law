@@ -24,6 +24,8 @@ import {scroll} from './scroll';
 import {initCheckBoxTree} from './checkBoxTree';
 import {initPermissions} from './permissions';
 import {copyLink} from './copyLink';
+import {flash} from './flash';
+import {slashSearch} from './slashSearch';
 
 initQuillReadOnly();
 initBooks();
@@ -51,3 +53,5 @@ scroll();
 initCheckBoxTree();
 initPermissions();
 copyLink();
+flash();
+slashSearch();
