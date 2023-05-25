@@ -23,6 +23,8 @@ import {initGoBack} from './tabGoBackBtn';
 import {scroll} from './scroll';
 import {copyLink} from './copyLink';
 import {quickSearch} from './quickSearch';
+import {flash} from './flash';
+import {slashSearch} from './slashSearch';
 
 initQuillReadOnly();
 initBooks();
@@ -49,3 +51,5 @@ initGoBack();
 scroll();
 copyLink();
 quickSearch();
+flash();
+slashSearch();
