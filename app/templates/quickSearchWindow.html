@@ -1,18 +1,109 @@
-<div class="relative overflow-x-auto">
-  <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-    <thead class="text-xs text-gray-900 uppercase dark:text-gray-400">
-      <tr>
-        <th scope="col" class="px-6 py-3">Interpretations</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="bg-white dark:bg-gray-800">
-        <th
-          scope="row"
-          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-          Apple MacBook Pro 17"
-        </th>
-      </tr>
-    </tbody>
-  </table>
+<!-- prettier-ignore -->
+<div id="quickSearchModal" tabindex="-1" aria-hidden="true" class="absolute w-96 top-14 left-[250px] z-50 hidden h-[calc(100%-1rem)] max-h-full">
+  <div class="relative w-full max-w-2xl max-h-full">
+    <!-- Modal content -->
+    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+      <!-- Modal header -->
+        <button type="button" class="hidden text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="quickSearchModal"> <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      <!-- Modal body -->
+      <div class="p-1 space-y-1">
+          <div id="quickSearchBlock-interpretations">
+            <table>
+          <thead class="text-xs text-gray-900 uppercase dark:text-gray-400">
+            <tr><th scope="col" class="flex items-center justify-start px-1 py-1">
+                <!-- prettier-ignore -->
+                Interpretations
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="interpretationsText-0">
+              <th scope="row"  class="flex items-center px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /> </svg>
+                <a href="" id="interpretationsText-0"></a></th>
+            </tr>
+             <tr class="interpretationsText-1">
+              <th scope="row" class="flex items-center px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /> </svg>
+                <a href="" id="interpretationsText-1"></a></th>
+            </tr>
+          </tbody>
+          </table>
+          </div>
+          <div id="quickSearchBlock-books">
+            <table>
+          <thead class="text-xs text-gray-900 uppercase dark:text-gray-400">
+            <tr><th scope="col" class="flex items-center justify-start px-1 py-1">
+                <!-- prettier-ignore -->
+                Books
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="booksText-0">
+              <th scope="row"  class="flex items-center px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <svg aria-hidden="true" class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
+                <a href="" id="booksText-0"></a></th>
+            </tr>
+             <tr class="booksText-1">
+              <th scope="row" class="flex items-center px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <svg aria-hidden="true" class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
+                <a href="" id="booksText-1"></a></th>
+            </tr>
+          </tbody>
+          </table>
+          </div>
+           <div id="quickSearchBlock-users">
+            <table>
+          <thead class="text-xs text-gray-900 uppercase dark:text-gray-400">
+            <tr><th scope="col" class="flex items-center justify-start px-1 py-1">
+                <!-- prettier-ignore -->
+                Users
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="usersText-0">
+              <th scope="row"  class="flex items-center px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <svg aria-hidden="true"  class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
+                <a href="" id="usersText-0"></a></th>
+            </tr>
+             <tr class="usersText-1">
+              <th scope="row" class="flex items-center px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <svg aria-hidden="true"  class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
+                <a href="" id="usersText-1"></a></th>
+            </tr>
+          </tbody>
+          </table>
+          </div>
+        <div id="quickSearchBlock-tags" class="hidden">
+          <table>
+          <thead class="text-xs text-gray-900 uppercase dark:text-gray-400">
+            <tr><th scope="col" class="flex items-center justify-start px-1 py-1">
+                <!-- prettier-ignore -->
+                <svg aria-hidden="true" class="w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
+                Tags
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="tagsText-0">
+              <th scope="row"  class="px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <svg aria-hidden="true" class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" /> </svg>
+                <a href="" id="tagsText-0"></a></th>
+            </tr>
+             <tr class="tagsText-1">
+              <th scope="row" class="flex items-center px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <svg aria-hidden="true" class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" /> </svg>
+                <a href="" id="tagsText-1"></a></th>
+            </tr>
+          </tbody>
+          </table>
+          </div>
+      </div>
+      <!-- Modal footer -->
+    </div>
+  </div>
 </div>

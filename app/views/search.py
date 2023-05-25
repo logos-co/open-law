@@ -1,8 +1,11 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, jsonify, url_for
 from sqlalchemy import func, and_, or_
 
 from app import models as m, db
 from app.controllers import create_pagination
+from app.controllers.build_qa_url_using_interpretation import (
+    build_qa_url_using_interpretation,
+)
 
 
 bp = Blueprint("search", __name__)
@@ -178,4 +181,65 @@ def tag_search_books():
         books=books.paginate(page=pagination.page, per_page=pagination.per_page),
         page=pagination,
         count=books.count(),
+    )
+
+
+@bp.route("/quick_search", methods=["GET"])
+def quick_search():
+    search_query = request.args.get("search_query", type=str, default="")
+    interpretations = (
+        m.Interpretation.query.order_by(m.Interpretation.id)
+        .filter((func.lower(m.Interpretation.plain_text).like(f"%{search_query}%")))
+        .limit(2)
+    )
+    interpretations_res = []
+    for interpretation in interpretations:
+        url_for_interpretation = build_qa_url_using_interpretation(interpretation)
+        interpretations_res.append(
+            {"label": interpretation.section.label, "url": url_for_interpretation}
+        )
+    books = (
+        m.Book.query.order_by(m.Book.id)
+        .filter((func.lower(m.Book.label).like(f"%{search_query}%")))
+        .limit(2)
+    )
+    books_res = []
+    for book in books:
+        url_for_book = url_for("book.collection_view", book_id=book.id)
+        books_res.append({"label": book.label, "url": url_for_book})
+
+    users = (
+        m.User.query.order_by(m.User.id)
+        .filter(
+            or_(
+                func.lower(m.User.username).like(f"%{search_query}%"),
+                func.lower(m.User.wallet_id).like(f"%{search_query}%"),
+            )
+        )
+        .order_by(m.User.id.asc())
+        .group_by(m.User.id)
+        .limit(2)
+    )
+    users_res = []
+    for user in users:
+        url_for_user = url_for("user.profile", user_id=user.id)
+        users_res.append({"label": user.username, "url": url_for_user})
+
+    tags = (
+        m.Tag.query.order_by(m.Tag.id)
+        .filter(func.lower(m.Tag.name).like(f"%{search_query}%"))
+        .limit(2)
+    )
+    tags_res = []
+    for tag in tags:
+        url_for_tag = url_for("search.tag_search_interpretations", tag_name=tag.name)
+        tags_res.append({"label": tag.name, "url": url_for_tag})
+
+    return jsonify(
+        {
+            "interpretations": interpretations_res,
+            "books": books_res,
+            "users": users_res,
+            "tags": tags_res,
+        }
     )
