@@ -56,7 +56,7 @@ def logout():
     logout_user()
     log(log.INFO, "You were logged out.")
     session.clear()
-    return redirect(url_for("main.index"))
+    return redirect(url_for("home.get_all"))
 
 
 @auth_blueprint.route("/nonce")

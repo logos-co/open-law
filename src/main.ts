@@ -22,6 +22,7 @@ import {initQuillReadOnly} from './initQuillReadOnly';
 import {initGoBack} from './tabGoBackBtn';
 import {scroll} from './scroll';
 import {copyLink} from './copyLink';
+import {flash} from './flash';
 
 initQuillReadOnly();
 initBooks();
@@ -47,3 +48,4 @@ renameSubCollection();
 initGoBack();
 scroll();
 copyLink();
+flash();

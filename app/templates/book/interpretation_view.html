@@ -147,7 +147,7 @@
                    <a href="{{url_for('user.profile',user_id=interpretation.user.id)}}" class=" text-blue-500 {% if interpretation.user.is_deleted %}line-through{% endif %}">{{interpretation.user.username}}</a> on {{interpretation.created_at.strftime('%B %d, %Y')}}
                   </div>
                   <div class="flex ml-auto justify-between w-24">
-                    <button data-tooltip-target="tooltip-click" data-tooltip-trigger="click" id="copyLinkButton" type="button" class="hover:text-white focus:ring-2 rounded-full font-medium text-sm p-2.5 text-center inline-flex items-center dark:hover:text-white" data-link="{{ build_qa_url(interpretation) }}">
+                    <button data-tooltip-target="tooltip-click" data-tooltip-trigger="click" id="copyLinkButton" type="button" class="hover:dark:text-white hover:text-black focus:ring-2 rounded-full font-medium text-sm p-2.5 text-center inline-flex items-center dark:hover:text-white" data-link="{{ build_qa_url(interpretation) }}">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
                     </button>
                     <div id="tooltip-click" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"> Link copied! <div class="tooltip-arrow" data-popper-arrow></div> </div>
