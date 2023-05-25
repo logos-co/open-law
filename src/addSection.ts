@@ -46,6 +46,10 @@ export function addSection() {
             `${collectionId}/${subCollectionId}/create_section`,
           );
         }
+        if (newActionPath.includes('/0')) {
+          console.log('ALERT');
+          return;
+        }
 
         addSectionForm.setAttribute('action', `${newActionPath}`);
         sectionModal.show();

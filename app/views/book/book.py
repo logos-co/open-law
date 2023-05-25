@@ -174,34 +174,36 @@ def favorite_books():
 
 @bp.route("/my_contributions", methods=["GET"])
 def my_contributions():
-    interpretations = (
-        db.session.query(
-            m.Interpretation,
-        )
-        .filter(
-            or_(
-                and_(
-                    m.Interpretation.id == m.Comment.interpretation_id,
-                    m.Comment.user_id == current_user.id,
-                    m.Comment.is_deleted.is_(False),
-                    m.Interpretation.is_deleted.is_(False),
-                ),
-                and_(
-                    m.Interpretation.user_id == current_user.id,
-                    m.Interpretation.is_deleted.is_(False),
-                ),
+    if current_user.is_authenticated:
+        interpretations = (
+            db.session.query(
+                m.Interpretation,
             )
+            .filter(
+                or_(
+                    and_(
+                        m.Interpretation.id == m.Comment.interpretation_id,
+                        m.Comment.user_id == current_user.id,
+                        m.Comment.is_deleted.is_(False),
+                        m.Interpretation.is_deleted.is_(False),
+                    ),
+                    and_(
+                        m.Interpretation.user_id == current_user.id,
+                        m.Interpretation.is_deleted.is_(False),
+                    ),
+                )
+            )
+            .group_by(m.Interpretation.id)
+            .order_by(m.Interpretation.created_at.desc())
         )
-        .group_by(m.Interpretation.id)
-        .order_by(m.Interpretation.created_at.desc())
-    )
 
-    pagination = create_pagination(total=interpretations.count())
+        pagination = create_pagination(total=interpretations.count())
 
-    return render_template(
-        "book/my_contributions.html",
-        interpretations=interpretations.paginate(
-            page=pagination.page, per_page=pagination.per_page
-        ),
-        page=pagination,
-    )
+        return render_template(
+            "book/my_contributions.html",
+            interpretations=interpretations.paginate(
+                page=pagination.page, per_page=pagination.per_page
+            ),
+            page=pagination,
+        )
+    return render_template("book/my_contributions.html", interpretations=[])
