@@ -118,13 +118,13 @@ def test_create_edit_delete_book(client: FlaskClient):
     check_if_nested_book_entities_is_deleted(book)
 
 
-def test_add_contributor(client: FlaskClient):
+def test_add_delete_contributor(client: FlaskClient):
     _, user = login(client)
     user: m.User
 
     moderator = m.User(username="Moderator", password="test").save()
 
-    moderators_book: m.Book = m.Book(label="Test Book", user_id=moderator.id).save()
+    moderators_book: m.Book = create_test_book(moderator.id)
     response: Response = client.post(
         f"/book/{moderators_book.id}/add_contributor",
         data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
@@ -134,7 +134,7 @@ def test_add_contributor(client: FlaskClient):
     assert response.status_code == 200
     assert b"You are not owner of this book!" in response.data
 
-    book: m.Book = m.Book(label="Test Book", user_id=user.id).save()
+    book: m.Book = create_test_book(user.id)
     m.BookVersion(semver="1.0.0", book_id=book.id).save()
 
     response: Response = client.post(
@@ -145,6 +145,12 @@ def test_add_contributor(client: FlaskClient):
 
     assert response.status_code == 200
     assert b"Contributor was added!" in response.data
+    moderator: m.User = db.session.get(m.User, moderator.id)
+    assert moderator.access_groups
+    for access_group in moderator.access_groups:
+        access_group: m.AccessGroup
+        assert access_group.book_id == book.id
+
     response: Response = client.post(
         f"/book/{book.id}/add_contributor",
         data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
@@ -176,28 +182,18 @@ def test_add_contributor(client: FlaskClient):
     assert contributor.role == m.BookContributor.Roles.EDITOR
     assert len(book.contributors) == 2
 
+    contributor_to_delete = m.BookContributor.query.filter_by(
+        user_id=moderator.id, book_id=book.id
+    ).first()
 
-def test_delete_contributor(client: FlaskClient, runner: FlaskCliRunner):
-    _, user = login(client)
-    user: m.User
-
-    # add dummmy data
-    runner.invoke(args=["db-populate"])
-
-    book = db.session.get(m.Book, 1)
-    book.user_id = user.id
-    book.save()
-
-    contributors_len = len(book.contributors)
-    assert contributors_len
-
-    contributor_to_delete = book.contributors[0]
-
+    assert moderator.access_groups
     response: Response = client.post(
         f"/book/{book.id}/delete_contributor",
         data=dict(user_id=contributor_to_delete.user_id),
         follow_redirects=True,
     )
+    moderator: m.User = db.session.get(m.User, moderator.id)
+    assert not moderator.access_groups
 
     assert response.status_code == 200
     assert b"Success!" in response.data

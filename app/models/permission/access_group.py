@@ -18,5 +18,8 @@ class AccessGroup(BaseModel):
         back_populates="access_groups",
     )
     users = db.relationship(
-        "User", secondary="users_access_groups", back_populates="permissions"
+        "User", secondary="users_access_groups", back_populates="access_groups"
     )
+
+    def __repr__(self):
+        return f"<{self.id}: {self.name} | Book: {self.book_id}>"

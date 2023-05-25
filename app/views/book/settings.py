@@ -76,18 +76,36 @@ def delete_contributor(book_id: int):
     form = f.DeleteContributorForm()
 
     if form.validate_on_submit():
+        user_id = int(form.user_id.data)
         book_contributor = m.BookContributor.query.filter_by(
-            user_id=int(form.user_id.data), book_id=book_id
+            user_id=user_id, book_id=book_id
         ).first()
         if not book_contributor:
             log(
                 log.INFO,
                 "BookContributor does not exists user: [%s], book: [%s]",
-                form.user_id.data,
+                user_id,
                 book_id,
             )
             flash("Does not exists!", "success")
             return redirect(url_for("book.settings", book_id=book_id))
+
+        book: m.Book = db.session.get(m.Book, book_id)
+        user: m.User = db.session.get(m.User, user_id)
+        for access_group in book.access_groups:
+            access_group: m.AccessGroup
+            if user in access_group.users:
+                log(
+                    log.INFO,
+                    "Delete user [%s] from AccessGroup [%s]",
+                    user,
+                    access_group,
+                )
+                relationships_to_delete = m.UserAccessGroups.query.filter_by(
+                    user_id=user_id, access_group_id=access_group.id
+                ).all()
+                for relationship in relationships_to_delete:
+                    db.session.delete(relationship)
 
         log(log.INFO, "Delete BookContributor [%s]", book_contributor)
         db.session.delete(book_contributor)

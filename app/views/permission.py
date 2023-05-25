@@ -1,5 +1,3 @@
-import json
-
 from flask import redirect, url_for, Blueprint, flash
 from flask_login import current_user
 

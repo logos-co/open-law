@@ -25,7 +25,7 @@ class User(BaseModel, UserMixin):
     avatar_img = db.Column(db.Text, nullable=True)
 
     # Relationships
-    permissions = db.relationship(
+    access_groups = db.relationship(
         "AccessGroup", secondary="users_access_groups", back_populates="users"
     )
     stars = db.relationship("Book", secondary="books_stars", back_populates="stars")
