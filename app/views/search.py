@@ -165,7 +165,7 @@ def tag_search_interpretations():
     log(log.INFO, "Returning data to front")
 
     return render_template(
-        "search/tag_search_Results_interpretations.html",
+        "search/tag_search_results_interpretations.html",
         tag_name=tag_name,
         interpretations=interpretations.paginate(
             page=pagination.page, per_page=pagination.per_page
