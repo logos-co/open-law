@@ -28,6 +28,8 @@ def delete_nested_version_entities(book_version: m.BookVersion):
 
 
 def delete_nested_collection_entities(collection: m.Collection):
+    for sub_collection in collection.children:
+        delete_nested_collection_entities(sub_collection)
     for section in collection.sections:
         section: m.Section
         section.is_deleted = True

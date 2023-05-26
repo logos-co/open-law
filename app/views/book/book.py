@@ -24,10 +24,14 @@ from .bp import bp
 
 @bp.route("/all", methods=["GET"])
 def get_all():
+    log(log.INFO, "Create query for books")
     books: m.Book = m.Book.query.filter(m.Book.is_deleted is not False).order_by(
         m.Book.id
     )
+    log(log.INFO, "Create pagination for books")
+
     pagination = create_pagination(total=books.count())
+    log(log.INFO, "Returning data for front end")
 
     return render_template(
         "book/all.html",
@@ -40,15 +44,22 @@ def get_all():
 @bp.route("/my_library", methods=["GET"])
 def my_library():
     if current_user.is_authenticated:
+        log(log.INFO, "Create query for my_library page for books")
+
         books: m.Book = m.Book.query.order_by(m.Book.id)
         books = books.filter_by(user_id=current_user.id, is_deleted=False)
+        log(log.INFO, "Create pagination for books")
+
         pagination = create_pagination(total=books.count())
+        log(log.INFO, "Returns data for front end")
 
         return render_template(
             "book/my_library.html",
             books=books.paginate(page=pagination.page, per_page=pagination.per_page),
             page=pagination,
         )
+    log(log.INFO, "Returns data for front end is user is anonym")
+
     return render_template(
         "book/my_library.html",
         books=[],
@@ -141,6 +152,8 @@ def statistic_view(book_id: int):
 @bp.route("/favorite_books", methods=["GET"])
 def favorite_books():
     if current_user.is_authenticated:
+        log(log.INFO, "Creating query for books")
+
         books = (
             db.session.query(
                 m.Book,
@@ -156,7 +169,10 @@ def favorite_books():
         )
 
         books = books.filter_by(is_deleted=False)
+        log(log.INFO, "Creating pagination for books")
+
         pagination = create_pagination(total=books.count())
+        log(log.INFO, "Returns data for front end")
 
         return render_template(
             "book/favorite_books.html",
@@ -169,6 +185,8 @@ def favorite_books():
 @bp.route("/my_contributions", methods=["GET"])
 def my_contributions():
     if current_user.is_authenticated:
+        log(log.INFO, "Creating query for interpretations")
+
         interpretations = (
             db.session.query(
                 m.Interpretation,
@@ -190,8 +208,10 @@ def my_contributions():
             .group_by(m.Interpretation.id)
             .order_by(m.Interpretation.created_at.desc())
         )
+        log(log.INFO, "Creating pagination for interpretations")
 
         pagination = create_pagination(total=interpretations.count())
+        log(log.INFO, "Returns data for front end")
 
         return render_template(
             "book/my_contributions.html",
