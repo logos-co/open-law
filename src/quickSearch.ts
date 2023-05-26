@@ -22,7 +22,7 @@ export function quickSearch() {
     currentSearchInput.addEventListener('keypress', async e => {
       if (e.key === 'Enter') {
         const urlParams = new URLSearchParams({
-          q: currentSearchInput.value,
+          q: currentSearchInput.value.toLowerCase(),
         });
         const res = await fetch('/search_interpretations?' + urlParams);
         if (res.status === 200) {
@@ -39,7 +39,7 @@ const onInputChange = async (e: any) => {
   e.preventDefault();
   if (currentSearchInput.value.length > 0) {
     const urlParams = new URLSearchParams({
-      search_query: currentSearchInput.value,
+      search_query: currentSearchInput.value.toLowerCase(),
     });
     const res = await fetch('/quick_search?' + urlParams);
     const json = await res.json();
