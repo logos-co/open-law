@@ -1,5 +1,3 @@
-import base64
-
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user, logout_user
 from app.controllers import create_pagination
