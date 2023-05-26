@@ -1,5 +1,9 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
+
+{% block title %}{{user.username.strip() + "'s profile" or user.wallet_id}}{% endblock %}
+
+
 {% block content %}
 <div class="border-b border-gray-200 dark:border-gray-700 md:mr-64">
   {% if user.is_deleted %}
