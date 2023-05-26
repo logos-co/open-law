@@ -17,7 +17,6 @@ class Section(BaseModel):
     collection_id = db.Column(db.ForeignKey("collections.id"))
     user_id = db.Column(db.ForeignKey("users.id"))
     version_id = db.Column(db.ForeignKey("book_versions.id"))
-    selected_interpretation_id = db.Column(db.Integer, nullable=True)
 
     # Relationships
     collection = db.relationship("Collection", viewonly=True)
