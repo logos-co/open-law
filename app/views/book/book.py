@@ -3,7 +3,6 @@ from flask import (
     flash,
     redirect,
     url_for,
-    request,
 )
 from flask_login import login_required, current_user
 from sqlalchemy import and_, or_
@@ -25,18 +24,15 @@ from .bp import bp
 
 @bp.route("/all", methods=["GET"])
 def get_all():
-    q = request.args.get("q", type=str, default=None)
-    books: m.Book = m.Book.query.order_by(m.Book.id)
-    if q:
-        books = books.filter(m.Book.label.like(f"{q}"))
-
+    books: m.Book = m.Book.query.filter(m.Book.is_deleted is not False).order_by(
+        m.Book.id
+    )
     pagination = create_pagination(total=books.count())
 
     return render_template(
         "book/all.html",
         books=books.paginate(page=pagination.page, per_page=pagination.per_page),
         page=pagination,
-        search_query=q,
         all_books=True,
     )
 
