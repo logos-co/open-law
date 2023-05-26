@@ -6,6 +6,7 @@ from app.controllers import create_pagination
 from app.controllers.build_qa_url_using_interpretation import (
     build_qa_url_using_interpretation,
 )
+from app.logger import log
 
 
 bp = Blueprint("search", __name__)
@@ -34,45 +35,43 @@ def search_interpretations():
 @bp.route("/search_books", methods=["GET"])
 def search_books():
     q = request.args.get("q", type=str, default="")
+    log(log.INFO, "Starting to build query for books")
+
     books = (
-        db.session.query(m.Book)
+        m.Book.query.join(m.BookVersion, m.BookVersion.book_id == m.Book.id)
+        .join(m.Collection, m.BookVersion.id == m.Collection.version_id, full=True)
+        .join(m.Section, m.BookVersion.id == m.Section.version_id, full=True)
+        .join(m.Interpretation, m.Interpretation.section_id == m.Section.id, full=True)
         .filter(
             or_(
                 and_(
                     func.lower(m.Book.label).like(f"%{q}%"),
-                    m.Book.is_deleted == False,  # noqa: E712
                 ),
                 and_(
                     func.lower(m.Collection.label).like(f"%{q}%"),
                     m.Collection.is_deleted == False,  # noqa: E712
                     m.Collection.is_root == False,  # noqa: E712
-                    m.BookVersion.id == m.Collection.version_id,
-                    m.Book.id == m.BookVersion.book_id,
-                    m.Book.is_deleted == False,  # noqa: E712
                 ),
                 and_(
                     func.lower(m.Section.label).like(f"%{q}%"),
                     m.Section.is_deleted == False,  # noqa: E712
-                    m.BookVersion.id == m.Section.version_id,
-                    m.Book.id == m.BookVersion.book_id,
-                    m.Book.is_deleted == False,  # noqa: E712
                 ),
                 and_(
                     func.lower(m.Interpretation.plain_text).like(f"%{q}%"),
                     m.Interpretation.is_deleted == False,  # noqa: E712
-                    m.Interpretation.section_id == m.Section.id,
                     m.Section.is_deleted == False,  # noqa: E712
-                    m.BookVersion.id == m.Section.version_id,
-                    m.Book.id == m.BookVersion.book_id,
-                    m.Book.is_deleted == False,  # noqa: E712
                 ),
             ),
+            m.Book.is_deleted == False,  # noqa: E712
         )
-        .order_by(m.Book.created_at.asc())
         .group_by(m.Book.id)
     )
+
+    log(log.INFO, "Get count of books")
     count = books.count()
+    log(log.INFO, "Creating pagination")
     pagination = create_pagination(total=books.count())
+    log(log.INFO, "Returning data to front")
 
     return render_template(
         "searchResultsBooks.html",
