@@ -1,8 +1,10 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
 {% set selected_tab='my_contributions' %}
-{% block content %}
 
+{% block title %}My Contributions{% endblock %}
+
+{% block content %}
 <div
   class="md:mr-64 pt-1 relative overflow-x-auto shadow-md sm:rounded-lg mt-1 h-box w-box flex">
   {% if not current_user.is_authenticated %}
