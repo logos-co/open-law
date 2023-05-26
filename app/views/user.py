@@ -40,9 +40,9 @@ def edit_profile():
         user: m.User = current_user
         user.username = form.name.data
         if form.avatar_img.data:
-            img_data = form.avatar_img.data.read()
-            img_data = base64.b64encode(img_data)
-            current_user.avatar_img = img_data.decode("utf-8")
+            current_user.avatar_img = (
+                form.avatar_img.data
+            )  # form.avatar_img.data is changed in form validator
         user.is_activated = True
         user.save()
         return redirect(url_for("main.index"))
@@ -56,6 +56,17 @@ def edit_profile():
     if current_user.is_activated:
         form.name.data = current_user.username
     return render_template("user/edit_profile.html", form=form)
+
+
+@bp.route("/delete_avatar", methods=["POST"])
+@login_required
+def delete_avatar():
+    user: m.User = current_user
+    current_user.avatar_img = None
+    log(log.ERROR, "Delete user [%s] avatar", user)
+    current_user.save()
+
+    return redirect(url_for("user.edit_profile"))
 
 
 @bp.route("/<int:user_id>/profile")
