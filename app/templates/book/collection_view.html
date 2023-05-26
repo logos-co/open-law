@@ -12,6 +12,8 @@
 {% include 'book/delete_section_modal.html' %}
 {% endif %}
 
+{% block title %}{{book.label[:32]}}{% endblock %}
+
 
 {% block content %}
 <div class="flex overflow-hidden">
