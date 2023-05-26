@@ -25,7 +25,7 @@ def set_book_tags(book: m.Book, tags: str):
     for book_tag in book_tags:
         db.session.delete(book_tag)
 
-    tags_names = [tag.title() for tag in tags.split(",") if len(tag)]
+    tags_names = [tag.lower() for tag in tags.split(",") if len(tag)]
 
     for tag_name in tags_names:
         try:
