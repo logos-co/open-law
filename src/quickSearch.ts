@@ -44,16 +44,20 @@ const onInputChange = async (e: any) => {
     const res = await fetch('/quick_search?' + urlParams);
     const json = await res.json();
     if (res.status === 200) {
+      let emptyEntityArr = [];
+
       for (const entity in json) {
         // iterate over json from back end
         const el: HTMLDivElement = document.querySelector(
           `#quickSearchBlock-${entity}`,
         );
         const secondUnusedLink = document.querySelector(`.${entity}Text-1`);
+        const emptySearchDiv = document.querySelector('#emptyQuickSearchDiv');
         if (secondUnusedLink) {
           secondUnusedLink.classList.remove('hidden');
         }
         if (json[entity].length < 1) {
+          emptyEntityArr.push(entity);
           if (el) {
             el.classList.add('hidden');
           }
@@ -63,10 +67,14 @@ const onInputChange = async (e: any) => {
             secondUnusedLink.classList.add('hidden');
           }
         }
+        if (emptyEntityArr.length === 4) {
+          emptySearchDiv.classList.remove('hidden');
+        }
 
         for (const obj in json[entity]) {
           // iterate over every entity in json
           el.classList.remove('hidden');
+          emptySearchDiv.classList.add('hidden');
           const link = document.querySelector(`#${entity}Text-${obj}`);
           // taking needed html element for markup
           if (link) {
