@@ -141,8 +141,7 @@ def interpretation_create(
         interpretation.save()
 
         tags = current_app.config["TAG_REGEX"].findall(text)
-        if tags:
-            set_interpretation_tags(interpretation, tags)
+        set_interpretation_tags(interpretation, tags)
 
         flash("Success!", "success")
         return redirect(redirect_url)
@@ -199,8 +198,7 @@ def interpretation_edit(
         interpretation.plain_text = plain_text
         interpretation.text = text
         tags = current_app.config["TAG_REGEX"].findall(text)
-        if tags:
-            set_interpretation_tags(interpretation, tags)
+        set_interpretation_tags(interpretation, tags)
 
         log(log.INFO, "Edit interpretation [%s]", interpretation.id)
         interpretation.save()
