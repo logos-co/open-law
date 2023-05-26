@@ -60,7 +60,7 @@ class NewUserForm(FlaskForm):
 
 class EditUserForm(FlaskForm):
     name = StringField("Name", [DataRequired()])
-    avatar_img = FileField("Avatar file (max 1mb)")
+    avatar_img = FileField("Avatar file (max 1mb, formats: jpg,jpeg,png)")
     submit = SubmitField("Save")
 
     def validate_username(self, field):
