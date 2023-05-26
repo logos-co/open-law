@@ -34,7 +34,7 @@ def search_interpretations():
 
 @bp.route("/search_books", methods=["GET"])
 def search_books():
-    q = request.args.get("q", type=str, default="")
+    q = request.args.get("q", type=str, default="").lower()
     log(log.INFO, "Starting to build query for books")
 
     books = (
@@ -84,7 +84,7 @@ def search_books():
 
 @bp.route("/search_users", methods=["GET"])
 def search_users():
-    q = request.args.get("q", type=str, default="")
+    q = request.args.get("q", type=str, default="").lower()
     users = (
         m.User.query.order_by(m.User.id)
         .filter(
@@ -111,7 +111,7 @@ def search_users():
 
 @bp.route("/search_tags", methods=["GET"])
 def search_tags():
-    q = request.args.get("q", type=str, default="")
+    q = request.args.get("q", type=str, default="").lower()
     tags = m.Tag.query.order_by(m.Tag.id).filter(func.lower(m.Tag.name).like(f"%{q}%"))
     count = tags.count()
     pagination = create_pagination(total=tags.count())
@@ -127,7 +127,7 @@ def search_tags():
 
 @bp.route("/tag_search_interpretations", methods=["GET"])
 def tag_search_interpretations():
-    tag_name = request.args.get("tag_name", type=str, default="")
+    tag_name = request.args.get("tag_name", type=str, default="").lower()
     interpretations = (
         db.session.query(m.Interpretation)
         .filter(
@@ -185,10 +185,13 @@ def tag_search_books():
 
 @bp.route("/quick_search", methods=["GET"])
 def quick_search():
-    search_query = request.args.get("search_query", type=str, default="")
+    search_query = request.args.get("search_query", type=str, default="").lower()
     interpretations = (
         m.Interpretation.query.order_by(m.Interpretation.id)
-        .filter((func.lower(m.Interpretation.plain_text).like(f"%{search_query}%")))
+        .filter(
+            (func.lower(m.Interpretation.plain_text).like(f"%{search_query}%")),
+            m.Interpretation.is_deleted == False,  # noqa: E712,
+        )
         .limit(2)
     )
     interpretations_res = []
@@ -199,7 +202,10 @@ def quick_search():
         )
     books = (
         m.Book.query.order_by(m.Book.id)
-        .filter((func.lower(m.Book.label).like(f"%{search_query}%")))
+        .filter(
+            (func.lower(m.Book.label).like(f"%{search_query}%")),
+            m.Book.is_deleted == False,  # noqa: E712,
+        )
         .limit(2)
     )
     books_res = []
