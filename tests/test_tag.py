@@ -23,7 +23,7 @@ def test_create_tags_on_book_create_and_edit(client: FlaskClient):
     book = m.Book.query.filter_by(label=BOOK_NAME).first()
     assert book.tags
 
-    splitted_tags = [tag.title() for tag in tags.split(",")]
+    splitted_tags = [tag.lower() for tag in tags.split(",")]
     assert len(book.tags) == 3
     for tag in book.tags:
         tag: m.Tag
@@ -42,7 +42,7 @@ def test_create_tags_on_book_create_and_edit(client: FlaskClient):
 
     book: m.Book = m.Book.query.first()
 
-    splitted_tags = [tag.title() for tag in tags.split(",")]
+    splitted_tags = [tag.lower() for tag in tags.split(",")]
     assert len(book.tags) == 3
     for tag in book.tags:
         tag: m.Tag
