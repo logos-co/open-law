@@ -158,7 +158,7 @@ def tag_search_interpretations():
 
 @bp.route("/tag_search_books", methods=["GET"])
 def tag_search_books():
-    tag_name = request.args.get("tag_name", type=str, default="")
+    tag_name = request.args.get("tag_name", type=str, default="").lower()
     books = (
         db.session.query(m.Book)
         .filter(

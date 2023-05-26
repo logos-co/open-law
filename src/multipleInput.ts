@@ -63,7 +63,7 @@ const multipleInputJs = () => {
     tagsToSubmitInput.value = addedWords.join();
 
     multipleInput.addEventListener('input', () => {
-      let inputValue = multipleInput.value.trim();
+      let inputValue = multipleInput.value.trim().toLowerCase();
       if (inputValue.length > 32) {
         multipleInput.value = inputValue.slice(0, 32);
         return;
