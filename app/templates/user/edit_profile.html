@@ -35,19 +35,24 @@
              <div class="flex items-center mb-3">
               <div>
               {% if current_user.avatar_img %}
-                <img class=" w-14 h-14 rounded-full mr-3" src="data:image/jpeg;base64,{{ current_user.avatar_img }}" alt="user avatar">
+                <img class="w-14 h-14 rounded-full mr-3" src="data:image/jpeg;base64,{{ current_user.avatar_img }}" alt="user avatar">
               {% else %}
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 56 56" stroke-width="1.5" stroke="currentColor" class="w-14 h-14"> <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-14 h-14 mr-2"> <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
               {% endif %}
               </div>
               <div>
-              
+
               {{form.avatar_img(type='file', class='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500', id="avatar_img",
               value=current_user.avatar_img if current_user.avatar_img else "")}}</div>
             </div>
             <button type="submit" class="w-full px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save changes</button>
           </form>
-          <button type="button" data-modal-target="delete_profile_modal" data-modal-toggle="delete_profile_modal" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Delete you profile</button>
+          <div class="flex">
+            <form action="{{ url_for('user.delete_avatar') }}" class="mb-0" method="POST">
+              <button type="submit" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Delete Avatar</button>
+            </form>
+            <button type="button" data-modal-target="delete_profile_modal" data-modal-toggle="delete_profile_modal" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Delete you profile</button>
+          </div>
         </div>
     </div>
   </div>

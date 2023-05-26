@@ -1,3 +1,5 @@
+import base64
+
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
@@ -58,7 +60,7 @@ class NewUserForm(FlaskForm):
 
 class EditUserForm(FlaskForm):
     name = StringField("Name", [DataRequired()])
-    avatar_img = FileField("Avatar file (max 200x200px)")
+    avatar_img = FileField("Avatar file (max 1mb)")
     submit = SubmitField("Save")
 
     def validate_username(self, field):
@@ -68,6 +70,16 @@ class EditUserForm(FlaskForm):
             .first()
         ):
             raise ValidationError("This username is taken.")
+
+    def validate_avatar_img(self, field):
+        if field.data:
+            img_data = field.data.read()
+            img_data = base64.b64encode(img_data)
+            img_data = img_data.decode("utf-8")
+            field.data = img_data
+            size = len(img_data) / 1000000
+            if size > 1:
+                raise ValidationError("Avatar file size too large")
 
 
 class ReactivateUserForm(FlaskForm):

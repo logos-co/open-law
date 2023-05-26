@@ -133,6 +133,15 @@ def test_profile(client):
     assert res.status_code == 200
     assert str.encode(new_name) in res.data
 
+    # delete_avatar
+    assert user.avatar_img
+    res = client.post(
+        "/user/delete_avatar",
+        follow_redirects=True,
+    )
+    assert res
+    assert not user.avatar_img
+
     # delete_profile
     res = client.post(
         "/user/profile_delete",
