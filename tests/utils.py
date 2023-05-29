@@ -30,7 +30,9 @@ def logout(client):
     return client.get("/logout", follow_redirects=True)
 
 
-def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
+def create_test_book(owner_id: int, entity_id: int = 0):
+    if not entity_id:
+        entity_id = randint(1, 100)
     book: m.Book = m.Book(
         label=f"Book {entity_id}", about=f"About {entity_id}", user_id=owner_id
     ).save()
@@ -122,7 +124,9 @@ def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
             interpretation_id=section.id, access_group_id=access_group.id
         ).save()
 
-    # -------------
+    # Contributors
+    u = m.User(username=f"Bob {entity_id}").save()
+    m.BookContributor(book_id=book.id, user_id=u.id).save()
 
     return book
 

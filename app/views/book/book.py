@@ -21,6 +21,7 @@ from app.controllers.create_access_groups import (
     create_editor_group,
     create_moderator_group,
 )
+from app.controllers.require_permission import require_permission
 from app import models as m, db, forms as f
 from app.logger import log
 from .bp import bp
@@ -112,6 +113,12 @@ def create():
 
 @bp.route("/<int:book_id>/edit", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.BOOK,
+    access=[m.Permission.Access.U],
+    model=m.Book,
+    entity_id_field="book_id",
+)
 @login_required
 def edit(book_id: int):
     form = f.EditBookForm()
@@ -144,7 +151,7 @@ def delete(book_id: int):
 
     if not book or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
+        flash("Book not found!", "danger")
         return redirect(url_for("book.my_library"))
 
     book.is_deleted = True

@@ -40,9 +40,9 @@ def book_validator() -> Response | None:
     book_id = request_args.get("book_id")
     if book_id:
         book: m.Book = db.session.get(m.Book, book_id)
-        if not book or book.is_deleted or book.owner != current_user:
+        if not book or book.is_deleted:
             log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-            flash("You are not owner of this book!", "danger")
+            flash("Book not found!", "danger")
             return redirect(url_for("book.my_library"))
 
     collection_id = request_args.get("collection_id")

@@ -10,12 +10,19 @@ from app.controllers import (
     register_book_verify_route,
 )
 from app import models as m, db, forms as f
+from app.controllers.require_permission import require_permission
 from app.logger import log
 from .bp import bp
 
 
 @bp.route("/<int:book_id>/settings", methods=["GET"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.BOOK,
+    access=[m.Permission.Access.U],
+    model=m.Book,
+    entity_id_field="book_id",
+)
 @login_required
 def settings(book_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
@@ -27,6 +34,12 @@ def settings(book_id: int):
 
 @bp.route("/<int:book_id>/add_contributor", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.BOOK,
+    access=[m.Permission.Access.U],
+    model=m.Book,
+    entity_id_field="book_id",
+)
 @login_required
 def add_contributor(book_id: int):
     form = f.AddContributorForm()
@@ -71,6 +84,12 @@ def add_contributor(book_id: int):
 
 @bp.route("/<int:book_id>/delete_contributor", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.BOOK,
+    access=[m.Permission.Access.U],
+    model=m.Book,
+    entity_id_field="book_id",
+)
 @login_required
 def delete_contributor(book_id: int):
     form = f.DeleteContributorForm()
@@ -124,6 +143,12 @@ def delete_contributor(book_id: int):
 
 @bp.route("/<int:book_id>/edit_contributor_role", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.BOOK,
+    access=[m.Permission.Access.U],
+    model=m.Book,
+    entity_id_field="book_id",
+)
 @login_required
 def edit_contributor_role(book_id: int):
     form = f.EditContributorRoleForm()
