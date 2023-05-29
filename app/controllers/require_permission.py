@@ -9,19 +9,29 @@ from app.logger import log
 def check_permissions(
     entity_type: m.Permission.Entity,
     access: list[m.Permission.Access],
-    model: m,
-    entity_id_field: str,
+    entities_data: list[dict] | dict,
 ):
     request_args = (
         {**request.view_args, **request.args} if request.view_args else {**request.args}
     )
+    if type(entities_data) == dict:
+        entities_data = [entities_data]
+    entity = None
+    for entity_data in entities_data:
+        model = entity_data.get("model")
+        entity_id_field = entity_data.get("entity_id_field")
+        if not model or entity_id_field is None:
+            raise ValueError(
+                "One of required arguments(model, entity_id_field) is missions"
+            )
 
-    entity_id = request_args.get(entity_id_field)
-    if entity_id is None:
-        raise ValueError("entity_id not found")
-    entity: m.Book | m.Collection | m.Section | m.Interpretation = db.session.get(
-        model, entity_id
-    )
+        entity_id = request_args.get(entity_id_field)
+        if entity_id is None:
+            raise ValueError("entity_id not found")
+        entity: m.Book | m.Collection | m.Section | m.Interpretation = db.session.get(
+            model, entity_id
+        )
+
     if not entity or not entity.access_groups:
         flash("You do not have permission", "warning")
         return make_response(redirect(url_for("home.get_all")))
@@ -62,8 +72,7 @@ def check_permissions(
 def require_permission(
     entity_type: m.Permission.Entity,
     access: list[m.Permission.Access],
-    model: m,
-    entity_id_field: str,
+    entities_data: list[dict] | dict,
 ):
     def decorator(f):
         @functools.wraps(f)
@@ -71,8 +80,7 @@ def require_permission(
             if response := check_permissions(
                 entity_type=entity_type,
                 access=access,
-                model=model,
-                entity_id_field=entity_id_field,
+                entities_data=entities_data,
             ):
                 return response
             return f(*args, **kwargs)

@@ -14,6 +14,7 @@ from app.controllers.delete_nested_book_entities import (
     delete_nested_collection_entities,
 )
 from app import models as m, db, forms as f
+from app.controllers.require_permission import require_permission
 from app.logger import log
 from .bp import bp
 
@@ -61,6 +62,12 @@ def sub_collection_view(book_id: int, collection_id: int):
 @bp.route("/<int:book_id>/create_collection", methods=["POST"])
 @bp.route("/<int:book_id>/<int:collection_id>/create_sub_collection", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.COLLECTION,
+    access=[m.Permission.Access.C],
+    model=m.Collection,
+    entity_id_field="collection_id",
+)
 @login_required
 def collection_create(book_id: int, collection_id: int | None = None):
     book: m.Book = db.session.get(m.Book, book_id)

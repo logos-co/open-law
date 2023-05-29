@@ -116,8 +116,10 @@ def create():
 @require_permission(
     entity_type=m.Permission.Entity.BOOK,
     access=[m.Permission.Access.U],
-    model=m.Book,
-    entity_id_field="book_id",
+    entity_data={
+        "model": m.Book,
+        "entity_id_field": "book_id",
+    },
 )
 @login_required
 def edit(book_id: int):
@@ -145,6 +147,16 @@ def edit(book_id: int):
 
 
 @bp.route("/<int:book_id>/delete", methods=["POST"])
+@require_permission(
+    entity_type=m.Permission.Entity.BOOK,
+    access=[m.Permission.Access.D],
+    entities_data=[
+        {
+            "model": m.Book,
+            "entity_id_field": "book_id",
+        }
+    ],
+)
 @login_required
 def delete(book_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
