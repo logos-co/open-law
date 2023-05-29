@@ -36,4 +36,8 @@ class BookVersion(BaseModel):
 
     @property
     def children_collections(self):
-        return self.root_collection.children
+        return [
+            collection
+            for collection in self.root_collection.children
+            if not collection.is_deleted
+        ]

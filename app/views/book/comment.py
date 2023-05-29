@@ -102,8 +102,7 @@ def create_comment(
         comment.save()
 
         tags = current_app.config["TAG_REGEX"].findall(text)
-        if tags:
-            set_comment_tags(comment, tags)
+        set_comment_tags(comment, tags)
 
         flash("Success!", "success")
         return redirect(redirect_url)
@@ -198,8 +197,7 @@ def comment_edit(
         log(log.INFO, "Edit comment [%s]", comment)
 
         tags = current_app.config["TAG_REGEX"].findall(text)
-        if tags:
-            set_comment_tags(comment, tags)
+        set_comment_tags(comment, tags)
 
         comment.save()
 

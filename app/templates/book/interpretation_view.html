@@ -2,22 +2,16 @@
 {% extends 'base.html' %}
 
 {% if current_user.is_authenticated %}
-{% include 'book/delete_section_modal.html' %}
-{% include 'book/edit_section_modal.html' %}
 {% include 'book/approve_interpretation_modal.html' %}
-<!-- prettier-ignore -->
-{% set show_delete_section = True %}
-<!-- prettier-ignore -->
-{% set show_edit_section = True %}
   {% block right_sidebar %}
-    {% include 'book/right_sidebar.html' %}
   {% endblock %}
 {% endif %}
 
+{% block title %}{{section.label}}{% endblock %}
 
 {% block content %}
 {% include 'book/breadcrumbs_navigation.html'%}
-<div class="overflow-x-auto shadow-md sm:rounded-lg md:mr-64">
+<div class="overflow-x-auto shadow-md sm:rounded-lg">
   <!-- prettier-ignore -->
   <div class="fixed z-30 w-full top-44 pt-6 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
     <!-- prettier-ignore -->

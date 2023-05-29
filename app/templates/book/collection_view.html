@@ -12,6 +12,8 @@
 {% include 'book/delete_section_modal.html' %}
 {% endif %}
 
+{% block title %}{{book.label[:32]}}{% endblock %}
+
 
 {% block content %}
 <div class="flex overflow-hidden">
@@ -29,7 +31,7 @@
       <div class="flex text-black dark:text-white">
         <!-- prettier-ignore -->
         <div>
-        {% if not book.versions[-1].children_collections %}
+        {% if not book.versions[-1].children_collections and current_user.is_authenticated %}
         <button type="button" data-modal-target="add-collection-modal" data-modal-toggle="add-collection-modal" ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg> </button>
         {% endif %}
         <a href="{{ url_for("book.settings", book_id=book.id) }}" type="button" class="ml-2" >
@@ -262,7 +264,7 @@
 
     <div class="gap-1 flex flex-wrap">
       {% for tag in book.tags %}
-        <div class="cursor-pointer multiple-input-word bg-sky-300 hover:bg-sky-400 dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white rounded text-center py-1/2 px-2">{{tag.name}}</div>
+        <a href="{{url_for('search.tag_search_interpretations',tag_name=tag.name)}}"><div class="cursor-pointer multiple-input-word bg-sky-300 hover:bg-sky-400 dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white rounded text-center py-1/2 px-2">{{tag.name}}</div></a>
       {% endfor %}
     </div>
 
