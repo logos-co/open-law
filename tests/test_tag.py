@@ -175,7 +175,7 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
 
     tags = "[tag-4] [tag5] [tag3]"
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{section.id}/{interpretation.id}/edit_interpretation",
+        f"/book/{book.id}/{collection.id}/{section.id}/edit_interpretation",
         data=dict(interpretation_id=interpretation.id, text=text_1 + tags),
         follow_redirects=True,
     )

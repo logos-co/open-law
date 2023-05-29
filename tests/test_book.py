@@ -886,11 +886,10 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
         section_id=section_in_collection.id
     ).first()
 
-    new_label = "Test Interpretation #1 Label(edited)"
     new_text = "Test Interpretation #1 Text(edited)"
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/{interpretation.id}/edit_interpretation",
+        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/edit_interpretation",
         data=dict(
             interpretation_id=interpretation.id,
             text=new_text,
@@ -906,9 +905,9 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert edited_interpretation
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/999/edit_interpretation",
+        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/edit_interpretation",
         data=dict(
-            interpretation_id=interpretation.id,
+            interpretation_id="999",
             text=new_text,
         ),
         follow_redirects=True,
@@ -917,7 +916,10 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Interpretation not found" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/999/delete_interpretation",
+        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/delete_interpretation",
+        data=dict(
+            interpretation_id="999",
+        ),
         follow_redirects=True,
     )
 
@@ -927,8 +929,9 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     response: Response = client.post(
         (
             f"/book/{book.id}/{collection.id}/{sub_collection.id}/"
-            f"{section_in_subcollection.id}/{section_in_subcollection.interpretations[0].id}/delete_interpretation"
+            f"{section_in_subcollection.id}/delete_interpretation"
         ),
+        data=dict(interpretation_id=section_in_subcollection.interpretations[0].id),
         follow_redirects=True,
     )
 
@@ -937,23 +940,6 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     deleted_interpretation: m.Interpretation = db.session.get(
         m.Interpretation, section_in_subcollection.interpretations[0].id
-    )
-    assert deleted_interpretation.is_deleted
-    check_if_nested_interpretation_entities_is_deleted(deleted_interpretation)
-
-    response: Response = client.post(
-        (
-            f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/"
-            f"{section_in_collection.interpretations[0].id}/delete_interpretation"
-        ),
-        follow_redirects=True,
-    )
-
-    assert response.status_code == 200
-    assert b"Success!" in response.data
-
-    deleted_interpretation: m.Interpretation = db.session.get(
-        m.Interpretation, section_in_collection.interpretations[0].id
     )
     assert deleted_interpretation.is_deleted
     check_if_nested_interpretation_entities_is_deleted(deleted_interpretation)

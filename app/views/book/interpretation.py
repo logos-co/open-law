@@ -155,13 +155,13 @@ def interpretation_create(
 
 
 @bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:section_id>/<int:interpretation_id>/edit_interpretation",
+    "/<int:book_id>/<int:collection_id>/<int:section_id>/edit_interpretation",
     methods=["POST"],
 )
 @bp.route(
     (
         "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/"
-        "<int:section_id>/<int:interpretation_id>/edit_interpretation"
+        "<int:section_id>/edit_interpretation"
     ),
     methods=["POST"],
 )
@@ -171,24 +171,35 @@ def interpretation_edit(
     book_id: int,
     collection_id: int,
     section_id: int,
-    interpretation_id: int,
     sub_collection_id: int | None = None,
 ):
-    interpretation: m.Interpretation = db.session.get(
-        m.Interpretation, interpretation_id
-    )
     form = f.EditInterpretationForm()
     redirect_url = url_for(
-        "book.qa_view",
+        "book.interpretation_view",
         book_id=book_id,
         collection_id=collection_id,
         sub_collection_id=sub_collection_id,
         section_id=section_id,
-        interpretation_id=interpretation_id,
     )
 
     if form.validate_on_submit():
         text = form.text.data
+        interpretation_id = form.interpretation_id.data
+        interpretation: m.Interpretation = db.session.get(
+            m.Interpretation, interpretation_id
+        )
+        if not interpretation or interpretation.is_deleted:
+            log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
+            flash("Interpretation not found", "danger")
+            return redirect(
+                url_for(
+                    "book.interpretation_view",
+                    book_id=book_id,
+                    collection_id=collection_id,
+                    sub_collection_id=sub_collection_id,
+                    section_id=section_id,
+                )
+            )
         plain_text = clean_html(text).lower()
         tags = current_app.config["TAG_REGEX"].findall(text)
         for tag in tags:
@@ -215,13 +226,13 @@ def interpretation_edit(
 
 
 @bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:section_id>/<int:interpretation_id>/delete_interpretation",
+    "/<int:book_id>/<int:collection_id>/<int:section_id>/delete_interpretation",
     methods=["POST"],
 )
 @bp.route(
     (
         "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/"
-        "<int:section_id>/<int:interpretation_id>/delete_interpretation"
+        "<int:section_id>/delete_interpretation"
     ),
     methods=["POST"],
 )
@@ -231,20 +242,42 @@ def interpretation_delete(
     book_id: int,
     collection_id: int,
     section_id: int,
-    interpretation_id: int,
     sub_collection_id: int | None = None,
 ):
+    form = f.DeleteInterpretationForm()
+    interpretation_id = form.interpretation_id.data
     interpretation: m.Interpretation = db.session.get(
         m.Interpretation, interpretation_id
     )
+    if not interpretation or interpretation.is_deleted:
+        log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
+        flash("Interpretation not found", "danger")
+        return redirect(
+            url_for(
+                "book.interpretation_view",
+                book_id=book_id,
+                collection_id=collection_id,
+                sub_collection_id=sub_collection_id,
+                section_id=section_id,
+            )
+        )
 
-    interpretation.is_deleted = True
-    delete_nested_interpretation_entities(interpretation)
+    if form.validate_on_submit():
+        interpretation.is_deleted = True
+        delete_nested_interpretation_entities(interpretation)
+        log(log.INFO, "Delete interpretation [%s]", interpretation)
+        interpretation.save()
 
-    log(log.INFO, "Delete interpretation [%s]", interpretation)
-    interpretation.save()
-
-    flash("Success!", "success")
+        flash("Success!", "success")
+        return redirect(
+            url_for(
+                "book.interpretation_view",
+                book_id=book_id,
+                collection_id=collection_id,
+                sub_collection_id=sub_collection_id,
+                section_id=section_id,
+            )
+        )
     return redirect(
         url_for(
             "book.collection_view",

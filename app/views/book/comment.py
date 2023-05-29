@@ -214,8 +214,7 @@ def comment_edit(
         )
     return redirect(
         url_for(
-            "book.sub_collection_view",
+            "book.collection_view",
             book_id=book_id,
-            collection_id=collection_id,
         )
     )
