@@ -52,7 +52,7 @@
         <a  id="accordion-collapse-heading-{{loop.index}}" class=" text-black dark:text-white ">
           <form id="rename-collection-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" method="post" class="mb-0">
             {{ form_hidden_tag() }}
-            <input class=" bg-inherit border-none " value="{{collection.label}}" type="text" name="label" id="edit-collection-label-{{loop.index}}" placeholder="Collection label" required readonly/>
+            <input class=" bg-inherit border-none " value="{{collection.label}}/{{collection.id}}" type="text" name="label" id="edit-collection-label-{{loop.index}}" placeholder="Collection label" required readonly/>
             <button name="submit" type="submit"></button>
           </form>
         </a>
@@ -98,11 +98,12 @@
         {% endif %}
     </div>
     <!-- prettier-ignore -->
-    <div id="accordion-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{loop.index}}">
+    <div id="accordion-collapse-body-{{loop.index}}"  class="hidden" aria-labelledby="accordion-collapse-heading-{{loop.index}}">
       <div class="ml-6">
         {% if not collection.is_leaf %}
         <!-- if collection has sub_collection make for loop for it -->
         <!-- Nested accordion -->
+        <div data-dnd="dnd-sub-collection" data-collection-id="{{collection.id}}">
         {% for sub_collection in collection.children if not sub_collection.is_deleted%}
         <div id="accordion-nested-collapse" data-accordion="open">
             <div class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
@@ -118,7 +119,7 @@
               <a  id="accordion-nested-collapse-heading-{{outer_loop.index}}-{{loop.index}}" class=" text-black dark:text-white ">
                 <form id="rename-sub-collection-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" method="post" class="mb-0">
                   {{ form_hidden_tag() }}
-                  <input class=" bg-inherit border-none " value="{{sub_collection.label}}" type="text" name="label" id="edit-sub-collection-label-{{loop.index}}" placeholder="Sub collection label" required readonly/>
+                  <input class=" bg-inherit border-none " value="{{sub_collection.label}}/{{sub_collection.id}}" type="text" name="label" id="edit-sub-collection-label-{{loop.index}}" placeholder="Sub collection label" required readonly/>
                   <button name="submit" type="submit"></button>
                 </form>
               </a>
@@ -154,14 +155,14 @@
             </div>
           <!-- prettier-ignore -->
           <div id="accordion-nested-collapse-body-{{outer_loop.index}}-{{loop.index}}" class="hidden" aria-labelledby="accordion-nested-collapse-heading-{{loop.index}}">
-            <div class="ml-6">
+            <div class="ml-6" id="draggableItems" data-sub-collection-id="{{sub_collection.id}}">
               <!-- here comes for loop for all section in this sub_collection-->
               {% for section in sub_collection.active_sections %}
               <div class="">
               <button type="button" href="#section-{{section.label}}" id="section-heading-{{loop.index}}" class="text-gray-500 dark:text-gray-400">
                 <form id="rename-section-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" data-section-id="{{section.id}}" method="post">
                   {{ form_hidden_tag() }}
-                <input class=" bg-inherit border-none underline" value="{{section.label}}" type="text" name="label" id="edit-section-label-{{loop.index}}" placeholder="Section label" required readonly/>
+                <input class="cursor-pointer bg-inherit border-none underline" value="{{section.label}}" type="text" name="label" id="edit-section-label-{{loop.index}}" placeholder="Section label" required readonly/>
                 <button name="submit" type="submit"></button>
               </form>
               </button>
@@ -195,16 +196,18 @@
           </div>
         </div>
         {% endfor %}
+        </div>
         <!-- End: Nested accordion -->
         {% else %}
         <!-- if collection doesn't have sub_collection -->
-        <div class="ml-6">
+        <div class="ml-6" id="draggableItems" data-collection-id="{{collection.id}}">
           <!-- here comes for loop for all section in this collection-->
           {% for section in collection.active_sections %}
+          <div>
           <button type="button" href="#section-{{section.label}}" id="section-heading-{{loop.index}}" class="text-gray-500 dark:text-gray-400">
             <form id="rename-section-label-form-{{loop.index}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" data-sub-collection-id="_" data-section-id="{{section.id}}" method="post">
               {{ form_hidden_tag() }}
-            <input class=" bg-inherit border-none underline" value="{{section.label}}" type="text" name="label" id="edit-section-label-{{loop.index}}" placeholder="Section label" required readonly/>
+            <input class="cursor-pointer bg-inherit border-none underline" value="{{section.label}}/{{section.id}}" type="text" name="label" id="edit-section-label-{{loop.index}}" placeholder="Section label" required readonly/>
             <button name="submit" type="submit"></button>
           </form>
           </button>
@@ -231,6 +234,7 @@
               </li>
             </ul>
             {% endif %}
+          </div>
           </div>
           {% endfor %}
         </div>

@@ -25,6 +25,7 @@ import {copyLink} from './copyLink';
 import {quickSearch} from './quickSearch';
 import {flash} from './flash';
 import {slashSearch} from './slashSearch';
+import {initDnD} from './drag_and_drop';
 
 initQuillReadOnly();
 initBooks();
@@ -53,3 +54,4 @@ copyLink();
 quickSearch();
 flash();
 slashSearch();
+initDnD();
