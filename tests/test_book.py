@@ -468,7 +468,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     ).save()
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/edit",
+        f"/book/{book.id}/{sub_collection.id}/edit",
         data=dict(
             label="Test SubCollection #2 Label",
         ),
@@ -482,7 +482,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     new_about = "Test SubCollection #1 About(edited)"
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/edit",
+        f"/book/{book.id}/{sub_collection.id}/edit",
         data=dict(
             label=new_label,
             about=new_about,
@@ -499,7 +499,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     assert edited_collection
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/9999/edit",
+        f"/book/{book.id}/9999/edit",
         data=dict(
             label=new_label,
             about=new_about,
@@ -508,10 +508,10 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     )
 
     assert response.status_code == 200
-    assert b"Subcollection not found" in response.data
+    assert b"Collection not found" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/delete",
+        f"/book/{book.id}/{sub_collection.id}/delete",
         follow_redirects=True,
     )
 
@@ -523,12 +523,12 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     check_if_nested_collection_entities_is_deleted(deleted_collection)
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/delete",
+        f"/book/{book.id}/{sub_collection.id}/delete",
         follow_redirects=True,
     )
 
     assert response.status_code == 200
-    assert b"Subcollection not found" in response.data
+    assert b"Collection not found" in response.data
 
 
 def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):

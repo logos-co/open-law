@@ -36,14 +36,13 @@ export function deleteSubCollection() {
     }
     deleteSubCollectionModalBtns.forEach(btn =>
       btn.addEventListener('click', () => {
-        const collectionId = btn.getAttribute('data-collection-id');
         const subCollectionId = btn.getAttribute('data-sub-collection-id');
-        collectionIdInDeleteSubCollectionModal.value = collectionId;
+        collectionIdInDeleteSubCollectionModal.value = subCollectionId;
         let newActionPath: string = '';
 
         newActionPath = defaultActionPath.replace(
-          '0/0/delete',
-          `${collectionId}/${subCollectionId}/delete`,
+          '0/delete',
+          `${subCollectionId}/delete`,
         );
 
         deleteSubCollectionForm.setAttribute('action', `${newActionPath}`);
