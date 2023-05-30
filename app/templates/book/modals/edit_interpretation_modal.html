@@ -3,11 +3,7 @@
   <div class="relative w-full max-w-2xl max-h-full">
     <!-- Modal content -->
     <form
-      {% if sub_collection %}
-        action="{{ url_for('book.interpretation_edit', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id, section_id=section.id) }}"
-      {% else %}
-        action="{{ url_for('book.interpretation_edit', book_id=book.id, collection_id=collection.id, section_id=section.id) }}"
-      {% endif %}
+      action="{{ url_for('book.interpretation_edit', book_id=book.id, interpretation_id=interpretation.id) }}"
       method="post"
       class="prevent-submit-on-enter relative bg-white rounded-lg shadow dark:bg-gray-700"
     >

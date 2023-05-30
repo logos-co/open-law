@@ -28,6 +28,6 @@ export function flash() {
     });
     setTimeout(() => {
       dismiss.hide();
-    }, 10000);
+    }, 5000);
   }
 }

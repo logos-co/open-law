@@ -4,8 +4,8 @@
 
 
 {% if current_user.is_authenticated %}
-{% include 'book/delete_comment_modal.html' %}
-{% include 'book/edit_comment_modal.html' %}
+{% include 'book/modals/delete_comment_modal.html' %}
+{% include 'book/modals/edit_comment_modal.html' %}
 {% block right_sidebar %}
 {% endblock %}
 {% endif %}
@@ -40,18 +40,7 @@
     {% endif %}
     {% if current_user.is_authenticated %}
     <form
-      {%
-      if
-      sub_collection
-      %}
-      action="{{ url_for('book.create_comment', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id,section_id=section.id,interpretation_id=interpretation.id) }}"
-      {%
-      else
-      %}
-      action="{{ url_for('book.create_comment', book_id=book.id, collection_id=collection.id,section_id=section.id,interpretation_id=interpretation.id) }}"
-      {%
-      endif
-      %}
+      action="{{ url_for('book.create_comment', book_id=book.id, interpretation_id=interpretation.id) }}"
       method="post"
       class="prevent-submit-on-enter flex flex-col bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
       {{ form_hidden_tag() }}
@@ -202,7 +191,7 @@
           </dt>
         </div>
         <div class="p-5 m-3">
-          {% for child in comment.children %}
+          {% for child in comment.children if not child.is_deleted %}
             <div class="p-5 mb-2 flex justify-between items-end bg-slate-100 dark:bg-slate-600 rounded-lg">
               <div class="ql-snow">
                 <div class="inline-block mb-4 ql-editor-readonly !p-0">
@@ -237,11 +226,7 @@
         <div id="accordion-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-1">
           <div class="p-5 border-t border-gray-200 dark:border-gray-700 dark:bg-gray-900">
               <form
-                {% if sub_collection %}
-                  action="{{ url_for('book.create_comment', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id,section_id=section.id,interpretation_id=interpretation.id) }}"
-                {% else %}
-                  action="{{ url_for('book.create_comment', book_id=book.id, collection_id=collection.id,section_id=section.id,interpretation_id=interpretation.id) }}"
-                {% endif %}
+                action="{{ url_for('book.create_comment', book_id=book.id, interpretation_id=interpretation.id) }}"
                 method="post"
                 class="prevent-submit-on-enter flex flex-col bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700"
               >

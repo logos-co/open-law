@@ -4,11 +4,9 @@
     <!-- Modal content -->
     <form
       id="delete_section_modal_form"
-      action="{{ url_for('book.section_delete', book_id=book.id, collection_id=0, sub_collection_id=0, section_id=0) }}"
+      action="{{ url_for('book.section_delete', book_id=book.id, section_id=0) }}"
       method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
       {{ form_hidden_tag() }}
-      <input type="hidden" name="collection_id" id="delete_section_modal_collection_id" value="" />
-      <input type="hidden" name="sub_collection_id" id="delete_section_modal_sub_collection_id" value="" />
       <input type="hidden" name="section_id" id="delete_section_modal_section_id" value="" />
 
       <!-- Modal header -->

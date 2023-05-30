@@ -83,13 +83,12 @@ def test_create_tags_on_comment_create_and_edit(client: FlaskClient):
     create_test_book(user.id, 1)
 
     book = db.session.get(m.Book, 1)
-    collection = db.session.get(m.Collection, 1)
     section = db.session.get(m.Section, 1)
     interpretation = db.session.get(m.Interpretation, 1)
 
     tags = "[tag1] [tag2] [tag3]"
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{section.id}/{interpretation.id}/create_comment",
+        f"/book/{book.id}/{interpretation.id}/create_comment",
         data=dict(
             section_id=section.id,
             text="some text" + tags,
@@ -116,7 +115,7 @@ def test_create_tags_on_comment_create_and_edit(client: FlaskClient):
 
     tags = "[tag1] [tag5] [tag7]"
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{section.id}/{interpretation.id}/comment_edit",
+        f"/book/{book.id}/{interpretation.id}/comment_edit",
         data=dict(text="some text" + tags, comment_id=comment.id),
         follow_redirects=True,
     )
@@ -143,14 +142,13 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
     create_test_book(user.id, 1)
 
     book = db.session.get(m.Book, 1)
-    collection = db.session.get(m.Collection, 1)
     section = db.session.get(m.Section, 1)
 
     tags = "[tag1] [tag2] [tag3]"
     text_1 = "Test Interpretation #1 Text"
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{section.id}/create_interpretation",
+        f"/book/{book.id}/{section.id}/create_interpretation",
         data=dict(section_id=section.id, text=text_1 + tags),
         follow_redirects=True,
     )
@@ -175,7 +173,7 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
 
     tags = "[tag-4] [tag5] [tag3]"
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{section.id}/edit_interpretation",
+        f"/book/{book.id}/{interpretation.id}/edit_interpretation",
         data=dict(interpretation_id=interpretation.id, text=text_1 + tags),
         follow_redirects=True,
     )

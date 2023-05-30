@@ -17,19 +17,10 @@ from app.logger import log
 from .bp import bp
 
 
-@bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:section_id>/interpretations",
-    methods=["GET"],
-)
-@bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/<int:section_id>/interpretations",
-    methods=["GET"],
-)
+@bp.route("/<int:book_id>/<int:section_id>/interpretations", methods=["GET"])
 def interpretation_view(
     book_id: int,
-    collection_id: int,
     section_id: int,
-    sub_collection_id: int | None = None,
 ):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.is_deleted:
@@ -37,84 +28,39 @@ def interpretation_view(
         flash("Book not found", "danger")
         return redirect(url_for("book.my_library"))
 
-    collection: m.Collection = db.session.get(m.Collection, collection_id)
-    if not collection or collection.is_deleted:
-        log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Collection not found", "danger")
-        return redirect(url_for("book.collection_view", book_id=book_id))
-
-    if sub_collection_id:
-        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-        if not sub_collection or sub_collection.is_deleted:
-            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-            flash("Sub_collection not found", "danger")
-            return redirect(
-                url_for(
-                    "book.sub_collection_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                )
-            )
-
     section: m.Section = db.session.get(m.Section, section_id)
     if not section:
         log(log.WARNING, "Section with id [%s] not found", section_id)
         flash("Section not found", "danger")
         return redirect(
             url_for(
-                "book.section_view",
+                "book.collection_view",
                 book_id=book_id,
-                collection_id=collection_id,
-                sub_collection_id=sub_collection_id,
             )
         )
-    else:
-        breadcrumbs = create_breadcrumbs(
-            book_id=book_id,
-            collection_path=(
-                collection_id,
-                sub_collection_id,
-            ),
-            section_id=section_id,
-        )
-        return render_template(
-            "book/interpretation_view.html",
-            book=book,
-            collection=collection,
-            sub_collection=sub_collection if sub_collection_id else None,
-            section=section,
-            breadcrumbs=breadcrumbs,
-        )
+    breadcrumbs = create_breadcrumbs(
+        book_id=book_id, section_id=section_id, collection_id=section.collection.id
+    )
+    return render_template(
+        "book/interpretation_view.html",
+        book=book,
+        section=section,
+        breadcrumbs=breadcrumbs,
+    )
 
 
-#####################
-# Interpretation CRUD
-#####################
-
-
-@bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:section_id>/create_interpretation",
-    methods=["POST"],
-)
-@bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/<int:section_id>/create_interpretation",
-    methods=["POST"],
-)
+@bp.route("/<int:book_id>/<int:section_id>/create_interpretation", methods=["POST"])
 @register_book_verify_route(bp.name)
 @login_required
 def interpretation_create(
     book_id: int,
-    collection_id: int,
     section_id: int,
-    sub_collection_id: int | None = None,
 ):
     section: m.Section = db.session.get(m.Section, section_id)
     form = f.CreateInterpretationForm()
     redirect_url = url_for(
         "book.interpretation_view",
         book_id=book_id,
-        collection_id=collection_id,
-        sub_collection_id=sub_collection_id,
         section_id=section.id,
     )
 
@@ -155,31 +101,17 @@ def interpretation_create(
 
 
 @bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:section_id>/edit_interpretation",
-    methods=["POST"],
-)
-@bp.route(
-    (
-        "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/"
-        "<int:section_id>/edit_interpretation"
-    ),
-    methods=["POST"],
+    "/<int:book_id>/<int:interpretation_id>/edit_interpretation", methods=["POST"]
 )
 @register_book_verify_route(bp.name)
 @login_required
 def interpretation_edit(
     book_id: int,
-    collection_id: int,
-    section_id: int,
-    sub_collection_id: int | None = None,
+    interpretation_id: int,
 ):
     form = f.EditInterpretationForm()
     redirect_url = url_for(
-        "book.interpretation_view",
-        book_id=book_id,
-        collection_id=collection_id,
-        sub_collection_id=sub_collection_id,
-        section_id=section_id,
+        "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
     )
 
     if form.validate_on_submit():
@@ -226,26 +158,11 @@ def interpretation_edit(
 
 
 @bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:section_id>/delete_interpretation",
-    methods=["POST"],
-)
-@bp.route(
-    (
-        "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/"
-        "<int:section_id>/delete_interpretation"
-    ),
-    methods=["POST"],
+    "/<int:book_id>/<int:interpretation_id>/delete_interpretation", methods=["POST"]
 )
 @register_book_verify_route(bp.name)
 @login_required
-def interpretation_delete(
-    book_id: int,
-    collection_id: int,
-    section_id: int,
-    sub_collection_id: int | None = None,
-):
-    form = f.DeleteInterpretationForm()
-    interpretation_id = form.interpretation_id.data
+def interpretation_delete(book_id: int, interpretation_id: int):
     interpretation: m.Interpretation = db.session.get(
         m.Interpretation, interpretation_id
     )
@@ -286,61 +203,13 @@ def interpretation_delete(
     )
 
 
-@bp.route(
-    "/<int:book_id>/<int:collection_id>/<int:section_id>/<int:interpretation_id>/preview",
-    methods=["GET"],
-)
-@bp.route(
-    (
-        "/<int:book_id>/<int:collection_id>/<int:sub_collection_id>/"
-        "<int:section_id>/<int:interpretation_id>/preview"
-    ),
-    methods=["GET"],
-)
-def qa_view(
-    book_id: int,
-    collection_id: int,
-    section_id: int,
-    interpretation_id: int,
-    sub_collection_id: int | None = None,
-):
+@bp.route("/<int:book_id>/<int:interpretation_id>/preview", methods=["GET"])
+def qa_view(book_id: int, interpretation_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
         flash("You are not owner of this book!", "danger")
         return redirect(url_for("book.my_library"))
-
-    collection: m.Collection = db.session.get(m.Collection, collection_id)
-    if not collection or collection.is_deleted:
-        log(log.WARNING, "Collection with id [%s] not found", collection_id)
-        flash("Collection not found", "danger")
-        return redirect(url_for("book.collection_view", book_id=book_id))
-
-    if sub_collection_id:
-        sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
-        if not sub_collection or sub_collection.is_deleted:
-            log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
-            flash("SubCollection not found", "danger")
-            return redirect(
-                url_for(
-                    "book.sub_collection_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                )
-            )
-
-    redirect_url = url_for(
-        "book.interpretation_view",
-        book_id=book_id,
-        collection_id=collection_id,
-        sub_collection_id=sub_collection_id,
-        section_id=section_id,
-    )
-    section: m.Section = db.session.get(m.Section, section_id)
-    if not section or section.is_deleted:
-        log(log.WARNING, "Section with id [%s] not found", section_id)
-        flash("Section not found", "danger")
-        return redirect(redirect_url)
 
     interpretation: m.Interpretation = db.session.get(
         m.Interpretation, interpretation_id
@@ -348,23 +217,17 @@ def qa_view(
     if not interpretation or interpretation.is_deleted:
         log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
         flash("Interpretation not found", "danger")
-        return redirect(redirect_url)
+        return redirect(url_for("book.collection_view", book_id=book_id))
 
     breadcrumbs = create_breadcrumbs(
         book_id=book_id,
-        collection_path=(
-            collection_id,
-            sub_collection_id,
-        ),
-        section_id=section_id,
-        interpretation_id=interpretation.id,
+        collection_id=interpretation.section.collection.id,
+        section_id=interpretation.section.id,
     )
     return render_template(
         "book/qa_view.html",
         book=book,
-        collection=collection,
-        sub_collection=sub_collection if sub_collection_id else None,
-        section=section,
+        section=interpretation.section,
         interpretation=interpretation,
         breadcrumbs=breadcrumbs,
     )
