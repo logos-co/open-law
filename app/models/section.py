@@ -6,6 +6,7 @@ from app.controllers import create_breadcrumbs
 from .interpretation import Interpretation
 from .comment import Comment
 from .interpretation_vote import InterpretationVote
+from app import schema as s
 
 
 class Section(BaseModel):
@@ -46,16 +47,15 @@ class Section(BaseModel):
 
     @property
     def breadcrumbs_path(self):
-        parent = self.collection
-        grand_parent = parent.parent
-        if grand_parent.is_root:
-            collection_path = (parent.id,)
-        else:
-            collection_path = (
-                grand_parent.id,
-                parent.id,
+        breadcrumbs_path = create_breadcrumbs(
+            book_id=self.book_id, collection_id=self.collection.id
+        )
+        if len(breadcrumbs_path) > 5:
+            breadcrumbs_path = (
+                breadcrumbs_path[:3]
+                + [s.BreadCrumb(type=s.BreadCrumbType.Splitter, url="", label="...")]
+                + breadcrumbs_path[-2:]
             )
-        breadcrumbs_path = create_breadcrumbs(self.book_id, collection_path)
         return breadcrumbs_path
 
     @property
