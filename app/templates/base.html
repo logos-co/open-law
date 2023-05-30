@@ -15,8 +15,7 @@
     <link
       rel="icon"
       type="image/x-icon"
-      href="{{ url_for('static', filename='img/logo.svg') }}"
-    />
+      href="{{ url_for('static', filename='img/logo.svg') }}" />
 
     <!-- styles -->
     <!-- prettier-ignore -->
@@ -43,7 +42,7 @@
     {% endblock %}
   </head>
 
-  <body class="bg-white dark:bg-gray-800" >
+  <body class="bg-white dark:bg-gray-800">
     <!-- Header -->
     <!-- prettier-ignore -->
     {% include 'header.html' %}
@@ -88,7 +87,7 @@
       {% block right_sidebar %}
         {% include 'right_sidebar.html' %}
       {% endblock %}
-      {% include 'book/add_book_modal.html' %}
+      {% include 'book/modals/add_book_modal.html' %}
     {% endif %}
 
     <!-- prettier-ignore -->

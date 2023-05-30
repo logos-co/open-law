@@ -19,22 +19,13 @@ export function renameSection() {
         sectionRenameForms[index].addEventListener('submit', async e => {
           e.preventDefault();
           const bookId = sectionRenameForms[index].getAttribute('data-book-id');
-          const collectionId =
-            sectionRenameForms[index].getAttribute('data-collection-id');
-          const subCollectionId = sectionRenameForms[index].getAttribute(
-            'data-sub-collection-id',
-          );
           const sectionId =
             sectionRenameForms[index].getAttribute('data-section-id');
           const newLabel = inputsForRename[index].value;
           inputsForRename[index].readOnly = true;
 
           let url = '';
-          if (subCollectionId === '_') {
-            url = `/book/${bookId}/${collectionId}/${sectionId}/edit_section_label`;
-          } else {
-            url = `/book/${bookId}/${collectionId}/${subCollectionId}/${sectionId}/edit_section_label`;
-          }
+          url = `/book/${bookId}/${sectionId}/edit_section`;
 
           const response = await fetch(url, {
             method: 'POST',

@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 
 {% if current_user.is_authenticated %}
-{% include 'book/approve_interpretation_modal.html' %}
+{% include 'book/modals/approve_interpretation_modal.html' %}
   {% block right_sidebar %}
   {% endblock %}
 {% endif %}
@@ -44,11 +44,7 @@
       {% if current_user.is_authenticated %}
       <!-- prettier-ignore -->
       <form
-        {% if sub_collection %}
-          action="{{ url_for('book.interpretation_create', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id,section_id=section.id) }}"
-        {% else %}
-          action="{{ url_for('book.interpretation_create', book_id=book.id, collection_id=collection.id,section_id=section.id) }}"
-        {% endif %}
+        action="{{ url_for('book.interpretation_create', book_id=book.id, section_id=section.id) }}"
         method="post" class="prevent-submit-on-enter bg-white rounded-lg shadow dark:bg-gray-700"
       >
       {{ form_hidden_tag() }}

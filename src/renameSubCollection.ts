@@ -23,15 +23,13 @@ export function renameSubCollection() {
           e.preventDefault();
           const bookId =
             subCollectionRenameForms[index].getAttribute('data-book-id');
-          const collectionId =
-            subCollectionRenameForms[index].getAttribute('data-collection-id');
           const subCollectionId = subCollectionRenameForms[index].getAttribute(
             'data-sub-collection-id',
           );
           const newLabel = inputsForRename[index].value;
           inputsForRename[index].readOnly = true;
 
-          let url = `/book/${bookId}/${collectionId}/${subCollectionId}/edit`;
+          let url = `/book/${bookId}/${subCollectionId}/edit`;
 
           const response = await fetch(url, {
             method: 'POST',
