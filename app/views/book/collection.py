@@ -21,7 +21,7 @@ from .bp import bp
 @bp.route("/<int:book_id>/collections", methods=["GET"])
 def collection_view(book_id: int):
     book = db.session.get(m.Book, book_id)
-    breadcrumbs = create_breadcrumbs(book_id=book_id, collection_path=())
+    breadcrumbs = create_breadcrumbs(book_id=book_id)
     if not book or book.is_deleted:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")

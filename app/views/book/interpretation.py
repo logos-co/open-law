@@ -38,17 +38,14 @@ def interpretation_view(
                 book_id=book_id,
             )
         )
-    # FIXME breadcrumbs
-    # breadcrumbs = create_breadcrumbs(
-    #     book_id=book_id,
-    #     collection_path=(section.collection.id,),
-    #     section_id=section_id,
-    # )
+    breadcrumbs = create_breadcrumbs(
+        book_id=book_id, section_id=section_id, collection_id=section.collection.id
+    )
     return render_template(
         "book/interpretation_view.html",
         book=book,
         section=section,
-        breadcrumbs=[],
+        breadcrumbs=breadcrumbs,
     )
 
 
@@ -188,13 +185,10 @@ def qa_view(book_id: int, interpretation_id: int):
         flash("Interpretation not found", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
 
-    # FIXME
     breadcrumbs = create_breadcrumbs(
         book_id=book_id,
-        collection_path=(interpretation.section.collection.id,),
+        collection_id=interpretation.section.collection.id,
         section_id=interpretation.section.id,
-        interpretation_id=interpretation.id,
-        _collection_id=interpretation.section.collection.id,
     )
     return render_template(
         "book/qa_view.html",
