@@ -59,12 +59,7 @@ def create_comment(
             )
 
     redirect_url = url_for(
-        "book.qa_view",
-        book_id=book_id,
-        collection_id=collection_id,
-        sub_collection_id=sub_collection_id,
-        section_id=section_id,
-        interpretation_id=interpretation_id,
+        "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
     )
     section: m.Section = db.session.get(m.Section, section_id)
     if not section or section.is_deleted:
@@ -149,12 +144,7 @@ def comment_delete(
         flash("Success!", "success")
         return redirect(
             url_for(
-                "book.qa_view",
-                book_id=book_id,
-                collection_id=collection_id,
-                sub_collection_id=sub_collection_id,
-                section_id=section_id,
-                interpretation_id=interpretation_id,
+                "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
             )
         )
     return redirect(
@@ -204,12 +194,7 @@ def comment_edit(
         flash("Success!", "success")
         return redirect(
             url_for(
-                "book.qa_view",
-                book_id=book_id,
-                collection_id=collection_id,
-                sub_collection_id=sub_collection_id,
-                section_id=section_id,
-                interpretation_id=interpretation_id,
+                "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
             )
         )
     return redirect(
