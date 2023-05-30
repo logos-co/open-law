@@ -191,7 +191,7 @@
           </dt>
         </div>
         <div class="p-5 m-3">
-          {% for child in comment.children %}
+          {% for child in comment.children if not child.is_deleted %}
             <div class="p-5 mb-2 flex justify-between items-end bg-slate-100 dark:bg-slate-600 rounded-lg">
               <div class="ql-snow">
                 <div class="inline-block mb-4 ql-editor-readonly !p-0">

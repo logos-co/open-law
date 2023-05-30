@@ -61,9 +61,7 @@ def book_validator() -> Response | None:
             flash("Subcollection not found", "danger")
             return redirect(
                 url_for(
-                    "book.sub_collection_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
+                    "book.collection_view", book_id=book_id, collection_id=collection_id
                 )
             )
 

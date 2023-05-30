@@ -74,16 +74,10 @@ def create_comment(
         return redirect(redirect_url)
 
 
-@bp.route(
-    "/<int:book_id>/<int:interpretation_id>/comment_delete",
-    methods=["POST"],
-)
+@bp.route("/<int:book_id>/<int:interpretation_id>/comment_delete", methods=["POST"])
 @register_book_verify_route(bp.name)
 @login_required
-def comment_delete(
-    book_id: int,
-    interpretation_id: int,
-):
+def comment_delete(book_id: int, interpretation_id: int):
     redirect_url = url_for(
         "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
     )

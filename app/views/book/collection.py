@@ -32,12 +32,6 @@ def collection_view(book_id: int):
         )
 
 
-@bp.route("/<int:book_id>/<int:collection_id>/subcollections", methods=["GET"])
-def sub_collection_view(book_id: int, collection_id: int):
-    # TODO REMOVE ME
-    return {"REMOVE ME": "REMOVE ME"}
-
-
 @bp.route("/<int:book_id>/create_collection", methods=["POST"])
 @bp.route("/<int:book_id>/<int:collection_id>/create_sub_collection", methods=["POST"])
 @register_book_verify_route(bp.name)
