@@ -72,11 +72,13 @@ def create_app(environment="development"):
         form_hidden_tag,
         display_tags,
         build_qa_url_using_interpretation,
+        recursive_render,
     )
 
     app.jinja_env.globals["form_hidden_tag"] = form_hidden_tag
     app.jinja_env.globals["display_tags"] = display_tags
     app.jinja_env.globals["build_qa_url"] = build_qa_url_using_interpretation
+    app.jinja_env.globals["recursive_render"] = recursive_render
 
     # Error handlers.
     @app.errorhandler(HTTPException)
