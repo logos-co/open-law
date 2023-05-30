@@ -5,13 +5,8 @@ from flask import (
 )
 from flask_login import login_required
 
-from app.controllers import (
-    create_breadcrumbs,
-    register_book_verify_route,
-)
-from app.controllers.delete_nested_book_entities import (
-    delete_nested_section_entities,
-)
+from app.controllers import register_book_verify_route
+from app.controllers.delete_nested_book_entities import delete_nested_section_entities
 from app import models as m, db, forms as f
 from app.logger import log
 from .bp import bp

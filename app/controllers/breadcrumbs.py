@@ -1,8 +1,7 @@
 from flask import url_for
 from flask_login import current_user
 
-from app import models as m, db
-from app import schema as s
+from app import models as m, db, schema as s
 
 
 def create_collections_breadcrumb(
@@ -21,9 +20,7 @@ def create_collections_breadcrumb(
 
 
 def create_breadcrumbs(
-    book_id: int,
-    section_id: int = 0,
-    collection_id: int = 0,
+    book_id: int, section_id: int = 0, collection_id: int = 0, short=True
 ) -> list[s.BreadCrumb]:
     """
     How breadcrumbs look like:
@@ -97,4 +94,12 @@ def create_breadcrumbs(
                 label=section.label,
             )
         ]
+
+    if short and len(crumples) > 5:
+        crumples = (
+            crumples[:3]
+            + [s.BreadCrumb(type=s.BreadCrumbType.Splitter, url="", label="...")]
+            + crumples[-2:]
+        )
+
     return crumples

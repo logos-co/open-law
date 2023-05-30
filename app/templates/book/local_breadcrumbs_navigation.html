@@ -1,33 +1,40 @@
 <!-- prettier-ignore -->
 <ol class="inline-flex items-center overflow-x-scroll md:overflow-auto p-0">
 {% for breadcrumb in local_breadcrumbs if breadcrumb.type != "MyBookList" and breadcrumb.type != "AuthorBookList" %}
-    <li class="inline-flex items-center align-middle justify-center">
-        {% if not loop.index==local_breadcrumbs|length-1 %}
-            <a href="{{ breadcrumb.url }}" class="inline-flex text-xs font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" data-tooltip-target="breadcrumb-{{loop.index}}-tooltip" data-tooltip-placement="bottom">
-        {% else %}
-            <span class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" data-tooltip-target="breadcrumb-{{loop.index}}-tooltip" data-tooltip-placement="bottom">
-        {% endif %}
+    {% if breadcrumb.type != 'Splitter' %}
+        <li class="inline-flex items-center align-middle justify-center">
+            {% if not loop.index==local_breadcrumbs|length-1 %}
+                <a href="{{ breadcrumb.url }}" class="inline-flex text-xs font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" data-tooltip-target="breadcrumb-{{loop.index}}-tooltip" data-tooltip-placement="bottom">
+            {% else %}
+                <span class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" data-tooltip-target="breadcrumb-{{loop.index}}-tooltip" data-tooltip-placement="bottom">
+            {% endif %}
 
-        {% if breadcrumb.type != "Splitter" %}
-        <div id="breadcrumb-{{loop.index}}-tooltip" role="tooltip" class="delay-100 absolute z-[100] invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-700 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-            {{ breadcrumb.label }}
-            <div class="tooltip-arrow" data-popper-arrow></div>
-        </div>
-        {% endif %}
+            {% if breadcrumb.type != "Splitter" %}
+            <div id="breadcrumb-{{loop.index}}-tooltip" role="tooltip" class="delay-100 absolute z-[100] invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-700 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                {{ breadcrumb.label }}
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+            {% endif %}
 
-        <!-- prettier-ignore -->
-        <span class="select-none">{{ breadcrumb.label }}</span>
+            <!-- prettier-ignore -->
+            <span class="select-none">{{ breadcrumb.label }}</span>
 
-        {% if not loop.index==local_breadcrumbs|length %}
-            </a>
-        {% else %}
-            </span>
-        {% endif %}
+            {% if not loop.index==local_breadcrumbs|length %}
+                </a>
+            {% else %}
+                </span>
+            {% endif %}
 
 
-        {% if not loop.index==local_breadcrumbs|length-1 %}
+            {% if not loop.index==local_breadcrumbs|length-1 %}
+            <svg aria-hidden="true" class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path> </svg>
+            {% endif %}
+        </li>
+    {% else %}
+      <li class="inline-flex items-center mx-1">
+        <span class="text-sm truncate font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white select-none ">{{ breadcrumb.label }}</span>
         <svg aria-hidden="true" class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path> </svg>
-        {% endif %}
-    </li>
+      </li>
+    {% endif %}
 {% endfor %}
 </ol>
