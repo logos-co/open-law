@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 
 {% if current_user.is_authenticated %}
-{% include 'book/approve_interpretation_modal.html' %}
+{% include 'book/modals/approve_interpretation_modal.html' %}
   {% block right_sidebar %}
   {% endblock %}
 {% endif %}

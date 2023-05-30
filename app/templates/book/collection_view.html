@@ -4,12 +4,12 @@
 {% endblock %}
 
 {% if current_user.is_authenticated %}
-{% include 'book/add_collection_modal.html' %}
-{% include 'book/delete_collection_modal.html' %}
-{% include 'book/add_sub_collection_modal.html' %}
-{% include 'book/delete_sub_collection_modal.html' %}
-{% include 'book/add_section_modal.html' %}
-{% include 'book/delete_section_modal.html' %}
+{% include 'book/modals/add_collection_modal.html' %}
+{% include 'book/modals/delete_collection_modal.html' %}
+{% include 'book/modals/add_sub_collection_modal.html' %}
+{% include 'book/modals/delete_sub_collection_modal.html' %}
+{% include 'book/modals/add_section_modal.html' %}
+{% include 'book/modals/delete_section_modal.html' %}
 {% endif %}
 
 {% block title %}{{book.label[:32]}}{% endblock %}

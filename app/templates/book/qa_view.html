@@ -4,8 +4,8 @@
 
 
 {% if current_user.is_authenticated %}
-{% include 'book/delete_comment_modal.html' %}
-{% include 'book/edit_comment_modal.html' %}
+{% include 'book/modals/delete_comment_modal.html' %}
+{% include 'book/modals/edit_comment_modal.html' %}
 {% block right_sidebar %}
 {% endblock %}
 {% endif %}
