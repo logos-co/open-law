@@ -5,7 +5,7 @@
     <!-- Modal content -->
     <form
       id="delete_sub_collection_modal_form"
-      action="{{ url_for('book.collection_delete', book_id=book.id, collection_id=0, sub_collection_id=0) }}"
+      action="{{ url_for('book.collection_delete', book_id=book.id, collection_id=0) }}"
       method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
       {{ form_hidden_tag() }}
       <input type="hidden" name="collection_id" id="delete_sub_collection_modal_collection_id" value="" />

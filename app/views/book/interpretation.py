@@ -62,10 +62,8 @@ def interpretation_view(
         flash("Section not found", "danger")
         return redirect(
             url_for(
-                "book.section_view",
+                "book.collection_view",
                 book_id=book_id,
-                collection_id=collection_id,
-                sub_collection_id=sub_collection_id,
             )
         )
     else:
