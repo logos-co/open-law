@@ -1015,9 +1015,8 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
     comment_text = "Some comment text"
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/{interpretation.id}/create_comment",
+        f"/book/{book.id}/{interpretation.id}/create_comment",
         data=dict(
-            section_id=section_in_subcollection.id,
             text=comment_text,
             interpretation_id=interpretation.id,
         ),
@@ -1036,9 +1035,8 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
 
     # edit
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/{interpretation.id}/comment_edit",
+        f"/book/{book.id}/{interpretation.id}/comment_edit",
         data=dict(
-            section_id=section_in_subcollection.id,
             text=new_text,
             interpretation_id=interpretation.id,
             comment_id=comment.id,
@@ -1054,9 +1052,8 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
 
     # delete
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/{interpretation.id}/comment_delete",
+        f"/book/{book.id}/{interpretation.id}/comment_delete",
         data=dict(
-            section_id=section_in_subcollection.id,
             text=comment_text,
             interpretation_id=interpretation.id,
             comment_id=comment.id,
