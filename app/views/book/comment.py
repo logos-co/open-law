@@ -1,4 +1,4 @@
-from flask import flash, redirect, url_for, current_app, request
+from flask import flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
 
 from app.controllers import (
@@ -22,12 +22,6 @@ def create_comment(
     book_id: int,
     interpretation_id: int,
 ):
-    current_url = request.referrer
-    if not current_url:
-        current_url = url_for(
-            "book.collection_view",
-            book_id=book_id,
-        )
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
@@ -69,7 +63,7 @@ def create_comment(
         set_comment_tags(comment, tags)
 
         flash("Success!", "success")
-        return redirect(current_url)
+        return redirect(redirect_url)
     else:
         log(log.ERROR, "Comment create errors: [%s]", form.errors)
         for field, errors in form.errors.items():
@@ -90,12 +84,9 @@ def comment_delete(
     book_id: int,
     interpretation_id: int,
 ):
-    current_url = request.referrer
-    if not current_url:
-        current_url = url_for(
-            "book.collection_view",
-            book_id=book_id,
-        )
+    redirect_url = url_for(
+        "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
+    )
     form = f.DeleteCommentForm()
     comment_id = form.comment_id.data
     comment: m.Comment = db.session.get(m.Comment, comment_id)
@@ -107,7 +98,7 @@ def comment_delete(
         comment.save()
 
         flash("Success!", "success")
-        return redirect(current_url)
+        return redirect(redirect_url)
     flash("Invalid id!", "danger")
     return redirect(
         url_for(
@@ -127,12 +118,9 @@ def comment_edit(
     book_id: int,
     interpretation_id: int,
 ):
-    current_url = request.referrer
-    if not current_url:
-        current_url = url_for(
-            "book.collection_view",
-            book_id=book_id,
-        )
+    redirect_url = url_for(
+        "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
+    )
     form = f.EditCommentForm()
 
     if form.validate_on_submit():
@@ -149,7 +137,7 @@ def comment_edit(
         comment.save()
 
         flash("Success!", "success")
-        return redirect(current_url)
+        return redirect(redirect_url)
     flash("Invalid id!", "danger")
 
     return redirect(
