@@ -3,11 +3,7 @@
   <div class="relative w-full max-w-2xl max-h-full">
     <!-- Modal content -->
     <form
-      {% if sub_collection %}
-        action="{{ url_for('book.comment_delete', book_id=book.id, collection_id=collection.id, sub_collection_id=sub_collection.id, section_id=section.id, interpretation_id=interpretation.id) }}"
-      {% else %}
-        action="{{ url_for('book.comment_delete', book_id=book.id, collection_id=collection.id, section_id=section.id, interpretation_id=interpretation.id) }}"
-      {% endif %}
+      action="{{ url_for('book.comment_delete', book_id=book.id, interpretation_id=interpretation.id) }}"
       method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
       {{ form_hidden_tag() }}
       <!-- Modal header -->
