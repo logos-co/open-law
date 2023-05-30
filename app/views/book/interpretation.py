@@ -41,10 +41,7 @@ def interpretation_view(
     # FIXME breadcrumbs
     # breadcrumbs = create_breadcrumbs(
     #     book_id=book_id,
-    #     collection_path=(
-    #         collection_id,
-    #         sub_collection_id,
-    #     ),
+    #     collection_path=(section.collection.id,),
     #     section_id=section_id,
     # )
     return render_template(
@@ -192,19 +189,17 @@ def qa_view(book_id: int, interpretation_id: int):
         return redirect(url_for("book.collection_view", book_id=book_id))
 
     # FIXME
-    # breadcrumbs = create_breadcrumbs(
-    #     book_id=book_id,
-    #     collection_path=(
-    #         collection_id,
-    #         sub_collection_id,
-    #     ),
-    #     section_id=section_id,
-    #     interpretation_id=interpretation.id,
-    # )
+    breadcrumbs = create_breadcrumbs(
+        book_id=book_id,
+        collection_path=(interpretation.section.collection.id,),
+        section_id=interpretation.section.id,
+        interpretation_id=interpretation.id,
+        _collection_id=interpretation.section.collection.id,
+    )
     return render_template(
         "book/qa_view.html",
         book=book,
         section=interpretation.section,
         interpretation=interpretation,
-        breadcrumbs=[],
+        breadcrumbs=breadcrumbs,
     )

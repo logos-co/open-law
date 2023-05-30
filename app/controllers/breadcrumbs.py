@@ -5,11 +5,27 @@ from app import models as m, db
 from app import schema as s
 
 
+def create_collections_breadcrumb(
+    bread_crumbs: list[s.BreadCrumb], collection: m.Collection
+) -> list[s.BreadCrumb]:
+    bread_crumbs += [
+        s.BreadCrumb(
+            type=s.BreadCrumbType.Collection,
+            url="",
+            label=collection.label,
+        )
+    ]
+
+    if collection.parent and not collection.parent.is_root:
+        create_collections_breadcrumb(bread_crumbs, collection.parent)
+
+
 def create_breadcrumbs(
     book_id: int,
     collection_path: tuple[int],
     section_id: int = 0,
     interpretation_id: int = 0,
+    collection_id: int = 0,
 ) -> list[s.BreadCrumb]:
     """
     How breadcrumbs look like:
@@ -52,28 +68,12 @@ def create_breadcrumbs(
         )
     ]
 
-    for index, collection_id in enumerate(collection_path):
-        if collection_id is None:
-            continue
-        collection: m.Collection = db.session.get(m.Collection, collection_id)
-        if index == 0:
-            crumples += [
-                s.BreadCrumb(
-                    type=s.BreadCrumbType.Collection,
-                    url="",
-                    label=collection.label,
-                )
-            ]
-        elif index == 1:
-            crumples += [
-                s.BreadCrumb(
-                    type=s.BreadCrumbType.Section,
-                    url="",
-                    label=collection.label,
-                )
-            ]
+    collections_crumbs = []
+    collection: m.Collection = db.session.get(m.Collection, collection_id)
+    create_collections_breadcrumb(collections_crumbs, collection)
+    crumples += collections_crumbs.reverse()
 
-    if section_id and collection_path:
+    if section_id and collection_id:
         section: m.Section = db.session.get(m.Section, section_id)
         crumples += [
             s.BreadCrumb(
@@ -81,10 +81,6 @@ def create_breadcrumbs(
                 url=url_for(
                     "book.interpretation_view",
                     book_id=book_id,
-                    collection_id=collection_path[0],
-                    sub_collection_id=collection_path[-1]
-                    if len(collection_path) == 2
-                    else collection_path[0],
                     section_id=section_id,
                 ),
                 label=section.label,
