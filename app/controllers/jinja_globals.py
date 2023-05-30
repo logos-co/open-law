@@ -2,7 +2,7 @@ import re
 
 from flask import current_app
 from flask_wtf import FlaskForm
-from flask import url_for
+from flask import url_for, render_template
 
 from app import models as m
 
@@ -49,3 +49,11 @@ def build_qa_url_using_interpretation(interpretation: m.Interpretation):
         interpretation_id=interpretation.id,
     )
     return url
+
+
+def recursive_render(template: str, collection: m.Collection, book: m.Book):
+    return render_template(
+        template,
+        collection=collection,
+        book=book,
+    )

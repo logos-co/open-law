@@ -88,7 +88,6 @@ def collection_create(book_id: int, collection_id: int | None = None):
         )
         if collection_id:
             collection.parent_id = collection_id
-            collection.is_leaf = True
 
         log(log.INFO, "Create collection [%s]. Book: [%s]", collection, book.id)
         collection.save()
