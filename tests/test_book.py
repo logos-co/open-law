@@ -817,7 +817,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     text_1 = "Test Interpretation #1 Text"
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/create_interpretation",
+        f"/book/{book.id}/{section_in_subcollection.id}/create_interpretation",
         data=dict(section_id=section_in_subcollection.id, text=text_1),
         follow_redirects=True,
     )
@@ -831,7 +831,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert not interpretation.comments
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/create_interpretation",
+        f"/book/{book.id}/{section_in_collection.id}/create_interpretation",
         data=dict(section_id=section_in_collection.id, text=text_1),
         follow_redirects=True,
     )
@@ -854,7 +854,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Collection not found" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/999/create_interpretation",
+        f"/book/{book.id}/999/create_interpretation",
         data=dict(collection_id=999, text=text_1),
         follow_redirects=True,
     )
@@ -863,7 +863,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Section not found" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/888/create_interpretation",
+        f"/book/{book.id}/888/create_interpretation",
         data=dict(collection_id=999, text=text_1),
         follow_redirects=True,
     )
@@ -890,7 +890,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     new_text = "Test Interpretation #1 Text(edited)"
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/{interpretation.id}/edit_interpretation",
+        f"/book/{book.id}/{interpretation.id}/edit_interpretation",
         data=dict(
             interpretation_id=interpretation.id,
             text=new_text,
@@ -906,7 +906,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert edited_interpretation
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/999/edit_interpretation",
+        f"/book/{book.id}/999/edit_interpretation",
         data=dict(
             interpretation_id=interpretation.id,
             text=new_text,
@@ -917,7 +917,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Interpretation not found" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/999/delete_interpretation",
+        f"/book/{book.id}/999/delete_interpretation",
         follow_redirects=True,
     )
 
@@ -926,8 +926,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         (
-            f"/book/{book.id}/{collection.id}/{sub_collection.id}/"
-            f"{section_in_subcollection.id}/{section_in_subcollection.interpretations[0].id}/delete_interpretation"
+            f"/book/{book.id}/{section_in_subcollection.interpretations[0].id}/delete_interpretation"
         ),
         follow_redirects=True,
     )
@@ -943,8 +942,7 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     response: Response = client.post(
         (
-            f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/"
-            f"{section_in_collection.interpretations[0].id}/delete_interpretation"
+            f"/book/{book.id}/{section_in_collection.interpretations[0].id}/delete_interpretation"
         ),
         follow_redirects=True,
     )
@@ -1001,7 +999,7 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
     text_1 = "Test Interpretation #1 Text"
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/create_interpretation",
+        f"/book/{book.id}/{section_in_subcollection.id}/create_interpretation",
         data=dict(section_id=section_in_subcollection.id, label=label_1, text=text_1),
         follow_redirects=True,
     )
@@ -1150,7 +1148,7 @@ def test_interpretation_in_home_last_inter_section(
     text_1 = "Test Interpretation #1 Text"
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_in_subcollection.id}/create_interpretation",
+        f"/book/{book.id}/{section_in_subcollection.id}/create_interpretation",
         data=dict(section_id=section_in_subcollection.id, label=label_1, text=text_1),
         follow_redirects=True,
     )
@@ -1164,7 +1162,7 @@ def test_interpretation_in_home_last_inter_section(
     assert not interpretation.comments
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section_in_collection.id}/create_interpretation",
+        f"/book/{book.id}/{section_in_collection.id}/create_interpretation",
         data=dict(section_id=section_in_collection.id, label=label_1, text=text_1),
         follow_redirects=True,
     )
@@ -1187,7 +1185,7 @@ def test_interpretation_in_home_last_inter_section(
     assert b"Collection not found" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/999/create_interpretation",
+        f"/book/{book.id}/999/create_interpretation",
         data=dict(collection_id=999, label=label_1, text=text_1),
         follow_redirects=True,
     )
@@ -1196,7 +1194,7 @@ def test_interpretation_in_home_last_inter_section(
     assert b"Section not found" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/888/create_interpretation",
+        f"/book/{book.id}/888/create_interpretation",
         data=dict(collection_id=999, label=label_1, text=text_1),
         follow_redirects=True,
     )

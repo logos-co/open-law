@@ -34,8 +34,7 @@ def create_comment(
         flash("You are not owner of this book!", "danger")
         return redirect(url_for("book.my_library"))
     redirect_url = url_for(
-        "book.collection_view",
-        book_id=book_id,
+        "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
     )
 
     interpretation: m.Interpretation = db.session.get(

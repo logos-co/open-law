@@ -40,7 +40,7 @@
     {% endif %}
     {% if current_user.is_authenticated %}
     <form
-      action="{{ url_for('book.create_comment', book_id=book.id,interpretation_id=interpretation.id) }}"
+      action="{{ url_for('book.create_comment', book_id=book.id, interpretation_id=interpretation.id) }}"
       method="post"
       class="prevent-submit-on-enter flex flex-col bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
       {{ form_hidden_tag() }}
@@ -226,7 +226,7 @@
         <div id="accordion-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-1">
           <div class="p-5 border-t border-gray-200 dark:border-gray-700 dark:bg-gray-900">
               <form
-                action="{{ url_for('book.create_comment', book_id=book.id,interpretation_id=interpretation.id) }}"
+                action="{{ url_for('book.create_comment', book_id=book.id, interpretation_id=interpretation.id) }}"
                 method="post"
                 class="prevent-submit-on-enter flex flex-col bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700"
               >
