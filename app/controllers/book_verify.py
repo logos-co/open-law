@@ -85,12 +85,7 @@ def book_validator() -> Response | None:
             flash("Interpretation not found", "danger")
             return redirect(
                 url_for(
-                    "book.qa_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                    sub_collection_id=sub_collection_id,
-                    section_id=section_id,
-                    interpretation_id=interpretation_id,
+                    "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
                 )
             )
 
@@ -101,12 +96,5 @@ def book_validator() -> Response | None:
             log(log.WARNING, "Comment with id [%s] not found", comment_id)
             flash("Comment not found", "danger")
             return redirect(
-                url_for(
-                    "book.qa_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                    sub_collection_id=sub_collection_id,
-                    section_id=section_id,
-                    interpretation_id=interpretation_id,
-                )
+                url_for("book.qa_view", interpretation_id=interpretation_id)
             )
