@@ -458,7 +458,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
         label="Test SubCollection #1 Label"
     ).first()
     assert sub_collection
-    assert sub_collection.is_leaf
+    assert not sub_collection.is_leaf
     assert sub_collection.parent_id == collection.id
 
     m.Collection(

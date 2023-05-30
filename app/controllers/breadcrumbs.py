@@ -11,7 +11,7 @@ def create_collections_breadcrumb(
     bread_crumbs += [
         s.BreadCrumb(
             type=s.BreadCrumbType.Collection,
-            url=url_for("book.collection_view", book_id=collection.version.book_id),
+            url="",
             label=collection.label,
         )
     ]
@@ -66,15 +66,26 @@ def create_breadcrumbs(
         )
     ]
 
-    if collection_id:
-        collections_crumbs = []
-        collection: m.Collection = db.session.get(m.Collection, collection_id)
-        create_collections_breadcrumb(collections_crumbs, collection)
-        collections_crumbs.reverse()
-        crumples += collections_crumbs
-
+    section: m.Section = None
     if section_id:
         section: m.Section = db.session.get(m.Section, section_id)
+
+    if collection_id and not section:
+        collections_crumbs = []
+        collection: m.Collection = db.session.get(m.Collection, collection_id)
+        if not collection.is_root:
+            create_collections_breadcrumb(collections_crumbs, collection)
+            collections_crumbs.reverse()
+            crumples += collections_crumbs
+
+    if section:
+        collections_crumbs = []
+        collection: m.Collection = db.session.get(m.Collection, section.collection_id)
+        if not collection.is_root:
+            create_collections_breadcrumb(collections_crumbs, collection)
+            collections_crumbs.reverse()
+            crumples += collections_crumbs
+
         crumples += [
             s.BreadCrumb(
                 type=s.BreadCrumbType.Section,
