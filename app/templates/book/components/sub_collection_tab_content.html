@@ -32,12 +32,15 @@
     <div data="sub-collection-context-menu-{{sub_collection.id}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
       {% if current_user.is_authenticated %}
       <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+        {% if sub_collection.is_leaf and not sub_collection.children %}
         <li>
           <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Section </button>
         </li>
+        {% else %}
         <li>
           <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Subcollection </button>
         </li>
+        {% endif %}
       </ul>
       <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
         <li>
