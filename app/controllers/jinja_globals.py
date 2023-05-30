@@ -51,9 +51,9 @@ def build_qa_url_using_interpretation(interpretation: m.Interpretation):
     return url
 
 
-def recursive_render(collection: m.Collection, book: m.Book):
+def recursive_render(template: str, collection: m.Collection, book: m.Book):
     return render_template(
-        "book/components/sub_collection_tab_content.html",
+        template,
         collection=collection,
         book=book,
     )
