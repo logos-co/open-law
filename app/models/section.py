@@ -6,7 +6,6 @@ from app.controllers import create_breadcrumbs
 from .interpretation import Interpretation
 from .comment import Comment
 from .interpretation_vote import InterpretationVote
-from app import schema as s
 
 
 class Section(BaseModel):
