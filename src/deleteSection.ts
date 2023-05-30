@@ -8,10 +8,6 @@ export function deleteSection() {
   const deleteSectionModalBtns = document.querySelectorAll(
     '#callDeleteSectionModal',
   );
-  const collectionIdInDeleteSectionModal: HTMLInputElement =
-    document.querySelector('#delete_section_modal_collection_id');
-  const subCollectionIdInDeleteSectionModal: HTMLInputElement =
-    document.querySelector('#delete_section_modal_sub_collection_id');
   const sectionIdInDeleteSectionModal: HTMLInputElement =
     document.querySelector('#delete_section_modal_section_id');
 
@@ -22,8 +18,6 @@ export function deleteSection() {
   if (
     deleteSectionModal &&
     deleteSectionModalBtns &&
-    collectionIdInDeleteSectionModal &&
-    subCollectionIdInDeleteSectionModal &&
     sectionIdInDeleteSectionModal &&
     deleteSectionForm
   ) {
@@ -39,24 +33,13 @@ export function deleteSection() {
     }
     deleteSectionModalBtns.forEach(btn =>
       btn.addEventListener('click', () => {
-        const collectionId = btn.getAttribute('data-collection-id');
-        const subCollectionId = btn.getAttribute('data-sub-collection-id');
         const sectionId = btn.getAttribute('data-section-id');
-        collectionIdInDeleteSectionModal.value = collectionId;
-        subCollectionIdInDeleteSectionModal.value = subCollectionId;
         sectionIdInDeleteSectionModal.value = sectionId;
         let newActionPath: string = '';
-        if (subCollectionId === '_') {
-          newActionPath = defaultActionPath.replace(
-            '0/0/0/delete_section',
-            `${collectionId}/${sectionId}/delete_section`,
-          );
-        } else {
-          newActionPath = defaultActionPath.replace(
-            '0/0/0/delete_section',
-            `${collectionId}/${subCollectionId}/${sectionId}/delete_section`,
-          );
-        }
+        newActionPath = defaultActionPath.replace(
+          '0/delete_section',
+          `${sectionId}/delete_section`,
+        );
 
         deleteSectionForm.setAttribute('action', `${newActionPath}`);
         sectionDeleteModal.show();

@@ -606,7 +606,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Section label must be unique!" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/create_section",
+        f"/book/{book.id}/{sub_collection.id}/create_section",
         data=dict(
             collection_id=sub_collection.id,
             label=label_1,
@@ -625,7 +625,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     assert not section.interpretations
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/create_section",
+        f"/book/{book.id}/{sub_collection.id}/create_section",
         data=dict(
             collection_id=sub_collection.id,
             label=label_1,
@@ -651,13 +651,13 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Collection not found" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/999/create_section",
+        f"/book/{book.id}/999/create_section",
         data=dict(collection_id=999, label=label_1, about="Test Section #1 About"),
         follow_redirects=True,
     )
 
     assert response.status_code == 200
-    assert b"Subcollection not found" in response.data
+    assert b"Collection not found" in response.data
 
     # edit
 
@@ -678,7 +678,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     ).first()
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section.id}/edit_section",
+        f"/book/{book.id}/{section.id}/edit_section",
         data=dict(
             section_id=section.id,
             label="Test",
@@ -693,7 +693,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     new_about = "Test Section #1 About(edited)"
 
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/{section.id}/edit_section",
+        f"/book/{book.id}/{section.id}/edit_section",
         data=dict(section_id=section.id, label=new_label, about=new_about),
         follow_redirects=True,
     )
@@ -710,7 +710,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
         label=label_1, collection_id=sub_collection.id
     ).first()
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_2.id}/edit_section",
+        f"/book/{book.id}/{section_2.id}/edit_section",
         data=dict(
             section_id=section_2.id,
             label="Test",
@@ -722,7 +722,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Section label must be unique!" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_2.id}/edit_section",
+        f"/book/{book.id}/{section_2.id}/edit_section",
         data=dict(section_id=section_2.id, label=new_label, about=new_about),
         follow_redirects=True,
     )
@@ -735,7 +735,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     assert edited_section
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/999/edit_section",
+        f"/book/{book.id}/999/edit_section",
         data=dict(section_id=section_2.id, label=new_label, about=new_about),
         follow_redirects=True,
     )
@@ -744,7 +744,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Section not found" in response.data
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{leaf_collection.id}/{section.id}/delete_section",
+        f"/book/{book.id}/{section.id}/delete_section",
         follow_redirects=True,
     )
 
@@ -756,7 +756,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     check_if_nested_section_entities_is_deleted(deleted_section)
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/{section_2.id}/delete_section",
+        f"/book/{book.id}/{section_2.id}/delete_section",
         follow_redirects=True,
     )
 
@@ -768,7 +768,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     check_if_nested_section_entities_is_deleted(deleted_section)
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/{sub_collection.id}/999/delete_section",
+        f"/book/{book.id}/999/delete_section",
         follow_redirects=True,
     )
 
@@ -845,13 +845,13 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert not interpretation.comments
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/999/create_section",
+        f"/book/{book.id}/999/create_section",
         data=dict(collection_id=999, text=text_1),
         follow_redirects=True,
     )
 
     assert response.status_code == 200
-    assert b"Subcollection not found" in response.data
+    assert b"Collection not found" in response.data
 
     response: Response = client.post(
         f"/book/{book.id}/{leaf_collection.id}/999/create_interpretation",
@@ -1179,13 +1179,13 @@ def test_interpretation_in_home_last_inter_section(
     assert not interpretation.comments
 
     response: Response = client.post(
-        f"/book/{book.id}/{collection.id}/999/create_section",
+        f"/book/{book.id}/999/create_section",
         data=dict(collection_id=999, label=label_1, text=text_1),
         follow_redirects=True,
     )
 
     assert response.status_code == 200
-    assert b"Subcollection not found" in response.data
+    assert b"Collection not found" in response.data
 
     response: Response = client.post(
         f"/book/{book.id}/{leaf_collection.id}/999/create_interpretation",
