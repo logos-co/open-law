@@ -98,6 +98,7 @@ def create_app(environment="development"):
     )
 
     for view in [
+        ProtectedModelView(m.User, db.session, name="User", endpoint="/user_"),
         ProtectedModelView(m.Book, db.session, name="Book", endpoint="/book_"),
         ProtectedModelView(
             m.Collection, db.session, name="Collection", endpoint="/collection_"
