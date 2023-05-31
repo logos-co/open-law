@@ -944,8 +944,10 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
         (
             f"/book/{book.id}/{section_in_collection.interpretations[0].id}/delete_interpretation"
         ),
+        data=dict(interpretation_id=section_in_subcollection.interpretations[0].id),
         follow_redirects=True,
     )
+    assert response.status_code == 200
 
 
 def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):

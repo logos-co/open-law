@@ -110,15 +110,17 @@ def interpretation_edit(
     interpretation_id: int,
 ):
     form = f.EditInterpretationForm()
-    redirect_url = url_for(
-        "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
-    )
 
     if form.validate_on_submit():
         text = form.text.data
         interpretation_id = form.interpretation_id.data
         interpretation: m.Interpretation = db.session.get(
             m.Interpretation, interpretation_id
+        )
+        redirect_url = url_for(
+            "book.interpretation_view",
+            book_id=book_id,
+            section_id=interpretation.section_id,
         )
         if not interpretation or interpretation.is_deleted:
             log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
@@ -127,9 +129,7 @@ def interpretation_edit(
                 url_for(
                     "book.interpretation_view",
                     book_id=book_id,
-                    collection_id=collection_id,
-                    sub_collection_id=sub_collection_id,
-                    section_id=section_id,
+                    section_id=interpretation.section_id,
                 )
             )
         plain_text = clean_html(text).lower()
@@ -162,7 +162,12 @@ def interpretation_edit(
 )
 @register_book_verify_route(bp.name)
 @login_required
-def interpretation_delete(book_id: int, interpretation_id: int):
+def interpretation_delete(
+    book_id: int,
+    interpretation_id: int,
+):
+    form = f.DeleteInterpretationForm()
+    interpretation_id = form.interpretation_id.data
     interpretation: m.Interpretation = db.session.get(
         m.Interpretation, interpretation_id
     )
@@ -173,12 +178,10 @@ def interpretation_delete(book_id: int, interpretation_id: int):
             url_for(
                 "book.interpretation_view",
                 book_id=book_id,
-                collection_id=collection_id,
-                sub_collection_id=sub_collection_id,
-                section_id=section_id,
+                section_id=interpretation.section_id,
             )
         )
-
+    form = f.DeleteInterpretationForm()
     if form.validate_on_submit():
         interpretation.is_deleted = True
         delete_nested_interpretation_entities(interpretation)
@@ -190,9 +193,7 @@ def interpretation_delete(book_id: int, interpretation_id: int):
             url_for(
                 "book.interpretation_view",
                 book_id=book_id,
-                collection_id=collection_id,
-                sub_collection_id=sub_collection_id,
-                section_id=section_id,
+                section_id=interpretation.section_id,
             )
         )
     return redirect(
