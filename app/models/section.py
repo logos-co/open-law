@@ -45,16 +45,9 @@ class Section(BaseModel):
 
     @property
     def breadcrumbs_path(self):
-        parent = self.collection
-        grand_parent = parent.parent
-        if grand_parent.is_root:
-            collection_path = (parent.id,)
-        else:
-            collection_path = (
-                grand_parent.id,
-                parent.id,
-            )
-        breadcrumbs_path = create_breadcrumbs(self.book_id, collection_path)
+        breadcrumbs_path = create_breadcrumbs(
+            book_id=self.book_id, collection_id=self.collection.id
+        )
         return breadcrumbs_path
 
     @property

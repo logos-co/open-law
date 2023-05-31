@@ -3,10 +3,8 @@
 <div id="add-section-modal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-[150] hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
   <div class="relative w-full max-w-2xl max-h-full">
     <!-- Modal content -->
-    <form id="add_section_modal_form" action="{{ url_for('book.section_create', book_id=book.id, collection_id=0, sub_collection_id=0) }}" method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+    <form id="add_section_modal_form" action="{{ url_for('book.section_create', book_id=book.id, collection_id=0) }}" method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
       {{ form_hidden_tag() }}
-      <input type="hidden" name="collection_id" id="add_section_modal_collection_id" value="" />
-      <input type="hidden" name="sub_collection_id" id="add_section_modal_sub_collection_id" value="" />
       <input type="hidden" name="about" id="new-section-input" />
       <!-- Modal header -->
       <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -18,7 +16,7 @@
         <div class="grid gap-6">
           <div class="col-span-6 sm:col-span-3">
             <label for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >Label</label >
-            <input type="text" name="label" id="label" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Collection label" required />
+            <input type="text" name="label" id="label" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Section label" required />
           </div>
         </div>
       </div>

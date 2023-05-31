@@ -4,15 +4,21 @@ from flask import (
 )
 from sqlalchemy import and_
 from app import models as m, db
+from app.logger import log
+
 
 bp = Blueprint("home", __name__, url_prefix="/home")
 
 
 @bp.route("/", methods=["GET"])
 def get_all():
+    log(log.INFO, "Create query for home page for books")
+
     books: m.Book = (
         m.Book.query.filter_by(is_deleted=False).order_by(m.Book.id).limit(5)
     ).all()
+    log(log.INFO, "Create query for home page for interpretations")
+
     interpretations = (
         db.session.query(
             m.Interpretation,
@@ -34,6 +40,7 @@ def get_all():
         .limit(5)
         .all()
     )
+    log(log.INFO, "Returning data to front end")
 
     return render_template(
         "home/index.html",

@@ -3,7 +3,6 @@ from flask import (
     flash,
     redirect,
     url_for,
-    request,
 )
 from flask_login import login_required, current_user
 from sqlalchemy import and_, or_
@@ -25,18 +24,19 @@ from .bp import bp
 
 @bp.route("/all", methods=["GET"])
 def get_all():
-    q = request.args.get("q", type=str, default=None)
-    books: m.Book = m.Book.query.order_by(m.Book.id)
-    if q:
-        books = books.filter(m.Book.label.like(f"{q}"))
+    log(log.INFO, "Create query for books")
+    books: m.Book = m.Book.query.filter(m.Book.is_deleted is not False).order_by(
+        m.Book.id
+    )
+    log(log.INFO, "Create pagination for books")
 
     pagination = create_pagination(total=books.count())
+    log(log.INFO, "Returning data for front end")
 
     return render_template(
         "book/all.html",
         books=books.paginate(page=pagination.page, per_page=pagination.per_page),
         page=pagination,
-        search_query=q,
         all_books=True,
     )
 
@@ -44,15 +44,22 @@ def get_all():
 @bp.route("/my_library", methods=["GET"])
 def my_library():
     if current_user.is_authenticated:
+        log(log.INFO, "Create query for my_library page for books")
+
         books: m.Book = m.Book.query.order_by(m.Book.id)
         books = books.filter_by(user_id=current_user.id, is_deleted=False)
+        log(log.INFO, "Create pagination for books")
+
         pagination = create_pagination(total=books.count())
+        log(log.INFO, "Returns data for front end")
 
         return render_template(
             "book/my_library.html",
             books=books.paginate(page=pagination.page, per_page=pagination.per_page),
             page=pagination,
         )
+    log(log.INFO, "Returns data for front end is user is anonym")
+
     return render_template(
         "book/my_library.html",
         books=[],
@@ -73,9 +80,8 @@ def create():
         m.Collection(
             label="Root Collection", version_id=version.id, is_root=True
         ).save()
-        tags = form.tags.data
-        if tags:
-            set_book_tags(book, tags)
+        tags = form.tags.data or ""
+        set_book_tags(book, tags)
 
         flash("Book added!", "success")
         return redirect(url_for("book.my_library"))
@@ -97,9 +103,8 @@ def edit(book_id: int):
         book: m.Book = db.session.get(m.Book, book_id)
         label = form.label.data
         about = form.about.data
-        tags = form.tags.data
-        if tags:
-            set_book_tags(book, tags)
+        tags = form.tags.data or ""
+        set_book_tags(book, tags)
 
         book.label = label
         book.about = about
@@ -147,6 +152,8 @@ def statistic_view(book_id: int):
 @bp.route("/favorite_books", methods=["GET"])
 def favorite_books():
     if current_user.is_authenticated:
+        log(log.INFO, "Creating query for books")
+
         books = (
             db.session.query(
                 m.Book,
@@ -162,7 +169,10 @@ def favorite_books():
         )
 
         books = books.filter_by(is_deleted=False)
+        log(log.INFO, "Creating pagination for books")
+
         pagination = create_pagination(total=books.count())
+        log(log.INFO, "Returns data for front end")
 
         return render_template(
             "book/favorite_books.html",
@@ -174,34 +184,40 @@ def favorite_books():
 
 @bp.route("/my_contributions", methods=["GET"])
 def my_contributions():
-    interpretations = (
-        db.session.query(
-            m.Interpretation,
-        )
-        .filter(
-            or_(
-                and_(
-                    m.Interpretation.id == m.Comment.interpretation_id,
-                    m.Comment.user_id == current_user.id,
-                    m.Comment.is_deleted.is_(False),
-                    m.Interpretation.is_deleted.is_(False),
-                ),
-                and_(
-                    m.Interpretation.user_id == current_user.id,
-                    m.Interpretation.is_deleted.is_(False),
-                ),
+    if current_user.is_authenticated:
+        log(log.INFO, "Creating query for interpretations")
+
+        interpretations = (
+            db.session.query(
+                m.Interpretation,
             )
+            .filter(
+                or_(
+                    and_(
+                        m.Interpretation.id == m.Comment.interpretation_id,
+                        m.Comment.user_id == current_user.id,
+                        m.Comment.is_deleted.is_(False),
+                        m.Interpretation.is_deleted.is_(False),
+                    ),
+                    and_(
+                        m.Interpretation.user_id == current_user.id,
+                        m.Interpretation.is_deleted.is_(False),
+                    ),
+                )
+            )
+            .group_by(m.Interpretation.id)
+            .order_by(m.Interpretation.created_at.desc())
         )
-        .group_by(m.Interpretation.id)
-        .order_by(m.Interpretation.created_at.desc())
-    )
+        log(log.INFO, "Creating pagination for interpretations")
 
-    pagination = create_pagination(total=interpretations.count())
+        pagination = create_pagination(total=interpretations.count())
+        log(log.INFO, "Returns data for front end")
 
-    return render_template(
-        "book/my_contributions.html",
-        interpretations=interpretations.paginate(
-            page=pagination.page, per_page=pagination.per_page
-        ),
-        page=pagination,
-    )
+        return render_template(
+            "book/my_contributions.html",
+            interpretations=interpretations.paginate(
+                page=pagination.page, per_page=pagination.per_page
+            ),
+            page=pagination,
+        )
+    return render_template("book/my_contributions.html", interpretations=[])

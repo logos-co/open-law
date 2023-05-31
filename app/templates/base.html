@@ -2,13 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>{{ config.APP_NAME }}</title>
+
+    <title>{% block title %}{{ config.APP_NAME }}{% endblock %}</title>
+
     <!-- meta -->
     <meta name="description" content="OpenLaw Flask App" />
     <meta name="author" content="Simple2B" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
     {% block meta %}{% endblock %}
+    <!-- favicon -->
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='img/logo.svg') }}" />
 
     <!-- styles -->
     <!-- prettier-ignore -->
@@ -80,7 +87,7 @@
       {% block right_sidebar %}
         {% include 'right_sidebar.html' %}
       {% endblock %}
-      {% include 'book/add_book_modal.html' %}
+      {% include 'book/modals/add_book_modal.html' %}
     {% endif %}
 
     <!-- prettier-ignore -->

@@ -61,26 +61,17 @@ def book_validator() -> Response | None:
             flash("Subcollection not found", "danger")
             return redirect(
                 url_for(
-                    "book.sub_collection_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
+                    "book.collection_view", book_id=book_id, collection_id=collection_id
                 )
             )
 
     section_id = request_args.get("section_id")
     if section_id:
         section: m.Section = db.session.get(m.Section, section_id)
-        if not section or collection.is_deleted:
+        if not section:
             log(log.WARNING, "Section with id [%s] not found", section)
             flash("Section not found", "danger")
-            return redirect(
-                url_for(
-                    "book.section_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                    sub_collection_id=sub_collection_id,
-                )
-            )
+            return redirect(url_for("book.collection_view", book_id=book_id))
 
     interpretation_id = request_args.get("interpretation_id")
     if interpretation_id:
@@ -92,12 +83,7 @@ def book_validator() -> Response | None:
             flash("Interpretation not found", "danger")
             return redirect(
                 url_for(
-                    "book.qa_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                    sub_collection_id=sub_collection_id,
-                    section_id=section_id,
-                    interpretation_id=interpretation_id,
+                    "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
                 )
             )
 
@@ -108,12 +94,5 @@ def book_validator() -> Response | None:
             log(log.WARNING, "Comment with id [%s] not found", comment_id)
             flash("Comment not found", "danger")
             return redirect(
-                url_for(
-                    "book.qa_view",
-                    book_id=book_id,
-                    collection_id=collection_id,
-                    sub_collection_id=sub_collection_id,
-                    section_id=section_id,
-                    interpretation_id=interpretation_id,
-                )
+                url_for("book.qa_view", interpretation_id=interpretation_id)
             )

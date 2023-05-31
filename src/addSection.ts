@@ -5,21 +5,10 @@ export function addSection() {
     document.querySelector('#add-section-modal');
 
   const addSectionModalBtns = document.querySelectorAll('#callAddSectionModal');
-  const collectionIdInAddSectionModal: HTMLInputElement =
-    document.querySelector('#add_section_modal_collection_id');
-  const subCollectionIdInAddSectionModal: HTMLInputElement =
-    document.querySelector('#add_section_modal_sub_collection_id');
-
   const addSectionForm: HTMLFormElement = document.querySelector(
     '#add_section_modal_form',
   );
-  if (
-    addSectionModal &&
-    addSectionModalBtns &&
-    collectionIdInAddSectionModal &&
-    subCollectionIdInAddSectionModal &&
-    addSectionForm
-  ) {
+  if (addSectionModal && addSectionModalBtns && addSectionForm) {
     const defaultActionPath = addSectionForm.getAttribute('action');
 
     const addModalCloseBtn = document.querySelector('#modalSectionCloseButton');
@@ -32,19 +21,21 @@ export function addSection() {
       btn.addEventListener('click', () => {
         const collectionId = btn.getAttribute('data-collection-id');
         const subCollectionId = btn.getAttribute('data-sub-collection-id');
-        collectionIdInAddSectionModal.value = collectionId;
-        subCollectionIdInAddSectionModal.value = subCollectionId;
         let newActionPath: string = '';
         if (subCollectionId === '_') {
           newActionPath = defaultActionPath.replace(
-            '0/0/create_section',
+            '0/create_section',
             `${collectionId}/create_section`,
           );
         } else {
           newActionPath = defaultActionPath.replace(
-            '0/0/create_section',
-            `${collectionId}/${subCollectionId}/create_section`,
+            '0/create_section',
+            `${subCollectionId}/create_section`,
           );
+        }
+        if (newActionPath.includes('/0')) {
+          console.log('ALERT');
+          return;
         }
 
         addSectionForm.setAttribute('action', `${newActionPath}`);

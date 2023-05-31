@@ -1,5 +1,3 @@
-import base64
-
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user, logout_user
 from app.controllers import create_pagination
@@ -40,9 +38,9 @@ def edit_profile():
         user: m.User = current_user
         user.username = form.name.data
         if form.avatar_img.data:
-            img_data = form.avatar_img.data.read()
-            img_data = base64.b64encode(img_data)
-            current_user.avatar_img = img_data.decode("utf-8")
+            current_user.avatar_img = (
+                form.avatar_img.data
+            )  # form.avatar_img.data is changed in form validator
         user.is_activated = True
         user.save()
         return redirect(url_for("main.index"))
@@ -58,6 +56,17 @@ def edit_profile():
     return render_template("user/edit_profile.html", form=form)
 
 
+@bp.route("/delete_avatar", methods=["POST"])
+@login_required
+def delete_avatar():
+    user: m.User = current_user
+    current_user.avatar_img = None
+    log(log.ERROR, "Delete user [%s] avatar", user)
+    current_user.save()
+
+    return redirect(url_for("user.edit_profile"))
+
+
 @bp.route("/<int:user_id>/profile")
 def profile(user_id: int):
     user: m.User = db.session.get(m.User, user_id)
@@ -70,22 +79,6 @@ def profile(user_id: int):
     return render_template(
         "user/profile.html", user=user, interpretations=interpretations
     )
-
-
-@bp.route("/create", methods=["POST"])
-@login_required
-def create():
-    form = f.NewUserForm()
-    if form.validate_on_submit():
-        user = m.User(
-            username=form.username.data,
-            password=form.password.data,
-            activated=form.activated.data,
-        )
-        log(log.INFO, "Form submitted. User: [%s]", user)
-        flash("User added!", "success")
-        user.save()
-        return redirect(url_for("user.get_all"))
 
 
 @bp.route("/profile_delete", methods=["POST"])
