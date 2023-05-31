@@ -41,8 +41,8 @@ def create_breadcrumbs(
         crumples += [
             s.BreadCrumb(
                 type=s.BreadCrumbType.MyBookList,
-                url=url_for("book.my_library"),
-                label="My Books",
+                url=url_for("user.profile", user_id=current_user.id),
+                label="Me",
             )
         ]
     else:
@@ -50,8 +50,8 @@ def create_breadcrumbs(
         crumples += [
             s.BreadCrumb(
                 type=s.BreadCrumbType.AuthorBookList,
-                url="",
-                label=book.owner.username + "'s books",
+                url=url_for("user.profile", user_id=book.owner.id),
+                label=book.owner.username,
             )
         ]
 
