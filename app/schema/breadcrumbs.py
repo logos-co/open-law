@@ -11,6 +11,7 @@ class BreadCrumbType(enum.StrEnum):
     Collection = "Collection"
     Section = "Section"
     Interpretation = "Interpretation"
+    Splitter = "Splitter"
 
 
 class BreadCrumb(BaseModel):
