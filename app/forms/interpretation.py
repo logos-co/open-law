@@ -27,3 +27,8 @@ class CreateInterpretationForm(BaseInterpretationForm):
 class EditInterpretationForm(BaseInterpretationForm):
     interpretation_id = StringField("Interpretation ID", [DataRequired()])
     submit = SubmitField("Edit")
+
+
+class DeleteInterpretationForm(FlaskForm):
+    interpretation_id = StringField("Interpretation ID", [DataRequired()])
+    submit = SubmitField("Delete")
