@@ -25,6 +25,8 @@ import {copyLink} from './copyLink';
 import {quickSearch} from './quickSearch';
 import {flash} from './flash';
 import {slashSearch} from './slashSearch';
+import {editInterpretations} from './editInterpretations';
+import {deleteInterpretation} from './deleteInterpretation';
 
 initQuillReadOnly();
 initBooks();
@@ -53,3 +55,5 @@ copyLink();
 quickSearch();
 flash();
 slashSearch();
+editInterpretations();
+deleteInterpretation();
