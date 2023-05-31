@@ -15,7 +15,7 @@ class BaseConfig(BaseSettings):
     APP_NAME: str = "Open Law"
     SECRET_KEY: str
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
-    WTF_CSRF_ENABLED: bool = True
+    WTF_CSRF_ENABLED: bool = False
 
     # Super admin
     ADMIN_USERNAME: str
