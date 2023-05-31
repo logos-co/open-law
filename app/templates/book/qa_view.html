@@ -114,7 +114,7 @@
             {% endif %}
 
             <!-- TODO check permissions -->
-            {% if interpretation.book.owner == current_user %}
+            {% if interpretation.book.owner == current_user or has_permission(interpretation, Access.D) %}
               <div class="approve-button select-none approve-btn mt-3 cursor-pointer" data-approve="comment" data-entity-id="{{ comment.id }}">
                 <!-- outline -->
                 <svg class="not-approved-icon w-6 h-6 {% if comment.approved %} hidden {% endif %}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

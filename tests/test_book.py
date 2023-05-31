@@ -3,6 +3,7 @@ from flask import current_app as Response, url_for
 from flask.testing import FlaskClient, FlaskCliRunner
 
 from app import models as m, db
+from app.controllers.create_access_groups import create_moderator_group
 from tests.utils import (
     login,
     logout,
@@ -562,7 +563,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     ).first()
 
     response: Response = client.post(
-        f"/book/{book.id}/{sub_collection.id}/create_section",
+        f"/book/{book.id}/{collection.id}/create_section",
         data=dict(
             collection_id=collection.id,
             label="Test Section",
@@ -875,13 +876,21 @@ def test_crud_interpretation(client: FlaskClient):
 
     # edit
 
-    m.Interpretation(
+    i_1 = m.Interpretation(
         text="Test", section_id=section_in_collection.id, user_id=user.id
     ).save()
 
-    m.Interpretation(
+    i_2 = m.Interpretation(
         text="Test",
         section_id=section_in_subcollection.id,
+    ).save()
+
+    group = create_moderator_group(book.id)
+    m.InterpretationAccessGroups(
+        interpretation_id=i_1.id, access_group_id=group.id
+    ).save()
+    m.InterpretationAccessGroups(
+        interpretation_id=i_2.id, access_group_id=group.id
     ).save()
 
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
@@ -995,6 +1004,10 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
         label="Test Section in Subcollection #1 Label",
         collection_id=sub_collection.id,
         version_id=book.last_version.id,
+    ).save()
+    group = create_moderator_group(book.id)
+    m.SectionAccessGroups(
+        section_id=section_in_subcollection.id, access_group_id=group.id
     ).save()
 
     label_1 = "Test Interpretation #1 Label"
@@ -1141,6 +1154,13 @@ def test_interpretation_in_home_last_inter_section(
         label="Test Section in Subcollection #1 Label",
         collection_id=sub_collection.id,
         version_id=book.last_version.id,
+    ).save()
+    group = create_moderator_group(book.id)
+    m.SectionAccessGroups(
+        section_id=section_in_subcollection.id, access_group_id=group.id
+    ).save()
+    m.SectionAccessGroups(
+        section_id=section_in_collection.id, access_group_id=group.id
     ).save()
 
     label_1 = "Test Interpretation #1 Label"

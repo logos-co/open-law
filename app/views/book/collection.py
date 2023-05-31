@@ -39,8 +39,7 @@ def collection_view(book_id: int):
 @require_permission(
     entity_type=m.Permission.Entity.COLLECTION,
     access=[m.Permission.Access.C],
-    model=m.Collection,
-    entity_id_field="collection_id",
+    entities=[m.Collection, m.Book],
 )
 @login_required
 def collection_create(book_id: int, collection_id: int | None = None):
@@ -119,6 +118,11 @@ def collection_create(book_id: int, collection_id: int | None = None):
 
 @bp.route("/<int:book_id>/<int:collection_id>/edit", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.COLLECTION,
+    access=[m.Permission.Access.U],
+    entities=[m.Collection],
+)
 @login_required
 def collection_edit(book_id: int, collection_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
@@ -174,6 +178,11 @@ def collection_edit(book_id: int, collection_id: int):
 
 @bp.route("/<int:book_id>/<int:collection_id>/delete", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.COLLECTION,
+    access=[m.Permission.Access.D],
+    entities=[m.Collection],
+)
 @login_required
 def collection_delete(book_id: int, collection_id: int):
     collection: m.Collection = db.session.get(m.Collection, collection_id)

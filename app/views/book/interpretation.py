@@ -12,6 +12,7 @@ from app.controllers.delete_nested_book_entities import (
     delete_nested_interpretation_entities,
 )
 from app import models as m, db, forms as f
+from app.controllers.require_permission import require_permission
 from app.controllers.tags import set_interpretation_tags
 from app.logger import log
 from .bp import bp
@@ -111,6 +112,11 @@ def interpretation_create(
     "/<int:book_id>/<int:interpretation_id>/edit_interpretation", methods=["POST"]
 )
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.INTERPRETATION,
+    access=[m.Permission.Access.U],
+    entities=[m.Interpretation],
+)
 @login_required
 def interpretation_edit(
     book_id: int,
@@ -155,6 +161,11 @@ def interpretation_edit(
     "/<int:book_id>/<int:interpretation_id>/delete_interpretation", methods=["POST"]
 )
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.INTERPRETATION,
+    access=[m.Permission.Access.D],
+    entities=[m.Interpretation],
+)
 @login_required
 def interpretation_delete(book_id: int, interpretation_id: int):
     interpretation: m.Interpretation = db.session.get(

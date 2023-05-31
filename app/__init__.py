@@ -28,10 +28,7 @@ def create_app(environment="development"):
         permissions_blueprint,
         search_blueprint,
     )
-    from app.models import (
-        User,
-        AnonymousUser,
-    )
+    from app.models import User, AnonymousUser, Permission
 
     # Instantiate app.
     app = Flask(__name__)
@@ -75,12 +72,16 @@ def create_app(environment="development"):
         display_tags,
         build_qa_url_using_interpretation,
         recursive_render,
+        has_permission,
     )
+
+    app.jinja_env.globals["Access"] = Permission.Access
 
     app.jinja_env.globals["form_hidden_tag"] = form_hidden_tag
     app.jinja_env.globals["display_tags"] = display_tags
     app.jinja_env.globals["build_qa_url"] = build_qa_url_using_interpretation
     app.jinja_env.globals["recursive_render"] = recursive_render
+    app.jinja_env.globals["has_permission"] = has_permission
 
     # Error handlers.
     @app.errorhandler(HTTPException)

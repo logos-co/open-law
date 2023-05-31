@@ -20,8 +20,7 @@ from .bp import bp
 @require_permission(
     entity_type=m.Permission.Entity.BOOK,
     access=[m.Permission.Access.U],
-    model=m.Book,
-    entity_id_field="book_id",
+    entities=[m.Book],
 )
 @login_required
 def settings(book_id: int):
@@ -37,8 +36,7 @@ def settings(book_id: int):
 @require_permission(
     entity_type=m.Permission.Entity.BOOK,
     access=[m.Permission.Access.U],
-    model=m.Book,
-    entity_id_field="book_id",
+    entities=[m.Book],
 )
 @login_required
 def add_contributor(book_id: int):
@@ -87,8 +85,7 @@ def add_contributor(book_id: int):
 @require_permission(
     entity_type=m.Permission.Entity.BOOK,
     access=[m.Permission.Access.U],
-    model=m.Book,
-    entity_id_field="book_id",
+    entities=[m.Book],
 )
 @login_required
 def delete_contributor(book_id: int):
@@ -146,8 +143,7 @@ def delete_contributor(book_id: int):
 @require_permission(
     entity_type=m.Permission.Entity.BOOK,
     access=[m.Permission.Access.U],
-    model=m.Book,
-    entity_id_field="book_id",
+    entities=[m.Book],
 )
 @login_required
 def edit_contributor_role(book_id: int):

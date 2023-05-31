@@ -116,10 +116,7 @@ def create():
 @require_permission(
     entity_type=m.Permission.Entity.BOOK,
     access=[m.Permission.Access.U],
-    entity_data={
-        "model": m.Book,
-        "entity_id_field": "book_id",
-    },
+    entities=[m.Book],
 )
 @login_required
 def edit(book_id: int):
@@ -150,12 +147,7 @@ def edit(book_id: int):
 @require_permission(
     entity_type=m.Permission.Entity.BOOK,
     access=[m.Permission.Access.D],
-    entities_data=[
-        {
-            "model": m.Book,
-            "entity_id_field": "book_id",
-        }
-    ],
+    entities=[m.Book],
 )
 @login_required
 def delete(book_id: int):
