@@ -150,7 +150,7 @@ def edit_contributor_role(book_id: int):
     form = f.EditContributorRoleForm()
 
     if form.validate_on_submit():
-        book_contributor = m.BookContributor.query.filter_by(
+        book_contributor: m.BookContributor = m.BookContributor.query.filter_by(
             user_id=int(form.user_id.data), book_id=book_id
         ).first()
         if not book_contributor:
@@ -164,6 +164,24 @@ def edit_contributor_role(book_id: int):
             return redirect(url_for("book.settings", book_id=book_id))
 
         role = m.BookContributor.Roles(int(form.role.data))
+
+        # change access group
+        current_group = m.AccessGroup.query.filter_by(
+            book_id=book_id, name=book_contributor.role.name.lower()
+        ).first()
+        db.session.delete(
+            m.UserAccessGroups.query.filter_by(
+                user_id=book_contributor.user_id, access_group_id=current_group.id
+            ).first()
+        )
+
+        new_group = m.AccessGroup.query.filter_by(
+            book_id=book_id, name=role.name.lower()
+        ).first()
+        m.UserAccessGroups(
+            user_id=book_contributor.user_id, access_group_id=new_group.id
+        ).save(False)
+
         book_contributor.role = role
 
         log(

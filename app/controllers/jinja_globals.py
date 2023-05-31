@@ -65,7 +65,11 @@ def recursive_render(template: str, collection: m.Collection, book: m.Book):
 def has_permission(
     entity: m.Book | m.Collection | m.Section | m.Interpretation,
     required_permissions: m.Permission.Access | list[m.Permission.Access],
+    entity_type: m.Permission.Entity = None,
 ) -> bool:
+    if not current_user.is_authenticated:
+        return False
+
     if type(required_permissions) == m.Permission.Access:
         required_permissions = [required_permissions]
 
@@ -76,9 +80,14 @@ def has_permission(
     if not access_groups:
         return False
 
+    if not entity_type:
+        entity_type = m.Permission.Entity[type(entity).__name__.upper()]
+
     for access_group in access_groups:
         for permission in access_group.permissions:
             permission: m.Permission
+            if permission.entity_type != entity_type:
+                continue
             for required_permission in required_permissions:
                 if permission.access & required_permission:
                     return True

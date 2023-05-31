@@ -76,6 +76,7 @@ def create_app(environment="development"):
     )
 
     app.jinja_env.globals["Access"] = Permission.Access
+    app.jinja_env.globals["EntityType"] = Permission.Entity
 
     app.jinja_env.globals["form_hidden_tag"] = form_hidden_tag
     app.jinja_env.globals["display_tags"] = display_tags

@@ -23,7 +23,8 @@
         id="edit-section-label-{{section.id}}"
         placeholder="Section label"
         required
-        readonly />
+        readonly
+      />
       <button name="submit" type="submit"></button>
     </form>
   </button>
@@ -41,51 +42,63 @@
     id="dropdown"
     class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
     {% if current_user.is_authenticated %}
-    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-      <li>
-        <button
-          type="button"
-          id="rename-section-button-{{section.id}}"
-          class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-          Rename Section
-        </button>
-      </li>
-      <li>
-        <!-- prettier-ignore -->
-        <button
-          type="button"
-          data-modal-target="delete-section-modal"
-          data-modal-toggle="delete-section-modal"
-          id="callDeleteSectionModal"
-          data-collection-id="{{collection.id}}"
-          {% if sub_collection %}
-          data-sub-collection-id="{{sub_collection.id}}"
+      {% set access_to_create_sections = has_permission(section, Access.C) %}
+      {% set access_to_update_sections = has_permission(section, Access.U) %}
+      {% set access_to_delete_sections = has_permission(section, Access.D) %}
+
+      {% if access_to_update_sections or access_to_delete_sections %}
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+          {% if access_to_update_sections %}
+            <li>
+              <button
+                type="button"
+                id="rename-section-button-{{section.id}}"
+                class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                Rename Section
+              </button>
+            </li>
           {% endif %}
-          data-section-id="{{section.id}}"
-          class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-          Delete Section
-        </button>
-      </li>
-    </ul>
-    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-      <li>
-        <button
-          type="button"
-          class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-          Export Section
-        </button>
-      </li>
-    </ul>
+
+          {% if access_to_delete_sections %}
+            <li>
+              <!-- prettier-ignore -->
+              <button
+                type="button"
+                data-modal-target="delete-section-modal"
+                data-modal-toggle="delete-section-modal"
+                id="callDeleteSectionModal"
+                data-collection-id="{{collection.id}}"
+                {% if sub_collection %}
+                data-sub-collection-id="{{sub_collection.id}}"
+                {% endif %}
+                data-section-id="{{section.id}}"
+                class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                Delete Section
+              </button>
+            </li>
+          {% endif %}
+        </ul>
+      {% endif %}
+
+      <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+        <li>
+          <button
+            type="button"
+            class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+            Export Section
+          </button>
+        </li>
+      </ul>
     {% else %}
-    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-      <li>
-        <button
-          type="button"
-          class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-          Connect your wallet to do this
-        </button>
-      </li>
-    </ul>
+      <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+        <li>
+          <button
+            type="button"
+            class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+            Connect your wallet to do this
+          </button>
+        </li>
+      </ul>
     {% endif %}
   </div>
 </div>

@@ -28,17 +28,20 @@
         Table of contents
       </h1>
       </div>
-      <div class="flex text-black dark:text-white">
-        <!-- prettier-ignore -->
-        <div>
-        {% if not book.versions[-1].children_collections and current_user.is_authenticated %}
-        <button type="button" data-modal-target="add-collection-modal" data-modal-toggle="add-collection-modal" ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg> </button>
-        {% endif %}
-        <a href="{{ url_for("book.settings", book_id=book.id) }}" type="button" class="ml-2" >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
-        </a>
+      {% if has_permission(book, Access.U) %}
+        <div class="flex text-black dark:text-white">
+          <!-- prettier-ignore -->
+          <div>
+            {% if not book.versions[-1].children_collections and current_user.is_authenticated %}
+              <button type="button" data-modal-target="add-collection-modal" data-modal-toggle="add-collection-modal" ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg> </button>
+            {% endif %}
+            <a href="{{ url_for('book.settings', book_id=book.id) }}" type="button" class="ml-2" >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> </svg>
+            </a>
+          </div>
         </div>
-      </div>
+      {% endif %}
+
     </div>
     <!-- prettier-ignore -->
     {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
@@ -59,42 +62,59 @@
     <svg id="dropdownCollectionContextButton{{collection.id}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
     </div>
     <div data="collection-context-menu-{{collection.id}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-        {% if current_user.is_authenticated %}
-        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-          <li>
-              <button type="button" data-modal-target="add-collection-modal" data-modal-toggle="add-collection-modal" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Collection</button>
-          </li>
-          {% if not collection.is_leaf %}
-          <li>
-              <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Subcollection</button>
-          </li>
-          {% endif %}
-          {% if collection.children|length ==0  or collection.children|length ==0 and collection.is_leaf %}
-          <li>
-              <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="_"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
-          </li>
-          {% endif %}
-        </ul>
-        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-          <li>
-              <button type="button" id="rename-collection-button-{{collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Collection</button>
-          </li>
-          <li>
-              <button type="button" id="callDeleteCollectionModal" data-modal-target="delete-collection-modal" data-modal-toggle="delete-collection-modal" data-collection-id="{{collection.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Collection</button>
-          </li>
-        </ul>
+      {% if current_user.is_authenticated %}
+        {% set access_to_create_collections = has_permission(collection, Access.C) %}
+        {% set access_to_update_collections = has_permission(collection, Access.U) %}
+        {% set access_to_delete_collections = has_permission(collection, Access.D) %}
+
+        {% if access_to_create_collections or access_to_update_collections %}
+          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+            {% if access_to_create_collections %}
+              <li>
+                <button type="button" data-modal-target="add-collection-modal" data-modal-toggle="add-collection-modal" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Collection</button>
+              </li>
+              {% if not collection.is_leaf %}
+                <li>
+                  <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Subcollection</button>
+                </li>
+              {% endif %}
+            {% endif %}
+            {% if access_to_update_collections %}
+              {% if collection.children|length ==0  or collection.children|length ==0 and collection.is_leaf %}
+                <li>
+                    <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="_"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
+                </li>
+              {% endif %}
+            {% endif %}
+          </ul>
+        {% endif %}
+
+        {% if access_to_update_collections or access_to_delete_collections %}
+          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+            {% if access_to_update_collections %}
+              <li>
+                <button type="button" id="rename-collection-button-{{collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Collection</button>
+              </li>
+            {% endif %}
+            {% if access_to_delete_collections %}
+              <li>
+                <button type="button" id="callDeleteCollectionModal" data-modal-target="delete-collection-modal" data-modal-toggle="delete-collection-modal" data-collection-id="{{collection.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Collection</button>
+              </li>
+            {% endif %}
+          </ul>
+        {% endif %}
         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
           <li>
               <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Collection</button>
           </li>
         </ul>
-        {% else %}
+      {% else %}
         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
           <li>
               <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Connect you wallet to do this</button>
           </li>
         </ul>
-        {% endif %}
+      {% endif %}
     </div>
     <!-- prettier-ignore -->
     <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}">
