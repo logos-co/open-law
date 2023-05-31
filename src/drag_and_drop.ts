@@ -3,7 +3,7 @@ import Sortable from 'sortablejs';
 
 export function initDnD() {
   const divsForSectionsDnD: NodeListOf<HTMLDivElement> =
-    document.querySelectorAll('#draggableItems');
+    document.querySelectorAll('#draggableSectionItems');
   const divsForSubCollectionsDnD: NodeListOf<HTMLDivElement> =
     document.querySelectorAll('[data-dnd="dnd-sub-collection"]');
   divsForSubCollectionsDnD.forEach((div: HTMLDivElement) =>

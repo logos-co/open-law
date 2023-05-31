@@ -1,10 +1,13 @@
-<div class="ml-6">
+<div class="ml-6" data-dnd="dnd-sub-collection">
   {% if not collection.is_leaf %}
   <!-- if collection has sub_collection make for loop for it -->
   <!-- Nested accordion -->
   {% for sub_collection in collection.children if not
   sub_collection.is_deleted%}
-  <div id="accordion-nested-collapse" data-accordion="open">
+  <div
+    id="accordion-nested-collapse"
+    data-accordion="open"
+    data-sub-collection-id="{{sub_collection.id}}">
     <!-- prettier-ignore -->
     <div class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
       <button
@@ -21,7 +24,7 @@
         <form id="rename-sub-collection-label-form-{{sub_collection.id}}" data-book-id="{{book.id}}" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" method="post" class="mb-0">
           {{ form_hidden_tag() }}
           <!-- prettier-ignore -->
-          <input class="bg-inherit border-none" value="{{sub_collection.label}}" type="text" name="label" id="edit-sub-collection-label-{{sub_collection.id}}" placeholder="Sub collection label" required readonly />
+          <input class="bg-inherit border-none" value="{{sub_collection.label}}/{{sub_collection.id}}" type="text" name="label" id="edit-sub-collection-label-{{sub_collection.id}}" placeholder="Sub collection label" required readonly />
           <button name="submit" type="submit"></button>
         </form>
       </a>
@@ -65,10 +68,10 @@
     </div>
     <!-- prettier-ignore -->
     <div id="accordion-nested-collapse-body-{{sub_collection.parent.id}}-{{sub_collection.id}}" class="hidden" aria-labelledby="accordion-nested-collapse-heading-{{sub_collection.id}}">
-    {% if sub_collection.children %}
+    {% if sub_collection.children or not sub_collection.active_sections%}
         {{recursive_render("book/components/sub_collection_tab_content.html",sub_collection,book)|safe}}
-    {% else %}
-        <div class="ml-6">
+    {% elif sub_collection.active_sections  %}
+        <div id="draggableSectionItems" data-sub-collection-id="{{sub_collection.id}}">
         <!-- here comes for loop for all section in this sub_collection-->
             {% for section in sub_collection.active_sections %}
                 {% include 'book/components/section_tab_content.html' %}
@@ -81,7 +84,10 @@
   <!-- End: Nested accordion -->
   {% else %}
   <!-- if collection doesn't have sub_collection -->
-  <div class="ml-6">
+  <div
+    class="ml-6"
+    id="draggableSectionItems"
+    data-collection-id="{{collection.id}}">
     <!-- here comes for loop for all section in this collection-->
     {% for section in collection.active_sections %} {% include
     'book/components/section_tab_content.html' %} {% endfor %}

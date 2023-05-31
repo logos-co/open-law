@@ -1,9 +1,9 @@
-<div class="">
+<div class="flex flex-col ml-6">
   <button
     type="button"
     href="#section-{{section.label}}"
     id="section-heading-{{section.id}}"
-    class="text-gray-500 dark:text-gray-400">
+    class="text-gray-500 dark:text-gray-400 w-max">
     <!-- prettier-ignore -->
     <form
       id="rename-section-label-form-{{section.id}}"
@@ -13,11 +13,12 @@
       data-sub-collection-id="{{sub_collection.id}}"
       {% endif %}
       data-section-id="{{section.id}}"
-      method="post">
+      method="post"
+      class="inline-block w-auto">
       {{ form_hidden_tag() }}
       <input
         class="bg-inherit border-none underline"
-        value="{{section.label}}"
+        value="{{section.label}}/{{section.id}}"
         type="text"
         name="label"
         id="edit-section-label-{{section.id}}"
