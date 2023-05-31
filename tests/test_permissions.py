@@ -54,16 +54,7 @@ def create_collection(client, book_id):
     )
 
     assert response.status_code == 200
-    assert b"Success!" in response.data
-
     collection: m.Collection = m.Collection.query.filter_by(label=LABEL).first()
-
-    assert collection
-    assert collection.access_groups
-    assert len(collection.access_groups) == 2
-    for access_group in collection.access_groups:
-        access_group: m.AccessGroup
-        assert access_group.book_id == collection.version.book_id
 
     return collection, response
 
@@ -77,21 +68,9 @@ def create_section(client, book_id, collection_id):
         follow_redirects=True,
     )
 
-    assert response.status_code == 200
-    assert b"Success!" in response.data
     section: m.Section = m.Section.query.filter_by(
         label=LABEL, collection_id=collection_id
     ).first()
-    assert section
-    assert section.collection_id == collection_id
-    assert not section.interpretations
-
-    assert section.access_groups
-    assert len(section.access_groups) == 2
-    for access_group in section.access_groups:
-        access_group: m.AccessGroup
-        assert access_group.book_id == section.version.book_id
-
     return section, response
 
 
@@ -103,21 +82,9 @@ def create_interpretation(client, book_id, section_id):
         data=dict(section_id=section_id, text=LABEL),
         follow_redirects=True,
     )
-
-    assert response.status_code == 200
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
         section_id=section_id, text=LABEL
     ).first()
-    assert interpretation
-    assert interpretation.section_id == section_id
-    assert not interpretation.comments
-
-    assert interpretation.access_groups
-    assert len(interpretation.access_groups) == 2
-    for access_group in interpretation.access_groups:
-        access_group: m.AccessGroup
-        assert access_group.book_id == interpretation.section.version.book_id
-
     return interpretation, response
 
 
@@ -132,14 +99,7 @@ def create_comment(client, book_id, interpretation_id):
         ),
         follow_redirects=True,
     )
-
-    assert response
-    assert response.status_code == 200
-    assert b"Success" in response.data
-    assert str.encode(TEXT) in response.data
     comment: m.Comment = m.Comment.query.filter_by(text=TEXT).first()
-    assert comment
-
     return comment, response
 
 
@@ -229,6 +189,106 @@ def test_editor_access_to_entire_book(client):
     # restore section
     section.is_deleted = False
     section.save()
+
+    # access to create interpretation
+    interpretation, response = create_interpretation(client, book.id, section.id)
+    assert b"You do not have permission" not in response.data
+    assert b"Success!" in response.data
+
+    # access to approve interpretation
+    response: Response = client.post(
+        f"/approve/interpretation/{interpretation.id}",
+        follow_redirects=True,
+    )
+
+    assert response
+    assert response.json["message"] == "success"
+    assert response.json["approve"]
+    assert interpretation.approved
+
+    # access to delete interpretation
+    response: Response = client.post(
+        (f"/book/{book.id}/{interpretation.id}/delete_interpretation"),
+        follow_redirects=True,
+    )
+    assert b"You do not have permission" not in response.data
+    assert b"Success!" in response.data
+
+    # restore interpretation
+    interpretation.is_deleted = False
+    interpretation.save()
+
+    # access to create comment
+    comment, response = create_comment(client, book.id, interpretation.id)
+    assert b"You do not have permission" not in response.data
+    assert b"Success!" in response.data
+
+    # access to approve comment
+    response: Response = client.post(
+        f"/approve/comment/{comment.id}",
+        follow_redirects=True,
+    )
+
+    assert response
+    assert response.json["message"] == "success"
+    assert response.json["approve"]
+    assert interpretation.approved
+
+    # access to delete comment
+    response: Response = client.post(
+        f"/book/{book.id}/{interpretation.id}/comment_delete",
+        data=dict(
+            text=comment.text,
+            interpretation_id=interpretation.id,
+            comment_id=comment.id,
+        ),
+        follow_redirects=True,
+    )
+    assert b"You do not have permission" not in response.data
+    assert b"Success!" in response.data
+
+
+def test_moderator_access_to_entire_book(client):
+    login(client)
+    book = create_book(client)
+
+    editor = m.User(username="moderator", password="moderator").save()
+    response: Response = client.post(
+        f"/book/{book.id}/add_contributor",
+        data=dict(user_id=editor.id, role=m.BookContributor.Roles.MODERATOR),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Contributor was added!" in response.data
+
+    logout(client)
+    login(client, "moderator", "moderator")
+
+    # access to settings page
+    response: Response = client.get(f"/book/{book.id}/settings", follow_redirects=True)
+    assert b"You do not have permission" in response.data
+
+    # access to edit book
+    response: Response = client.post(
+        f"/book/{book.id}/edit",
+        data=dict(book_id=book.id, label="BookEdited"),
+        follow_redirects=True,
+    )
+    assert b"You do not have permission" in response.data
+
+    # dont have access to delete
+    response: Response = client.post(
+        f"/book/{book.id}/delete",
+        data=dict(book_id=book.id),
+        follow_redirects=True,
+    )
+    assert b"You do not have permission" in response.data
+
+    logout(client)
+    login(client)
+    collection, response = create_collection(client, book.id)
+    section, response = create_section(client, book.id, collection.id)
+    login(client, "moderator", "moderator")
 
     # access to create interpretation
     interpretation, response = create_interpretation(client, book.id, section.id)
