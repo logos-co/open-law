@@ -55,7 +55,10 @@ def my_library():
             db.session.query(m.Book)
             .join(m.BookContributor, m.BookContributor.book_id == m.Book.id, full=True)
             .filter(
-                m.Book.user_id == current_user.id,
+                or_(
+                    m.Book.user_id == current_user.id,
+                    m.BookContributor.user_id == current_user.id,
+                ),
                 m.Book.is_deleted == False,  # noqa: E712
             )
             .group_by(m.Book.id)
