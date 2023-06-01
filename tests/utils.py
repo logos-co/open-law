@@ -1,4 +1,8 @@
 from app import models as m
+from app.controllers.create_access_groups import (
+    create_editor_group,
+    create_moderator_group,
+)
 
 from random import randint
 
@@ -26,15 +30,24 @@ def logout(client):
     return client.get("/logout", follow_redirects=True)
 
 
-def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
+def create_test_book(owner_id: int, entity_id: int = 0):
+    if not entity_id:
+        entity_id = randint(1, 500)
     book: m.Book = m.Book(
         label=f"Book {entity_id}", about=f"About {entity_id}", user_id=owner_id
     ).save()
 
     version: m.BookVersion = m.BookVersion(semver="1.0.0", book_id=book.id).save()
 
+    root_collection: m.Collection = m.Collection(
+        label="Root", version_id=version.id, is_root=True
+    ).save()
+
     collection: m.Collection = m.Collection(
-        label=f"Collection {entity_id}", version_id=version.id
+        label=f"Collection {entity_id}",
+        version_id=version.id,
+        is_leaf=True,
+        parent_id=root_collection.id,
     ).save()
 
     section: m.Section = m.Section(
@@ -55,6 +68,67 @@ def create_test_book(owner_id: int, entity_id: int = randint(1, 100)):
         user_id=owner_id,
         interpretation_id=interpretation.id,
     ).save()
+
+    # subcollection
+    collection_2: m.Collection = m.Collection(
+        label=f"Collection {entity_id}",
+        version_id=version.id,
+        parent_id=root_collection.id,
+    ).save()
+
+    subcollection: m.Collection = m.Collection(
+        label=f"subCollection {entity_id}",
+        version_id=version.id,
+        parent_id=collection_2.id,
+        is_leaf=True,
+    ).save()
+
+    section_in_subcollection: m.Section = m.Section(
+        label=f"Section in sub {entity_id}",
+        user_id=owner_id,
+        collection_id=subcollection.id,
+        version_id=version.id,
+    ).save()
+
+    # access groups
+    editor_access_group = create_editor_group(book_id=book.id)
+    moderator_access_group = create_moderator_group(book_id=book.id)
+    access_groups = [editor_access_group, moderator_access_group]
+
+    for access_group in access_groups:
+        m.BookAccessGroups(book_id=book.id, access_group_id=access_group.id).save()
+        # root
+        m.CollectionAccessGroups(
+            collection_id=root_collection.id, access_group_id=access_group.id
+        ).save()
+        # leaf
+        m.CollectionAccessGroups(
+            collection_id=collection.id, access_group_id=access_group.id
+        ).save()
+
+        m.CollectionAccessGroups(
+            collection_id=collection_2.id, access_group_id=access_group.id
+        ).save()
+        # subcollection
+        m.CollectionAccessGroups(
+            collection_id=subcollection.id, access_group_id=access_group.id
+        ).save()
+
+        m.SectionAccessGroups(
+            section_id=section.id, access_group_id=access_group.id
+        ).save()
+        m.SectionAccessGroups(
+            section_id=section_in_subcollection.id, access_group_id=access_group.id
+        ).save()
+        m.InterpretationAccessGroups(
+            interpretation_id=section.id, access_group_id=access_group.id
+        ).save()
+
+    # Contributors
+    u = m.User(username=f"Bob {entity_id}").save()
+    m.BookContributor(book_id=book.id, user_id=u.id).save()
+
+    return book
 
 
 def check_if_nested_book_entities_is_deleted(book: m.Book, is_deleted: bool = True):

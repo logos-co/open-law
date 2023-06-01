@@ -3,6 +3,7 @@ import re
 from flask import current_app
 from flask_wtf import FlaskForm
 from flask import url_for, render_template
+from flask_login import current_user
 from sqlalchemy import func
 
 from app import models as m
@@ -76,9 +77,58 @@ def build_qa_url_using_interpretation(interpretation: m.Interpretation):
     return url
 
 
+# Using: {{ recursive_render("template.html", collection=collection, book=book) }}
 def recursive_render(template: str, collection: m.Collection, book: m.Book):
     return render_template(
         template,
         collection=collection,
         book=book,
     )
+
+
+# Using: {{ has_permission(entity=book, required_permissions=[Access.create]) }}
+def has_permission(
+    entity: m.Book | m.Collection | m.Section | m.Interpretation,
+    required_permissions: m.Permission.Access | list[m.Permission.Access],
+    entity_type: m.Permission.Entity = None,
+) -> bool:
+    if not current_user.is_authenticated:
+        return False
+
+    # check if user is owner of book
+    match type(entity):
+        case m.Book:
+            if entity.user_id == current_user.id:
+                return True
+        case m.Collection | m.Section:
+            if entity.version.book.user_id == current_user.id:
+                return True
+        case m.Interpretation:
+            if entity.book.user_id == current_user.id:
+                return True
+        case _:
+            ...
+
+    if type(required_permissions) == m.Permission.Access:
+        required_permissions = [required_permissions]
+
+    access_groups: list[m.AccessGroup] = list(
+        set(entity.access_groups).intersection(current_user.access_groups)
+    )
+
+    if not access_groups:
+        return False
+
+    if not entity_type:
+        entity_type = m.Permission.Entity[type(entity).__name__.upper()]
+
+    for access_group in access_groups:
+        for permission in access_group.permissions:
+            permission: m.Permission
+            if permission.entity_type != entity_type:
+                continue
+            for required_permission in required_permissions:
+                if permission.access & required_permission:
+                    return True
+
+    return False

@@ -17,6 +17,11 @@ from app.controllers.tags import (
 from app.controllers.delete_nested_book_entities import (
     delete_nested_book_entities,
 )
+from app.controllers.create_access_groups import (
+    create_editor_group,
+    create_moderator_group,
+)
+from app.controllers.require_permission import require_permission
 from app import models as m, db, forms as f
 from app.logger import log
 from .bp import bp
@@ -85,11 +90,23 @@ def create():
         log(log.INFO, "Form submitted. Book: [%s]", book)
         book.save()
         version = m.BookVersion(semver="1.0.0", book_id=book.id).save()
-        m.Collection(
+        root_collection = m.Collection(
             label="Root Collection", version_id=version.id, is_root=True
         ).save()
         tags = form.tags.data or ""
         set_book_tags(book, tags)
+
+        # access groups
+        editor_access_group = create_editor_group(book_id=book.id)
+        moderator_access_group = create_moderator_group(book_id=book.id)
+        access_groups = [editor_access_group, moderator_access_group]
+
+        for access_group in access_groups:
+            m.BookAccessGroups(book_id=book.id, access_group_id=access_group.id).save()
+            m.CollectionAccessGroups(
+                collection_id=root_collection.id, access_group_id=access_group.id
+            ).save()
+        # -------------
 
         flash("Book added!", "success")
         return redirect(url_for("book.my_library"))
@@ -104,6 +121,11 @@ def create():
 
 @bp.route("/<int:book_id>/edit", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.BOOK,
+    access=[m.Permission.Access.U],
+    entities=[m.Book],
+)
 @login_required
 def edit(book_id: int):
     form = f.EditBookForm()
@@ -130,13 +152,18 @@ def edit(book_id: int):
 
 
 @bp.route("/<int:book_id>/delete", methods=["POST"])
+@require_permission(
+    entity_type=m.Permission.Entity.BOOK,
+    access=[m.Permission.Access.D],
+    entities=[m.Book],
+)
 @login_required
 def delete(book_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
 
     if not book or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
+        flash("Book not found!", "danger")
         return redirect(url_for("book.my_library"))
 
     book.is_deleted = True

@@ -8,12 +8,18 @@ from flask_login import login_required
 from app.controllers import register_book_verify_route
 from app.controllers.delete_nested_book_entities import delete_nested_section_entities
 from app import models as m, db, forms as f
+from app.controllers.require_permission import require_permission
 from app.logger import log
 from .bp import bp
 
 
 @bp.route("/<int:book_id>/<int:collection_id>/create_section", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.SECTION,
+    access=[m.Permission.Access.C],
+    entities=[m.Collection],
+)
 @login_required
 def section_create(book_id: int, collection_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
@@ -38,6 +44,13 @@ def section_create(book_id: int, collection_id: int):
         log(log.INFO, "Create section [%s]. Collection: [%s]", section, collection_id)
         section.save()
 
+        # access groups
+        for access_group in section.collection.access_groups:
+            m.SectionAccessGroups(
+                section_id=section.id, access_group_id=access_group.id
+            ).save()
+        # -------------
+
         flash("Success!", "success")
         return redirect(redirect_url)
     else:
@@ -51,6 +64,11 @@ def section_create(book_id: int, collection_id: int):
 
 @bp.route("/<int:book_id>/<int:section_id>/edit_section", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.SECTION,
+    access=[m.Permission.Access.U],
+    entities=[m.Section],
+)
 @login_required
 def section_edit(book_id: int, section_id: int):
     section: m.Section = db.session.get(m.Section, section_id)
@@ -79,6 +97,11 @@ def section_edit(book_id: int, section_id: int):
 
 @bp.route("/<int:book_id>/<int:section_id>/delete_section", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.SECTION,
+    access=[m.Permission.Access.D],
+    entities=[m.Section],
+)
 @login_required
 def section_delete(
     book_id: int,

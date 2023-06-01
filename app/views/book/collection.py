@@ -14,6 +14,7 @@ from app.controllers.delete_nested_book_entities import (
     delete_nested_collection_entities,
 )
 from app import models as m, db, forms as f
+from app.controllers.require_permission import require_permission
 from app.logger import log
 from .bp import bp
 
@@ -35,6 +36,11 @@ def collection_view(book_id: int):
 @bp.route("/<int:book_id>/create_collection", methods=["POST"])
 @bp.route("/<int:book_id>/<int:collection_id>/create_sub_collection", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.COLLECTION,
+    access=[m.Permission.Access.C],
+    entities=[m.Collection, m.Book],
+)
 @login_required
 def collection_create(book_id: int, collection_id: int | None = None):
     book: m.Book = db.session.get(m.Book, book_id)
@@ -92,6 +98,11 @@ def collection_create(book_id: int, collection_id: int | None = None):
         log(log.INFO, "Create collection [%s]. Book: [%s]", collection, book.id)
         collection.save()
 
+        for access_group in collection.parent.access_groups:
+            m.CollectionAccessGroups(
+                collection_id=collection.id, access_group_id=access_group.id
+            ).save()
+
         flash("Success!", "success")
         if collection_id:
             redirect_url = url_for("book.collection_view", book_id=book_id)
@@ -107,6 +118,11 @@ def collection_create(book_id: int, collection_id: int | None = None):
 
 @bp.route("/<int:book_id>/<int:collection_id>/edit", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.COLLECTION,
+    access=[m.Permission.Access.U],
+    entities=[m.Collection],
+)
 @login_required
 def collection_edit(book_id: int, collection_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
@@ -162,6 +178,11 @@ def collection_edit(book_id: int, collection_id: int):
 
 @bp.route("/<int:book_id>/<int:collection_id>/delete", methods=["POST"])
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.COLLECTION,
+    access=[m.Permission.Access.D],
+    entities=[m.Collection],
+)
 @login_required
 def collection_delete(book_id: int, collection_id: int):
     collection: m.Collection = db.session.get(m.Collection, collection_id)

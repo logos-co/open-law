@@ -37,10 +37,12 @@ export function deleteInterpretation() {
         const interpretationId = btn.getAttribute('data-interpretation-id');
         interpretationIdInDeleteInterpretationModal.value = interpretationId;
         let newActionPath: string = '';
+
         newActionPath = defaultActionPath.replace(
-          '0/interpretation_delete',
-          `${interpretationId}/interpretation_delete`,
+          '0/delete_interpretation',
+          `${interpretationId}/delete_interpretation`,
         );
+        console.log(defaultActionPath);
 
         deleteInterpretationForm.setAttribute('action', `${newActionPath}`);
         interpretationDeleteModal.show();

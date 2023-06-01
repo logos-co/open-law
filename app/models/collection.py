@@ -25,6 +25,10 @@ class Collection(BaseModel):
         order_by="asc(Collection.id)",
     )
     sections = db.relationship("Section")
+    access_groups = db.relationship(
+        "AccessGroup",
+        secondary="collections_access_groups",
+    )  # access_groups related to current entity
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"
