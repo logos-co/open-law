@@ -1,5 +1,4 @@
-# flake8: noqa F501
-from flask import current_app as Response, url_for
+from flask import current_app as Response
 from flask.testing import FlaskClient, FlaskCliRunner
 
 from app import models as m, db
@@ -115,7 +114,7 @@ def test_create_edit_delete_book(client: FlaskClient):
     assert response.status_code == 200
     assert b"Success!" in response.data
     book = db.session.get(m.Book, book.id)
-    assert book.is_deleted == True
+    assert book.is_deleted
     check_if_nested_book_entities_is_deleted(book)
 
 
@@ -263,7 +262,7 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
     assert b"You do not have permission" in response.data
 
     response: Response = client.post(
-        f"/book/999/add_contributor",
+        "/book/999/add_contributor",
         data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
         follow_redirects=True,
     )
@@ -296,7 +295,7 @@ def test_crud_collection(client: FlaskClient):
     assert b"Collection label must be unique!" in response.data
 
     response: Response = client.post(
-        f"/book/999/create_collection",
+        "/book/999/create_collection",
         data=dict(label="Test Collection #1 Label", about="Test Collection #1 About"),
         follow_redirects=True,
     )
@@ -978,7 +977,7 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
         is_leaf=True,
         parent_id=book.last_version.root_collection.id,
     ).save()
-    section_in_collection: m.Section = m.Section(
+    m.Section(
         label="Test Section in Collection #1 Label",
         collection_id=leaf_collection.id,
         version_id=book.last_version.id,
@@ -1215,7 +1214,7 @@ def test_interpretation_in_home_last_inter_section(
     assert b"Section not found" in response.data
 
     response: Response = client.get(
-        f"/home",
+        "/home",
         follow_redirects=True,
     )
 

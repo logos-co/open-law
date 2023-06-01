@@ -1,19 +1,9 @@
 from random import randint
 
-from flask import current_app as Response, url_for
-from flask.testing import FlaskClient, FlaskCliRunner
+from flask import current_app as Response
 
-from app import models as m, db
-from app.controllers.create_access_groups import create_moderator_group
-from tests.utils import (
-    login,
-    logout,
-    check_if_nested_book_entities_is_deleted,
-    check_if_nested_collection_entities_is_deleted,
-    check_if_nested_section_entities_is_deleted,
-    check_if_nested_interpretation_entities_is_deleted,
-    create_test_book,
-)
+from app import models as m
+from tests.utils import login, logout
 
 
 def create_book(client):
