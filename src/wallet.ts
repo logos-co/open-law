@@ -14,12 +14,12 @@ export function initWallet() {
   const origin = window.location.origin;
   // connect to ethereum network and sign transactions with Metamask
   if (!window.hasOwnProperty('ethereum')) {
-    // let result = confirm(
-    //   "You don't have needed extension! Do you want to install it?",
-    // );
-    // if (result) {
-    //   window.open('https://metamask.io/', '_blank');
-    // }
+    let result = confirm(
+      "You don't have needed extension! Do you want to install it?",
+    );
+    if (result) {
+      window.open('https://metamask.io/', '_blank');
+    }
     return;
   }
   const eOwner: IEthereumOwner = window as any;
