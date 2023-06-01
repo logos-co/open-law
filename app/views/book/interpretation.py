@@ -112,24 +112,23 @@ def interpretation_create(
     "/<int:book_id>/<int:interpretation_id>/edit_interpretation", methods=["POST"]
 )
 @register_book_verify_route(bp.name)
-@require_permission(
-    entity_type=m.Permission.Entity.INTERPRETATION,
-    access=[m.Permission.Access.U],
-    entities=[m.Interpretation],
-)
 @login_required
 def interpretation_edit(
     book_id: int,
     interpretation_id: int,
 ):
+    interpretation: m.Interpretation = db.session.get(
+        m.Interpretation, interpretation_id
+    )
+
+    if interpretation and interpretation.user_id != current_user.id:
+        flash("You dont have permission to edit this interpretation", "danger")
+        return redirect(url_for("book.collection_view", book_id=book_id))
+
     form = f.EditInterpretationForm()
 
     if form.validate_on_submit():
         text = form.text.data
-        interpretation_id = form.interpretation_id.data
-        interpretation: m.Interpretation = db.session.get(
-            m.Interpretation, interpretation_id
-        )
         redirect_url = url_for(
             "book.interpretation_view",
             book_id=book_id,
@@ -185,20 +184,13 @@ def interpretation_delete(
     interpretation_id: int,
 ):
     form = f.DeleteInterpretationForm()
-    interpretation_id = form.interpretation_id.data
     interpretation: m.Interpretation = db.session.get(
         m.Interpretation, interpretation_id
     )
     if not interpretation or interpretation.is_deleted:
         log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
         flash("Interpretation not found", "danger")
-        return redirect(
-            url_for(
-                "book.interpretation_view",
-                book_id=book_id,
-                section_id=interpretation.section_id,
-            )
-        )
+        return redirect(url_for("book.collection_view", book_id=book_id))
     form = f.DeleteInterpretationForm()
     if form.validate_on_submit():
         interpretation.is_deleted = True

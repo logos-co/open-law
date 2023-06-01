@@ -32,7 +32,7 @@ def logout(client):
 
 def create_test_book(owner_id: int, entity_id: int = 0):
     if not entity_id:
-        entity_id = randint(1, 100)
+        entity_id = randint(1, 500)
     book: m.Book = m.Book(
         label=f"Book {entity_id}", about=f"About {entity_id}", user_id=owner_id
     ).save()

@@ -169,11 +169,11 @@ def edit_contributor_role(book_id: int):
         current_group = m.AccessGroup.query.filter_by(
             book_id=book_id, name=book_contributor.role.name.lower()
         ).first()
-        db.session.delete(
-            m.UserAccessGroups.query.filter_by(
-                user_id=book_contributor.user_id, access_group_id=current_group.id
-            ).first()
-        )
+        user_access_group = m.UserAccessGroups.query.filter_by(
+            user_id=book_contributor.user_id, access_group_id=current_group.id
+        ).first()
+        if user_access_group:
+            db.session.delete(user_access_group)
 
         new_group = m.AccessGroup.query.filter_by(
             book_id=book_id, name=role.name.lower()

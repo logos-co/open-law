@@ -208,7 +208,8 @@ def test_editor_access_to_entire_book(client):
 
     # access to delete interpretation
     response: Response = client.post(
-        (f"/book/{book.id}/{interpretation.id}/delete_interpretation"),
+        f"/book/{book.id}/{interpretation.id}/delete_interpretation",
+        data=dict(interpretation_id=interpretation.id),
         follow_redirects=True,
     )
     assert b"You do not have permission" not in response.data
@@ -308,7 +309,8 @@ def test_moderator_access_to_entire_book(client):
 
     # access to delete interpretation
     response: Response = client.post(
-        (f"/book/{book.id}/{interpretation.id}/delete_interpretation"),
+        f"/book/{book.id}/{interpretation.id}/delete_interpretation",
+        data=dict(interpretation_id=interpretation.id),
         follow_redirects=True,
     )
     assert b"You do not have permission" not in response.data

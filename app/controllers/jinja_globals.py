@@ -70,6 +70,20 @@ def has_permission(
     if not current_user.is_authenticated:
         return False
 
+    # check if user is owner of book
+    match type(entity):
+        case m.Book:
+            if entity.user_id == current_user.id:
+                return True
+        case m.Collection | m.Section:
+            if entity.version.book.user_id == current_user.id:
+                return True
+        case m.Interpretation:
+            if entity.book.user_id == current_user.id:
+                return True
+        case _:
+            ...
+
     if type(required_permissions) == m.Permission.Access:
         required_permissions = [required_permissions]
 
