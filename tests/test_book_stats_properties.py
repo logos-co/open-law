@@ -104,12 +104,3 @@ def test_approved_comments(client: FlaskClient):
     interpretation.is_deleted = False
     interpretation.save()
     assert len(book.approved_comments) == 2
-
-    collection: m.Collection = m.Collection.query.first()
-    collection.is_deleted = True
-    collection.save()
-
-    interpretation.is_deleted = False
-    interpretation.save()
-    # TODO Fix
-    # assert len(book.approved_comments) == 0

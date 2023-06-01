@@ -33,6 +33,7 @@ def set():
             flash("User are not contributor of this book!", "danger")
             return redirect(url_for("book.my_library"))
 
+        # TODO process data from checkbox tree
         # permissions = json.loads(form.permissions.data)
 
     return {"status": "ok"}
