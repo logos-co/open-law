@@ -50,9 +50,9 @@ def set_comment_tags(comment: m.Comment, tags: list[str]):
     comment_tags = m.CommentTags.query.filter_by(comment_id=comment.id).all()
     for tag in comment_tags:
         db.session.delete(tag)
-    tags_names = [tag.lower().replace("[", "").replace("]", "") for tag in tags]
+    tags_names = [tag.lower().replace("#", "") for tag in tags]
 
-    for tag_name in tags_names:
+    for tag_name in set(tags_names):
         try:
             tag = get_or_create_tag(tag_name)
         except ValueError as e:
@@ -77,7 +77,7 @@ def set_interpretation_tags(interpretation: m.InterpretationTag, tags: list[str]
     ).all()
     for tag in interpretation_tags:
         db.session.delete(tag)
-    tags_names = [tag.lower().replace("[", "").replace("]", "") for tag in tags]
+    tags_names = [tag.lower().replace("#", "") for tag in tags]
 
     for tag_name in tags_names:
         try:

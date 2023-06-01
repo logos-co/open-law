@@ -3,6 +3,7 @@ import re
 from flask import current_app
 from flask_wtf import FlaskForm
 from flask import url_for, render_template
+from sqlalchemy import func
 
 from app import models as m
 
@@ -15,21 +16,45 @@ def form_hidden_tag():
     return form.hidden_tag()
 
 
-# Using: {{ display_tags("Some text with [tags] here") }}
-def display_tags(text: str):
-    tags = current_app.config["TAG_REGEX"].findall(text)
+# Using: {{ display_inline_elements("Some text with [tags] here") }}
+def display_inline_elements(text: str):
+    users_mentions = current_app.config["USER_MENTION_REGEX"].findall(text)
+    classes = [
+        "!no-underline",
+        "cursor-pointer",
+        "multiple-input-word",
+        "bg-sky-100",
+        "border",
+        "border-sky-300",
+        "dark:!text-black",
+        "rounded",
+        "text-center",
+        "py-1/2",
+        "px-1",
+    ]
+    classes = " ".join(classes)
+    for users_mention in users_mentions:
+        username = users_mention.replace("@", "").lower()
+        user: m.User = m.User.query.filter(
+            (func.lower(m.User.username) == username)
+        ).first()
+        if user:
+            username_to_display = users_mention.replace(username, user.username)
+            url = url_for("user.profile", user_id=user.id)
+            text = text.replace(
+                users_mention,
+                f"<a href='{url}' class='{classes}'>{username_to_display}</a>",
+            )
 
+    tags = current_app.config["TAG_REGEX"].findall(text)
     classes = ["text-orange-500", "!no-underline"]
     classes = " ".join(classes)
-
-    for tag in tags:
+    for tag in set(tags):
         url = url_for(
-            "search.tag_search_interpretations",
-            tag_name=tag.lower().replace("[", "").replace("]", ""),
+            "search.tag_search_interpretations", tag_name=tag.lower().replace("#", "")
         )
-        text = text.replace(
-            tag,
-            f"<a href='{url}' class='{classes}'>{tag}</a>",
+        text = re.sub(
+            rf"({tag})\b", f"<a href='{url}' class='{classes}'>{tag}</a>", text
         )
 
     return text

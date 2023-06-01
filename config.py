@@ -30,7 +30,8 @@ class BaseConfig(BaseSettings):
     HTTP_PROVIDER_URL: str
 
     # regex
-    TAG_REGEX = re.compile(r"\[.*?\]")
+    TAG_REGEX = re.compile(r"(#+[a-zA-Z0-9(_)]{1,})")  # #tag
+    USER_MENTION_REGEX = re.compile(r"(?<!\w)@\w+")  # @word
 
     @staticmethod
     def configure(app: Flask):
