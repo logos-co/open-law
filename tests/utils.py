@@ -1,4 +1,5 @@
 from random import randint
+from uuid import uuid4
 
 from flask import current_app as Response
 
@@ -192,7 +193,7 @@ def check_if_nested_comment_entities_is_deleted(
 
 
 def create_book(client):
-    random_id = randint(1, 100)
+    random_id = str(uuid4())
     BOOK_NAME = f"TBook {random_id}"
     response: Response = client.post(
         "/book/create",
@@ -220,7 +221,7 @@ def create_book(client):
 
 
 def create_collection(client, book_id):
-    random_id = randint(1, 100)
+    random_id = str(uuid4())
     LABEL = f"TCollection {random_id}"
     response: Response = client.post(
         f"/book/{book_id}/create_collection",
@@ -234,8 +235,23 @@ def create_collection(client, book_id):
     return collection, response
 
 
+def create_sub_collection(client, book_id, collection_id):
+    random_id = str(uuid4())
+    LABEL = f"TCollection {random_id}"
+    response: Response = client.post(
+        f"/book/{book_id}/{collection_id}/create_sub_collection",
+        data=dict(label=LABEL),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    collection: m.Collection = m.Collection.query.filter_by(label=LABEL).first()
+
+    return collection, response
+
+
 def create_section(client, book_id, collection_id):
-    random_id = randint(1, 100)
+    random_id = str(uuid4())
     LABEL = f"TSection {random_id}"
     response: Response = client.post(
         f"/book/{book_id}/{collection_id}/create_section",
@@ -250,7 +266,7 @@ def create_section(client, book_id, collection_id):
 
 
 def create_interpretation(client, book_id, section_id):
-    random_id = randint(1, 100)
+    random_id = str(uuid4())
     LABEL = f"TInterpretation {random_id}"
     response: Response = client.post(
         f"/book/{book_id}/{section_id}/create_interpretation",
@@ -264,7 +280,7 @@ def create_interpretation(client, book_id, section_id):
 
 
 def create_comment(client, book_id, interpretation_id):
-    random_id = randint(1, 100)
+    random_id = str(uuid4())
     TEXT = f"TComment {random_id}"
     response: Response = client.post(
         f"/book/{book_id}/{interpretation_id}/create_comment",
