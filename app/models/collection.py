@@ -11,6 +11,7 @@ class Collection(BaseModel):
     about = db.Column(db.Text, unique=False, nullable=True)
     is_root = db.Column(db.Boolean, default=False)
     is_leaf = db.Column(db.Boolean, default=False)
+    position = db.Column(db.Integer, default=-1, nullable=True)
 
     # Foreign keys
     version_id = db.Column(db.ForeignKey("book_versions.id"))

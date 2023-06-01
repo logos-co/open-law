@@ -1,96 +1,15 @@
-from random import randint
-
 from flask import current_app as Response
 
 from app import models as m
-from tests.utils import login, logout
-
-
-def create_book(client):
-    random_id = randint(1, 100)
-    BOOK_NAME = f"TBook {random_id}"
-    response: Response = client.post(
-        "/book/create",
-        data=dict(label=BOOK_NAME),
-        follow_redirects=True,
-    )
-
-    assert response.status_code == 200
-    assert b"Book added!" in response.data
-
-    book: m.Book = m.Book.query.filter_by(label=BOOK_NAME).first()
-
-    assert book
-    assert book.versions
-    assert len(book.versions) == 1
-    assert book.access_groups
-    assert len(book.access_groups) == 2
-
-    root_collection: m.Collection = book.last_version.collections[0]
-    assert root_collection
-    assert root_collection.access_groups
-    assert len(root_collection.access_groups) == 2
-
-    return book
-
-
-def create_collection(client, book_id):
-    random_id = randint(1, 100)
-    LABEL = f"TCollection {random_id}"
-    response: Response = client.post(
-        f"/book/{book_id}/create_collection",
-        data=dict(label=LABEL),
-        follow_redirects=True,
-    )
-
-    assert response.status_code == 200
-    collection: m.Collection = m.Collection.query.filter_by(label=LABEL).first()
-
-    return collection, response
-
-
-def create_section(client, book_id, collection_id):
-    random_id = randint(1, 100)
-    LABEL = f"TSection {random_id}"
-    response: Response = client.post(
-        f"/book/{book_id}/{collection_id}/create_section",
-        data=dict(collection_id=collection_id, label=LABEL),
-        follow_redirects=True,
-    )
-
-    section: m.Section = m.Section.query.filter_by(
-        label=LABEL, collection_id=collection_id
-    ).first()
-    return section, response
-
-
-def create_interpretation(client, book_id, section_id):
-    random_id = randint(1, 100)
-    LABEL = f"TInterpretation {random_id}"
-    response: Response = client.post(
-        f"/book/{book_id}/{section_id}/create_interpretation",
-        data=dict(section_id=section_id, text=LABEL),
-        follow_redirects=True,
-    )
-    interpretation: m.Interpretation = m.Interpretation.query.filter_by(
-        section_id=section_id, text=LABEL
-    ).first()
-    return interpretation, response
-
-
-def create_comment(client, book_id, interpretation_id):
-    random_id = randint(1, 100)
-    TEXT = f"TComment {random_id}"
-    response: Response = client.post(
-        f"/book/{book_id}/{interpretation_id}/create_comment",
-        data=dict(
-            text=TEXT,
-            interpretation_id=interpretation_id,
-        ),
-        follow_redirects=True,
-    )
-    comment: m.Comment = m.Comment.query.filter_by(text=TEXT).first()
-    return comment, response
+from tests.utils import (
+    login,
+    logout,
+    create_book,
+    create_collection,
+    create_section,
+    create_interpretation,
+    create_comment,
+)
 
 
 def test_editor_access_to_entire_book(client):
