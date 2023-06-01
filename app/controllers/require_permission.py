@@ -47,7 +47,7 @@ def check_permissions(
         log(
             log.INFO,
             "User [%s] dont have permission to [%s] [%s]",
-            access.name,
+            access,
             current_user,
             entity,
         )
