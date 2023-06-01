@@ -10,7 +10,8 @@ def test_upvote_interpretation(client: FlaskClient):
 
     response: Response = client.post(
         "/vote/interpretation/999",
-        data=dict(
+        headers={"Content-Type": "application/json"},
+        json=dict(
             positive=True,
         ),
         follow_redirects=True,
@@ -29,7 +30,8 @@ def test_upvote_interpretation(client: FlaskClient):
 
     response: Response = client.post(
         f"/vote/interpretation/{interpretation.id}",
-        data=dict(
+        headers={"Content-Type": "application/json"},
+        json=dict(
             positive=True,
         ),
         follow_redirects=True,
@@ -47,7 +49,8 @@ def test_upvote_interpretation(client: FlaskClient):
 
     response: Response = client.post(
         f"/vote/interpretation/{interpretation.id}",
-        data=dict(
+        headers={"Content-Type": "application/json"},
+        json=dict(
             positive=True,
         ),
         follow_redirects=True,
@@ -65,7 +68,8 @@ def test_upvote_interpretation(client: FlaskClient):
 
     response: Response = client.post(
         f"/vote/interpretation/{interpretation.id}",
-        data=dict(
+        headers={"Content-Type": "application/json"},
+        json=dict(
             positive=False,
         ),
         follow_redirects=True,
@@ -83,7 +87,8 @@ def test_upvote_interpretation(client: FlaskClient):
 
     response: Response = client.post(
         f"/vote/interpretation/{interpretation.id}",
-        data=dict(
+        headers={"Content-Type": "application/json"},
+        json=dict(
             positive=False,
         ),
         follow_redirects=True,
@@ -105,7 +110,8 @@ def test_upvote_comment(client: FlaskClient):
 
     response: Response = client.post(
         "/vote/comment/999",
-        data=dict(
+        headers={"Content-Type": "application/json"},
+        json=dict(
             positive=True,
         ),
         follow_redirects=True,
@@ -124,7 +130,8 @@ def test_upvote_comment(client: FlaskClient):
 
     response: Response = client.post(
         f"/vote/comment/{comment.id}",
-        data=dict(
+        headers={"Content-Type": "application/json"},
+        json=dict(
             positive=True,
         ),
         follow_redirects=True,
@@ -142,7 +149,8 @@ def test_upvote_comment(client: FlaskClient):
 
     response: Response = client.post(
         f"/vote/comment/{comment.id}",
-        data=dict(
+        headers={"Content-Type": "application/json"},
+        json=dict(
             positive=True,
         ),
         follow_redirects=True,
@@ -160,7 +168,8 @@ def test_upvote_comment(client: FlaskClient):
 
     response: Response = client.post(
         f"/vote/comment/{comment.id}",
-        data=dict(
+        headers={"Content-Type": "application/json"},
+        json=dict(
             positive=False,
         ),
         follow_redirects=True,
@@ -178,7 +187,8 @@ def test_upvote_comment(client: FlaskClient):
 
     response: Response = client.post(
         f"/vote/comment/{comment.id}",
-        data=dict(
+        headers={"Content-Type": "application/json"},
+        json=dict(
             positive=False,
         ),
         follow_redirects=True,
