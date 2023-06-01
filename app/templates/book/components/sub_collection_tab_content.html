@@ -42,11 +42,11 @@
 
         {% if access_to_create_collections or access_to_update_collections or access_to_create_section %}
           <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-            {% if access_to_create_section and sub_collection.is_leaf and not sub_collection.children %}
+            {% if access_to_create_section and sub_collection.is_leaf and not sub_collection.active_children %}
               <li>
                 <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Section </button>
               </li>
-            {% elif not sub_collection.is_leaf and not sub_collection.children %}
+            {% elif not sub_collection.is_leaf and not sub_collection.active_children %}
               {% if access_to_create_section %}
                 <li>
                   <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Section </button>
@@ -96,7 +96,7 @@
     </div>
     <!-- prettier-ignore -->
     <div id="accordion-nested-collapse-body-{{sub_collection.parent.id}}-{{sub_collection.id}}" class="hidden" aria-labelledby="accordion-nested-collapse-heading-{{sub_collection.id}}">
-    {% if sub_collection.children or not sub_collection.active_sections%}
+    {% if sub_collection.active_children %}
         {{recursive_render("book/components/sub_collection_tab_content.html",sub_collection,book)|safe}}
     {% elif sub_collection.active_sections  %}
         <div id="draggableSectionItems" data-sub-collection-id="{{sub_collection.id}}">

@@ -1,14 +1,14 @@
 {% if not collection.is_leaf %}
 <!-- if collection has sub_collection make for loop for it -->
-{% for sub_collection in collection.children if not sub_collection.is_deleted%}
+{% for sub_collection in collection.active_children if not sub_collection.is_deleted%}
 <p class="my-3" id="collection-{{sub_collection.label}}">
   ##{{sub_collection.label}}/{{sub_collection.id}}
 </p>
-{% if not sub_collection.active_sections and not sub_collection.children %}
+{% if not sub_collection.active_sections and not sub_collection.active_children %}
 <p class="ml-3 my-3 italic text-sm">This sub collection is empty</p>
 {% endif %}
 <!-- prettier-ignore -->
-{% if sub_collection.children %}
+{% if sub_collection.active_children %}
 {{recursive_render("book/components/sub_collection_preview_content.html",sub_collection,book)|safe}}
 {% else %}
 <!-- prettier-ignore -->

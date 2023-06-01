@@ -38,6 +38,10 @@ class Collection(BaseModel):
         return [section for section in self.sections if not section.is_deleted]
 
     @property
+    def active_children(self):
+        return [child for child in self.children if not child.is_deleted]
+
+    @property
     def book_id(self):
         return self.version.book_id
 

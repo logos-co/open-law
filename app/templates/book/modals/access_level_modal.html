@@ -34,7 +34,7 @@
                       <span class="text-center dark:text-gray-300">{{ collection.label }}</span>
                     </div>
 
-                    {% for sub_collection in collection.children %}
+                    {% for sub_collection in collection.active_children %}
                       <ul class="ml-4">
                         <li>
                           <div class="flex items-center space-x-2">
