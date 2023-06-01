@@ -92,3 +92,27 @@ class Book(BaseModel):
         )
 
         return interpretations
+
+    @property
+    def interpretations(self):
+        interpretations = (
+            db.session.query(
+                m.Interpretation,
+            )
+            .filter(
+                and_(
+                    m.BookVersion.id == self.last_version.id,
+                    m.Section.version_id == m.BookVersion.id,
+                    m.Collection.id == m.Section.collection_id,
+                    m.Interpretation.section_id == m.Section.id,
+                    m.BookVersion.is_deleted.is_(False),
+                    m.Interpretation.is_deleted.is_(False),
+                    m.Section.is_deleted.is_(False),
+                    m.Collection.is_deleted.is_(False),
+                ),
+            )
+            .order_by(m.Interpretation.created_at.desc())
+            .all()
+        )
+
+        return interpretations

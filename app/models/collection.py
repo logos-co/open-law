@@ -34,6 +34,10 @@ class Collection(BaseModel):
         return [section for section in self.sections if not section.is_deleted]
 
     @property
+    def book_id(self):
+        return self.version.book_id
+
+    @property
     def sub_collections(self):
         return [
             sub_collection
