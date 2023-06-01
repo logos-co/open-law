@@ -51,8 +51,16 @@ def my_library():
     if current_user.is_authenticated:
         log(log.INFO, "Create query for my_library page for books")
 
-        books: m.Book = m.Book.query.order_by(m.Book.id)
-        books = books.filter_by(user_id=current_user.id, is_deleted=False)
+        books: m.Book = (
+            db.session.query(m.Book)
+            .join(m.BookContributor, m.BookContributor.book_id == m.Book.id, full=True)
+            .filter(
+                m.Book.user_id == current_user.id,
+                m.Book.is_deleted == False,  # noqa: E712
+            )
+            .group_by(m.Book.id)
+        )
+
         log(log.INFO, "Create pagination for books")
 
         pagination = create_pagination(total=books.count())

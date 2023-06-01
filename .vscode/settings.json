@@ -21,6 +21,7 @@
     "jsonify",
     "pydantic",
     "pytest",
+    "scrf",
     "siwe",
     "sqlalchemy",
     "tailwindcss",

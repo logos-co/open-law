@@ -69,7 +69,7 @@ def create_app(environment="development"):
     # Jinja globals
     from app.controllers.jinja_globals import (
         form_hidden_tag,
-        display_tags,
+        display_inline_elements,
         build_qa_url_using_interpretation,
         recursive_render,
         has_permission,
@@ -79,7 +79,7 @@ def create_app(environment="development"):
     app.jinja_env.globals["EntityType"] = Permission.Entity
 
     app.jinja_env.globals["form_hidden_tag"] = form_hidden_tag
-    app.jinja_env.globals["display_tags"] = display_tags
+    app.jinja_env.globals["display_inline_elements"] = display_inline_elements
     app.jinja_env.globals["build_qa_url"] = build_qa_url_using_interpretation
     app.jinja_env.globals["recursive_render"] = recursive_render
     app.jinja_env.globals["has_permission"] = has_permission

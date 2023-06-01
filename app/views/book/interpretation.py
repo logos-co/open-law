@@ -70,7 +70,7 @@ def interpretation_create(
         plain_text = clean_html(text).lower()
         tags = current_app.config["TAG_REGEX"].findall(text)
         for tag in tags:
-            word = tag.lower().replace("[", "").replace("]", "")
+            word = tag.lower().replace("#", "")
             plain_text = plain_text.replace(tag.lower(), word)
 
         interpretation: m.Interpretation = m.Interpretation(
@@ -147,7 +147,7 @@ def interpretation_edit(
         plain_text = clean_html(text).lower()
         tags = current_app.config["TAG_REGEX"].findall(text)
         for tag in tags:
-            word = tag.lower().replace("[", "").replace("]", "")
+            word = tag.lower().replace("#", "")
             plain_text = plain_text.replace(tag.lower(), word)
 
         interpretation.plain_text = plain_text

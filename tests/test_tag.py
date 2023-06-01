@@ -86,7 +86,7 @@ def test_create_tags_on_comment_create_and_edit(client: FlaskClient):
     section = db.session.get(m.Section, 1)
     interpretation = db.session.get(m.Interpretation, 1)
 
-    tags = "[tag1] [tag2] [tag3]"
+    tags = "#tag1 #tag2 #tag3"
     response: Response = client.post(
         f"/book/{book.id}/{interpretation.id}/create_comment",
         data=dict(
@@ -102,9 +102,7 @@ def test_create_tags_on_comment_create_and_edit(client: FlaskClient):
     assert comment
     assert comment.tags
 
-    splitted_tags = [
-        tag.lower().replace("[", "").replace("]", "") for tag in tags.split()
-    ]
+    splitted_tags = [tag.lower().replace("#", "") for tag in tags.split()]
     assert len(comment.tags) == 3
     for tag in comment.tags:
         tag: m.Tag
@@ -113,7 +111,7 @@ def test_create_tags_on_comment_create_and_edit(client: FlaskClient):
     tags_from_db: m.Tag = m.Tag.query.all()
     assert len(tags_from_db) == 3
 
-    tags = "[tag1] [tag5] [tag7]"
+    tags = "#tag1 #tag5 #tag7"
     response: Response = client.post(
         f"/book/{book.id}/{interpretation.id}/comment_edit",
         data=dict(text="some text" + tags, comment_id=comment.id),
@@ -125,9 +123,7 @@ def test_create_tags_on_comment_create_and_edit(client: FlaskClient):
     assert comment
     assert comment.tags
 
-    splitted_tags = [
-        tag.lower().replace("[", "").replace("]", "") for tag in tags.split()
-    ]
+    splitted_tags = [tag.lower().replace("#", "") for tag in tags.split()]
     assert len(comment.tags) == 3
     for tag in comment.tags:
         tag: m.Tag
@@ -144,8 +140,8 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
     book = db.session.get(m.Book, 1)
     section = db.session.get(m.Section, 1)
 
-    tags = "[tag1] [tag2] [tag3]"
-    text_1 = "Test Interpretation #1 Text"
+    tags = "#tag1 #tag2 #tag3"
+    text_1 = "Test Interpretation no1 Text"
 
     response: Response = client.post(
         f"/book/{book.id}/{section.id}/create_interpretation",
@@ -160,9 +156,7 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
     assert interpretation
     assert interpretation.tags
 
-    splitted_tags = [
-        tag.lower().replace("[", "").replace("]", "") for tag in tags.split()
-    ]
+    splitted_tags = [tag.lower().replace("#", "") for tag in tags.split()]
     assert len(interpretation.tags) == 3
     for tag in interpretation.tags:
         tag: m.Tag
@@ -171,7 +165,7 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
     tags_from_db: m.Tag = m.Tag.query.all()
     assert len(tags_from_db) == 3
 
-    tags = "[tag-4] [tag5] [tag3]"
+    tags = "#tag4 #tag3 #tag5"
     response: Response = client.post(
         f"/book/{book.id}/{interpretation.id}/edit_interpretation",
         data=dict(interpretation_id=interpretation.id, text=text_1 + tags),
@@ -184,9 +178,7 @@ def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
     ).first()
     assert interpretation
 
-    splitted_tags = [
-        tag.lower().replace("[", "").replace("]", "") for tag in tags.split()
-    ]
+    splitted_tags = [tag.lower().replace("#", "") for tag in tags.split()]
     assert len(interpretation.tags) == 3
     for tag in interpretation.tags:
         tag: m.Tag
