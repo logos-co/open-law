@@ -48,13 +48,13 @@
         <!-- prettier-ignore -->
         <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
         </button>
-        <a  id="accordion-collapse-heading-{{collection.id}}" class=" text-black dark:text-white ">
+        <button href="#collection-{{collection.label}}" id="accordion-collapse-heading-{{collection.id}}" class=" text-black dark:text-white ">
           <form id="rename-collection-label-form-{{collection.id}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" method="post" class="mb-0">
             {{ form_hidden_tag() }}
             <input class=" bg-inherit border-none " value="{{collection.label}}" type="text" name="label" id="edit-collection-label-{{collection.id}}" placeholder="Collection label" required readonly/>
             <button name="submit" type="submit"></button>
           </form>
-        </a>
+        </button>
         </div>
     <svg id="dropdownCollectionContextButton{{collection.id}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
     </div>
@@ -133,7 +133,7 @@
 
     <p class=" text-sm mb-3">{% if book.about==None %}About text{% else %}{{book.about}}{% endif %}</p>
     {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
-    <p class="my-3 underline">#{{collection.label}}</p>
+    <p class="my-3 underline" id="collection-{{collection.label}}">#{{collection.label}}</p>
     {% if not collection.is_leaf and not collection.children %}
     <p class="ml-3 my-3 italic text-sm">Collection is empty</p>
     {% endif %}

@@ -2,8 +2,8 @@
   {% if not collection.is_leaf %}
   <!-- if collection has sub_collection make for loop for it -->
   <!-- Nested accordion -->
-  {% for sub_collection in collection.children if not
-  sub_collection.is_deleted%}
+  <!-- prettier-ignore -->
+  {% for sub_collection in collection.children if not sub_collection.is_deleted%}
   <div id="accordion-nested-collapse" data-accordion="open">
     <!-- prettier-ignore -->
     <div class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
@@ -17,14 +17,14 @@
         <svg data-accordion-icon class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
       </button>
       <!-- prettier-ignore -->
-      <a id="accordion-nested-collapse-heading-{{sub_collection.parent.id}}-{{sub_collection.id}}" class="text-black dark:text-white">
+      <button href="#collection-{{sub_collection.label}}" id="accordion-nested-collapse-heading-{{sub_collection.parent.id}}-{{sub_collection.id}}" class="text-black dark:text-white">
         <form id="rename-sub-collection-label-form-{{sub_collection.id}}" data-book-id="{{book.id}}" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" method="post" class="mb-0">
           {{ form_hidden_tag() }}
           <!-- prettier-ignore -->
           <input class="bg-inherit border-none" value="{{sub_collection.label}}" type="text" name="label" id="edit-sub-collection-label-{{sub_collection.id}}" placeholder="Sub collection label" required readonly />
           <button name="submit" type="submit"></button>
         </form>
-      </a>
+      </button>
     </div>
     <!-- prettier-ignore -->
     <svg id="dropdownSubCollectionContextButton{{sub_collection.id}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
@@ -35,6 +35,13 @@
         {% if sub_collection.is_leaf and not sub_collection.children %}
         <li>
           <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Section </button>
+        </li>
+        {% elif not sub_collection.is_leaf and not sub_collection.children %}
+        <li>
+          <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Section </button>
+        </li>
+        <li>
+          <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Subcollection </button>
         </li>
         {% else %}
         <li>

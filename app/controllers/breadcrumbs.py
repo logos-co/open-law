@@ -10,7 +10,8 @@ def create_collections_breadcrumb(
     bread_crumbs += [
         s.BreadCrumb(
             type=s.BreadCrumbType.Collection,
-            url="",
+            url=url_for("book.collection_view", book_id=collection.book_id)
+            + f"#collection-{collection.label}",
             label=collection.label,
         )
     ]
