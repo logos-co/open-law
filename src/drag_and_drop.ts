@@ -16,8 +16,8 @@ export function initDnD() {
       animation: 100,
       onEnd: function (/**Event*/ evt) {
         var itemEl = evt.item; // dragged HTMLElement
-        console.log('evt.to', evt.to.getAttribute('data-collection-id'));
-        console.log('evt.to', evt.to.getAttribute('data-sub-collection-id'));
+        console.log('we moved sub_collection', itemEl);
+
         evt.to; // target list
         console.log('evt.from', evt.from.getAttribute('data-collection-id'));
         console.log(

@@ -1,4 +1,4 @@
-<div class="ml-6" data-dnd="dnd-sub-collection">
+<div class="ml-6">
   {% if not collection.is_leaf %}
   <!-- if collection has sub_collection make for loop for it -->
   <!-- Nested accordion -->
@@ -7,7 +7,8 @@
   <div
     id="accordion-nested-collapse"
     data-accordion="open"
-    data-sub-collection-id="{{sub_collection.id}}">
+    data-sub-collection-id="{{sub_collection.id}}"
+    data-dnd="dnd-sub-collection">
     <!-- prettier-ignore -->
     <div class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
       <button
