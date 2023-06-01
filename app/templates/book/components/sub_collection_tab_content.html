@@ -34,24 +34,31 @@
         {% set access_to_create_collections = has_permission(sub_collection, Access.C) %}
         {% set access_to_update_collections = has_permission(sub_collection, Access.U) %}
         {% set access_to_delete_collections = has_permission(sub_collection, Access.D) %}
+        {% set access_to_create_section = has_permission(collection, Access.C, EntityType.SECTION) %}
 
-        {% if access_to_create_collections or access_to_update_collections %}
+        {% if access_to_create_collections or access_to_update_collections or access_to_create_section %}
           <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-            {% if sub_collection.is_leaf and not sub_collection.children %}
+            {% if access_to_create_section and sub_collection.is_leaf and not sub_collection.children %}
               <li>
                 <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Section </button>
               </li>
             {% elif not sub_collection.is_leaf and not sub_collection.children %}
-              <li>
-                <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Section </button>
-              </li>
-              <li>
-                <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Subcollection </button>
-              </li>
+              {% if access_to_create_section %}
+                <li>
+                  <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Section </button>
+                </li>
+              {% endif %}
+              {% if access_to_create_collections %}
+                <li>
+                  <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Subcollection </button>
+                </li>
+              {% endif %}
             {% else %}
-              <li>
-                <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Subcollection </button>
-              </li>
+              {% if access_to_create_collections %}
+                <li>
+                  <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Subcollection </button>
+                </li>
+              {% endif %}
             {% endif %}
           </ul>
         {% endif %}

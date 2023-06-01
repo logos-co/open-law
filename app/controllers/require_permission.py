@@ -46,9 +46,8 @@ def check_permissions(
     if not entity or not entity.access_groups:
         log(
             log.INFO,
-            "User [%s] dont have permission to [%s] [%s]",
+            "Entity [%s] of entity.access_groups [%s] not found",
             access,
-            current_user,
             entity,
         )
         flash("You do not have permission", "warning")
@@ -91,7 +90,7 @@ def check_permissions(
         log(
             log.INFO,
             "User [%s] has permission to [%s] [%s]",
-            access.name,
+            access,
             current_user,
             entity,
         )
@@ -100,8 +99,8 @@ def check_permissions(
     log(
         log.INFO,
         "User [%s] dont have permission to [%s] [%s]",
-        access.name,
         current_user,
+        access,
         entity,
     )
     flash("You do not have permission", "danger")

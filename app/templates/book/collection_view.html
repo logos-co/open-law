@@ -66,6 +66,7 @@
         {% set access_to_create_collections = has_permission(collection, Access.C) %}
         {% set access_to_update_collections = has_permission(collection, Access.U) %}
         {% set access_to_delete_collections = has_permission(collection, Access.D) %}
+        {% set access_to_create_section = has_permission(collection, Access.C, EntityType.SECTION) %}
 
         {% if access_to_create_collections or access_to_update_collections %}
           <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
@@ -79,7 +80,7 @@
                 </li>
               {% endif %}
             {% endif %}
-            {% if access_to_update_collections %}
+            {% if access_to_create_section %}
               {% if collection.children|length ==0  or collection.children|length ==0 and collection.is_leaf %}
                 <li>
                     <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="_"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
