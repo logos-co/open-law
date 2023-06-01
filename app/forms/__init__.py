@@ -17,3 +17,4 @@ from .interpretation import (
 from .comment import CreateCommentForm
 from .vote import VoteForm
 from .comment import CreateCommentForm, DeleteCommentForm, EditCommentForm
+from .permission import EditPermissionForm

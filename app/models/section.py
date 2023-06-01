@@ -26,6 +26,10 @@ class Section(BaseModel):
     interpretations = db.relationship(
         "Interpretation", viewonly=True, order_by="desc(Interpretation.id)"
     )
+    access_groups = db.relationship(
+        "AccessGroup",
+        secondary="sections_access_groups",
+    )  # access_groups related to current entity
     tags = db.relationship(
         "Tag",
         secondary="section_tags",

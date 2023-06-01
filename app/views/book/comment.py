@@ -25,7 +25,7 @@ def create_comment(
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
+        flash("Book not found!", "danger")
         return redirect(url_for("book.my_library"))
     redirect_url = url_for(
         "book.qa_view", book_id=book_id, interpretation_id=interpretation_id

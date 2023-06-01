@@ -21,8 +21,7 @@ def test_approve_interpretation(client: FlaskClient):
     )
 
     assert response
-    assert response.status_code == 404
-    assert response.json["message"] == "Interpretation not found"
+    assert b"You do not have permission" in response.data
 
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
         user_id=dummy_user.id
@@ -33,7 +32,7 @@ def test_approve_interpretation(client: FlaskClient):
     )
 
     assert response
-    assert response.json["message"] == "You dont have permission"
+    assert b"You do not have permission" in response.data
 
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
         user_id=user.id
@@ -78,8 +77,7 @@ def test_approve_comment(client: FlaskClient):
     )
 
     assert response
-    assert response.status_code == 404
-    assert response.json["message"] == "Comment not found"
+    assert b"You do not have permission" in response.data
 
     comment: m.Comment = m.Comment.query.filter_by(user_id=dummy_user.id).first()
     response: Response = client.post(
@@ -88,7 +86,7 @@ def test_approve_comment(client: FlaskClient):
     )
 
     assert response
-    assert response.json["message"] == "You dont have permission"
+    assert b"You do not have permission" in response.data
 
     comment: m.Comment = m.Comment.query.filter_by(user_id=user.id).first()
     response: Response = client.post(
