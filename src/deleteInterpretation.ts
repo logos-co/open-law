@@ -47,7 +47,6 @@ export function deleteInterpretation() {
       }),
     );
     const modalOptions: ModalOptions = {
-      placement: 'bottom-right',
       closable: true,
       onHide: () => {
         deleteInterpretationForm.setAttribute('action', '');
