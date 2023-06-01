@@ -20,7 +20,7 @@
       {{ section.label }}
     </h1>
     <div class="ql-editor-readonly text-lg dark:text-white p-3">
-      {{display_tags(interpretation.text)|safe}}
+      {{display_inline_elements(interpretation.text)|safe}}
     </div>
   </div>
   <div class="p-1">
@@ -131,9 +131,9 @@
           <dt class="flex justify-center w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
             <div>
               <div class="dark:text-white h-30">
-                <div class="ql-snow mb-2 truncate md:max-w-xl">
+                <div class="ql-snow mb-2 md:max-w-xl">
                   <div class="dark:text-white h-30 ql-editor-readonly !px-0">
-                    <p>{{ display_tags(comment.text)|safe }}</p>
+                    <p>{{ display_inline_elements(comment.text)|safe }}</p>
                   </div>
                 </div>
               </div>
@@ -194,7 +194,7 @@
             <div class="p-5 mb-2 flex justify-between items-end bg-slate-100 dark:bg-slate-600 rounded-lg">
               <div class="ql-snow">
                 <div class="inline-block mb-4 ql-editor-readonly !p-0">
-                  {{display_tags(child.text)|safe}}
+                  {{display_inline_elements(child.text)|safe}}
                 </div>
                 <span>
                   <div>

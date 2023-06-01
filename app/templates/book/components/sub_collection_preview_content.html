@@ -24,7 +24,7 @@
       {% else %}
       <div class="ql-snow truncate md:max-w-xl">
         <div class="dark:text-white h-30 ql-editor-readonly !px-0">
-          <p>{{display_tags(section.approved_interpretation.text)|safe }}</p>
+          <p>{{display_inline_elements(section.approved_interpretation.text)|safe }}</p>
         </div>
       </div>
       <div
@@ -103,9 +103,9 @@
           {% for comment in section.approved_comments %}
           <div class="p-5 ml-6">
             <div class="dark:text-white h-30">
-              <div class="ql-snow mb-2 truncate md:max-w-xl">
+              <div class="ql-snow mb-2 md:max-w-xl">
                 <div class="dark:text-white h-30 ql-editor-readonly !px-0">
-                  <p>{{ display_tags(comment.text)|safe }}</p>
+                  <p>{{ display_inline_elements(comment.text)|safe }}</p>
                 </div>
               </div>
             </div>
@@ -157,9 +157,9 @@
   </div>
 </div>
 <!-- prettier-ignore -->
-{% endfor %} 
+{% endfor %}
 {% endif %}
-{% endfor %} 
+{% endfor %}
 {% else %}
 <!-- prettier-ignore -->
 {% for section in collection.active_sections %}
@@ -172,7 +172,7 @@
 {% else %}
 <div class="ql-snow truncate md:max-w-xl mb-3">
   <div class="dark:text-white h-30 ql-editor-readonly !px-0">
-    <p>{{ display_tags(section.approved_interpretation.text)|safe }}</p>
+    <p>{{ display_inline_elements(section.approved_interpretation.text)|safe }}</p>
   </div>
 </div>
 <!-- prettier-ignore -->
@@ -254,9 +254,9 @@
     {% for comment in section.approved_comments %}
     <div class="p-5 ml-6">
       <div class="dark:text-white h-30">
-        <div class="ql-snow mb-2 truncate md:max-w-xl">
+        <div class="ql-snow mb-2 md:max-w-xl">
           <div class="dark:text-white h-30 ql-editor-readonly !px-0">
-            <p>{{ display_tags(comment.text)|safe }}</p>
+            <p>{{ display_inline_elements(comment.text)|safe }}</p>
           </div>
         </div>
       </div>

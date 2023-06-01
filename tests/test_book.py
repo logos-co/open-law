@@ -1135,8 +1135,8 @@ def test_interpretation_in_home_last_inter_section(
         version_id=book.last_version.id,
     ).save()
 
-    label_1 = "Test Interpretation #1 Label"
-    text_1 = "Test Interpretation #1 Text"
+    label_1 = "Test Interpretation no1 Label"
+    text_1 = "Test Interpretation no1 Text"
 
     response: Response = client.post(
         f"/book/{book.id}/{section_in_subcollection.id}/create_interpretation",
