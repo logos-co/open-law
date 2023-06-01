@@ -3,6 +3,7 @@ from flask import flash, redirect, url_for, request, make_response
 import functools
 
 from app import models as m, db
+from app.logger import log
 
 
 def check_permissions(
@@ -21,27 +22,47 @@ def check_permissions(
     for model in entities:
         entity_id_field = (model.__name__ + "_id").lower()
         entity_id = request_args.get(entity_id_field)
-        entity: m.Book | m.Collection | m.Section | m.Interpretation = db.session.get(
-            model, entity_id
+        entity: m.Book | m.Collection | m.Section | m.Interpretation | m.Comment = (
+            db.session.get(model, entity_id)
         )
 
     if entity is None:
+        log(log.INFO, "No entity [%s] found", entities)
         flash("You do not have permission", "danger")
         return make_response(redirect(url_for("home.get_all")))
 
     book_id = request_args.get("book_id")
-    book: m.Book = db.session.get(m.Book, book_id)
-    if book and book.user_id == current_user.id:
-        # user has access because he is book owner
-        return None
+    if book_id:
+        book: m.Book = db.session.get(m.Book, book_id)
+        if book and book.user_id == current_user.id:
+            # user has access because he is book owner
+            log(log.INFO, "User [%s] is book owner [%s]", current_user, book)
+            return None
+
+    if type(entity) == m.Comment:
+        log(log.INFO, "Entity is Comment. Replace it by entity.interpretation")
+        entity = entity.interpretation
 
     if not entity or not entity.access_groups:
+        log(
+            log.INFO,
+            "User [%s] dont have permission to [%s] [%s]",
+            access.name,
+            current_user,
+            entity,
+        )
         flash("You do not have permission", "warning")
         return make_response(redirect(url_for("home.get_all")))
 
     # check if user is not owner of book
-    if not book and entity.access_groups[0].book.user_id == current_user.id:
+    if not book_id and entity.access_groups[0].book.user_id == current_user.id:
         # user has access because he is book owner
+        log(
+            log.INFO,
+            "User [%s] is book owner [%s]",
+            current_user,
+            entity.access_groups[0].book,
+        )
         return None
 
     access_group_query = (
@@ -67,8 +88,22 @@ def check_permissions(
     access_groups = access_group_query.all()
 
     if access_groups:
+        log(
+            log.INFO,
+            "User [%s] has permission to [%s] [%s]",
+            access.name,
+            current_user,
+            entity,
+        )
         return
 
+    log(
+        log.INFO,
+        "User [%s] dont have permission to [%s] [%s]",
+        access.name,
+        current_user,
+        entity,
+    )
     flash("You do not have permission", "danger")
     return make_response(redirect(url_for("home.get_all")))
 

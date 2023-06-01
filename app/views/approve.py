@@ -61,19 +61,19 @@ def approve_interpretation(interpretation_id: int):
 
 
 @bp.route(
-    "/comment/<int:interpretation_id>",
+    "/comment/<int:comment_id>",
     methods=["POST"],
 )
 @require_permission(
     entity_type=m.Permission.Entity.COMMENT,
     access=[m.Permission.Access.A],
-    entities=[m.Interpretation],
+    entities=[m.Comment],
 )
 @login_required
-def approve_comment(interpretation_id: int):
-    comment: m.Comment = db.session.get(m.Comment, interpretation_id)
+def approve_comment(comment_id: int):
+    comment: m.Comment = db.session.get(m.Comment, comment_id)
     if not comment:
-        log(log.WARNING, "Comment with id [%s] not found", interpretation_id)
+        log(log.WARNING, "Comment with id [%s] not found", comment_id)
         return jsonify({"message": "Comment not found"}), 404
 
     comment.approved = not comment.approved
