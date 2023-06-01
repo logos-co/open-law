@@ -97,7 +97,7 @@
         {% endif %}
     </div>
     <!-- prettier-ignore -->
-    <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}">
+    <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
       {{recursive_render("book/components/sub_collection_tab_content.html",collection,book)|safe}}
     </div>
     {% endfor %}

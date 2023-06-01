@@ -96,8 +96,10 @@
     id="draggableSectionItems"
     data-collection-id="{{collection.id}}">
     <!-- here comes for loop for all section in this collection-->
-    {% for section in collection.active_sections %} {% include
-    'book/components/section_tab_content.html' %} {% endfor %}
+    {% for section in collection.active_sections %}
+    <!-- prettier-ignore -->
+    {% include 'book/components/section_tab_content.html' %}
+    {% endfor %}
   </div>
   {% endif %}
 </div>
