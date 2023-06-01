@@ -81,7 +81,7 @@
               {% endif %}
             {% endif %}
             {% if access_to_create_section %}
-              {% if collection.children|length ==0  or collection.children|length ==0 and collection.is_leaf %}
+              {% if collection.active_children|length ==0  or collection.active_children|length ==0 and collection.is_leaf %}
                 <li>
                     <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="_"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
                 </li>
@@ -155,7 +155,7 @@
     <p class=" text-sm mb-3">{% if book.about==None %}About text{% else %}{{book.about}}{% endif %}</p>
     {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
     <p class="my-3 underline" id="collection-{{collection.label}}">#{{collection.label}}</p>
-    {% if not collection.is_leaf and not collection.children %}
+    {% if not collection.is_leaf and not collection.active_children %}
     <p class="ml-3 my-3 italic text-sm">Collection is empty</p>
     {% endif %}
       {{recursive_render("book/components/sub_collection_preview_content.html",collection,book)|safe}}

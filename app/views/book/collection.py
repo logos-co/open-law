@@ -188,8 +188,8 @@ def collection_delete(book_id: int, collection_id: int):
     collection: m.Collection = db.session.get(m.Collection, collection_id)
 
     collection.is_deleted = True
-    if collection.children:
-        for child in collection.children:
+    if collection.active_children:
+        for child in collection.active_children:
             child: m.Collection
             delete_nested_collection_entities(child)
             log(log.INFO, "Delete subcollection [%s]", collection.id)
