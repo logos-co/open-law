@@ -46,7 +46,7 @@ def book_validator() -> Response | None:
             return redirect(url_for("book.my_library"))
 
     collection_id = request_args.get("collection_id")
-    if collection_id:
+    if collection_id is not None:
         collection: m.Collection = db.session.get(m.Collection, collection_id)
         if not collection or collection.is_deleted:
             log(log.WARNING, "Collection with id [%s] not found", collection_id)
@@ -54,7 +54,7 @@ def book_validator() -> Response | None:
             return redirect(url_for("book.collection_view", book_id=book_id))
 
     sub_collection_id = request_args.get("sub_collection_id")
-    if sub_collection_id:
+    if sub_collection_id is not None:
         sub_collection: m.Collection = db.session.get(m.Collection, sub_collection_id)
         if not sub_collection or sub_collection.is_deleted:
             log(log.WARNING, "Sub_collection with id [%s] not found", sub_collection_id)
@@ -66,7 +66,7 @@ def book_validator() -> Response | None:
             )
 
     section_id = request_args.get("section_id")
-    if section_id:
+    if section_id is not None:
         section: m.Section = db.session.get(m.Section, section_id)
         if not section:
             log(log.WARNING, "Section with id [%s] not found", section)
@@ -74,7 +74,7 @@ def book_validator() -> Response | None:
             return redirect(url_for("book.collection_view", book_id=book_id))
 
     interpretation_id = request_args.get("interpretation_id")
-    if interpretation_id:
+    if interpretation_id is not None:
         interpretation: m.Interpretation = db.session.get(
             m.Interpretation, interpretation_id
         )
@@ -88,7 +88,7 @@ def book_validator() -> Response | None:
             )
 
     comment_id = request_args.get("comment_id")
-    if comment_id:
+    if comment_id is not None:
         comment: m.Comment = db.session.get(m.Comment, comment_id)
         if not comment or comment.is_deleted:
             log(log.WARNING, "Comment with id [%s] not found", comment_id)

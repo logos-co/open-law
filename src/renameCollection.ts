@@ -40,7 +40,7 @@ export function renameCollection() {
             },
             body: JSON.stringify({
               label: newLabel,
-              csrf_token: scrfInput.value,
+              csrf_token: scrfInput ? scrfInput.value : '',
             }),
           });
           if (response.status == 200) {

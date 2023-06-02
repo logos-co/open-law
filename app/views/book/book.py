@@ -1,9 +1,4 @@
-from flask import (
-    render_template,
-    flash,
-    redirect,
-    url_for,
-)
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
 from sqlalchemy import and_, or_
 
@@ -180,11 +175,12 @@ def delete(book_id: int):
 @bp.route("/<int:book_id>/statistics", methods=["GET"])
 def statistic_view(book_id: int):
     book = db.session.get(m.Book, book_id)
+    active_tab = request.args.get("active_tab")
     if not book or book.is_deleted:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.my_library"))
-    return render_template("book/stat.html", book=book)
+    return render_template("book/stat.html", book=book, active_tab=active_tab)
 
 
 @bp.route("/favorite_books", methods=["GET"])
@@ -226,22 +222,31 @@ def my_contributions():
         log(log.INFO, "Creating query for interpretations")
 
         interpretations = (
-            db.session.query(
-                m.Interpretation,
+            db.session.query(m.Interpretation)
+            .join(
+                m.Comment, m.Comment.interpretation_id == m.Interpretation.id, full=True
+            )
+            .join(
+                m.InterpretationVote,
+                m.InterpretationVote.interpretation_id == m.Interpretation.id,
+                full=True,
             )
             .filter(
                 or_(
                     and_(
-                        m.Interpretation.id == m.Comment.interpretation_id,
                         m.Comment.user_id == current_user.id,
                         m.Comment.is_deleted.is_(False),
-                        m.Interpretation.is_deleted.is_(False),
                     ),
                     and_(
                         m.Interpretation.user_id == current_user.id,
                         m.Interpretation.is_deleted.is_(False),
                     ),
-                )
+                    and_(
+                        m.InterpretationVote.user_id == current_user.id,
+                        m.InterpretationVote.interpretation_id == m.Interpretation.id,
+                    ),
+                ),
+                m.Interpretation.is_deleted == False,  # noqa: E712
             )
             .group_by(m.Interpretation.id)
             .order_by(m.Interpretation.created_at.desc())
