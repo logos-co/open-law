@@ -127,3 +127,12 @@ def test_change_section_ordering(client):
     assert len(collection.active_sections) == 1
     assert section.position != new_position
     assert section.position == 1
+
+    response: Response = client.post(
+        f"/book/{book.id}/{section.id}/section/change_position",
+        headers={"Content-Type": "application/json"},
+        json=dict(position=new_position, collection_id=999),
+        follow_redirects=True,
+    )
+    assert response.status_code == 404
+    assert response.json["message"] == "collection not found"
