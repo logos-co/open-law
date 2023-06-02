@@ -12,7 +12,6 @@ export function renameSection() {
           document.querySelectorAll(`[id^="edit-section-label-"]`);
         const scrfInput: HTMLInputElement =
           document.querySelector('#csrf_token');
-        console.log(scrfInput.value);
         const oldName = inputsForRename[index].value;
         inputsForRename[index].removeAttribute('readonly');
         inputsForRename[index].value = oldName;
@@ -44,7 +43,7 @@ export function renameSection() {
             body: JSON.stringify({
               label: newLabel,
               section_id: sectionId,
-              csrf_token: scrfInput.value,
+              csrf_token: scrfInput ? scrfInput.value : '',
             }),
           });
           if (response.status == 200) {

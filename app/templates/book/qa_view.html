@@ -1,18 +1,17 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
 
-
-
-{% if current_user.is_authenticated %}
-{% include 'book/modals/delete_comment_modal.html' %}
-{% include 'book/modals/edit_comment_modal.html' %}
-{% block right_sidebar %}
-{% endblock %}
-{% endif %}
-
 {% block title %}{{ section.label[:32] }}{% endblock %}
 
 {% block content %}
+
+{% if current_user.is_authenticated %}
+  {% include 'book/modals/delete_comment_modal.html' %}
+  {% include 'book/modals/edit_comment_modal.html' %}
+  {% block right_sidebar %}
+  {% endblock %}
+{% endif %}
+
 {% include 'book/breadcrumbs_navigation.html'%}
 <div class="shadow-md mt-5 h-auto overflow-x-hidden">
   <div class="ql-snow mt-20">

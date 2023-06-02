@@ -3,19 +3,20 @@
 {% block right_sidebar %}
 {% endblock %}
 
-{% if current_user.is_authenticated %}
-{% include 'book/modals/add_collection_modal.html' %}
-{% include 'book/modals/delete_collection_modal.html' %}
-{% include 'book/modals/add_sub_collection_modal.html' %}
-{% include 'book/modals/delete_sub_collection_modal.html' %}
-{% include 'book/modals/add_section_modal.html' %}
-{% include 'book/modals/delete_section_modal.html' %}
-{% endif %}
-
 {% block title %}{{book.label[:32]}}{% endblock %}
 
 
 {% block content %}
+
+{% if current_user.is_authenticated %}
+  {% include 'book/modals/add_collection_modal.html' %}
+  {% include 'book/modals/delete_collection_modal.html' %}
+  {% include 'book/modals/add_sub_collection_modal.html' %}
+  {% include 'book/modals/delete_sub_collection_modal.html' %}
+  {% include 'book/modals/add_section_modal.html' %}
+  {% include 'book/modals/delete_section_modal.html' %}
+{% endif %}
+
 <div class="flex overflow-hidden">
   <!-- prettier-ignore -->
   <div id="accordion-collapse" data-accordion="open" class="p-3 w-2/6 border-t border-r border-gray-200 dark:border-gray-700 overflow-y-scroll h-box">
