@@ -246,7 +246,7 @@ def my_contributions():
                         m.InterpretationVote.interpretation_id == m.Interpretation.id,
                     ),
                 ),
-                m.Interpretation.is_deleted == False,
+                m.Interpretation.is_deleted == False,  # noqa: E712
             )
             .group_by(m.Interpretation.id)
             .order_by(m.Interpretation.created_at.desc())
