@@ -226,22 +226,31 @@ def my_contributions():
         log(log.INFO, "Creating query for interpretations")
 
         interpretations = (
-            db.session.query(
-                m.Interpretation,
+            db.session.query(m.Interpretation)
+            .join(
+                m.Comment, m.Comment.interpretation_id == m.Interpretation.id, full=True
+            )
+            .join(
+                m.InterpretationVote,
+                m.InterpretationVote.interpretation_id == m.Interpretation.id,
+                full=True,
             )
             .filter(
                 or_(
                     and_(
-                        m.Interpretation.id == m.Comment.interpretation_id,
                         m.Comment.user_id == current_user.id,
                         m.Comment.is_deleted.is_(False),
-                        m.Interpretation.is_deleted.is_(False),
                     ),
                     and_(
                         m.Interpretation.user_id == current_user.id,
                         m.Interpretation.is_deleted.is_(False),
                     ),
-                )
+                    and_(
+                        m.InterpretationVote.user_id == current_user.id,
+                        m.InterpretationVote.interpretation_id == m.Interpretation.id,
+                    ),
+                ),
+                m.Interpretation.is_deleted == False,
             )
             .group_by(m.Interpretation.id)
             .order_by(m.Interpretation.created_at.desc())
