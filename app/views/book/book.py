@@ -1,9 +1,4 @@
-from flask import (
-    render_template,
-    flash,
-    redirect,
-    url_for,
-)
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
 from sqlalchemy import and_, or_
 
@@ -180,11 +175,12 @@ def delete(book_id: int):
 @bp.route("/<int:book_id>/statistics", methods=["GET"])
 def statistic_view(book_id: int):
     book = db.session.get(m.Book, book_id)
+    active_tab = request.args.get("active_tab")
     if not book or book.is_deleted:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.my_library"))
-    return render_template("book/stat.html", book=book)
+    return render_template("book/stat.html", book=book, active_tab=active_tab)
 
 
 @bp.route("/favorite_books", methods=["GET"])
