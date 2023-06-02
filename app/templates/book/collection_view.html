@@ -40,7 +40,12 @@
     </div>
     <!-- prettier-ignore -->
     {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
-    <div >
+    <div
+      {% if not collection.active_children and not collection.active_sections %}id="empty-dnd-entity"
+      {% elif collection.active_children %}data-dnd="dnd-sub-collection"
+      {% elif collection.active_sections %}id="draggableSectionItems"{% endif %}
+      data-entity-type="collection"
+      data-entity-id="{{collection.id}}">
       <div  class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
         <button class="bg-inherit" type="button" data-accordion-target="#accordion-collapse-body-{{collection.id}}" aria-expanded="true" aria-controls="accordion-collapse-body-{{collection.id}}">
         <!-- prettier-ignore -->
