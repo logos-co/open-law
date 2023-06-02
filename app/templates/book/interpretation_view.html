@@ -1,17 +1,19 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
 
+{% block title %}{{section.label}}{% endblock %}
+
+{% block content %}
+
 {% if current_user.is_authenticated %}
-{% include 'book/modals/approve_interpretation_modal.html' %}
-{% include 'book/modals/edit_interpretation_modal.html' %}
-{% include 'book/modals/delete_interpretation_modal.html' %}
+  {% include 'book/modals/approve_interpretation_modal.html' %}
+  {% include 'book/modals/edit_interpretation_modal.html' %}
+  {% include 'book/modals/delete_interpretation_modal.html' %}
   {% block right_sidebar %}
   {% endblock %}
 {% endif %}
 
-{% block title %}{{section.label}}{% endblock %}
 
-{% block content %}
 {% include 'book/breadcrumbs_navigation.html'%}
 <div class="overflow-x-auto shadow-md sm:rounded-lg">
   <!-- prettier-ignore -->

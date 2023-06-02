@@ -1,13 +1,15 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
-{% include 'book/modals/access_level_modal.html' %}
-{% include 'book/modals/add_contributor_modal.html' %}
-{% include 'book/modals/delete_book_modal.html' %}
 
 
 {% block title %}Book Settings{% endblock %}
 
 {% block content %}
+
+{% include 'book/modals/access_level_modal.html' %}
+{% include 'book/modals/add_contributor_modal.html' %}
+{% include 'book/modals/delete_book_modal.html' %}
+
 <!-- Hide right_sidebar -->
 <!-- prettier-ignore -->
 {% block right_sidebar %} {% endblock %}
