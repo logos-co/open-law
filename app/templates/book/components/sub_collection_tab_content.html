@@ -30,65 +30,7 @@
     <svg id="dropdownSubCollectionContextButton{{sub_collection.id}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
     <!-- prettier-ignore -->
     <div data="sub-collection-context-menu-{{sub_collection.id}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-      {% if current_user.is_authenticated %}
-        {% set access_to_create_collections = has_permission(sub_collection, Access.C) %}
-        {% set access_to_update_collections = has_permission(sub_collection, Access.U) %}
-        {% set access_to_delete_collections = has_permission(sub_collection, Access.D) %}
-        {% set access_to_create_section = has_permission(collection, Access.C, EntityType.SECTION) %}
-
-        {% if access_to_create_collections or access_to_update_collections or access_to_create_section %}
-          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-            {% if access_to_create_section and sub_collection.is_leaf and not sub_collection.active_children %}
-              <li>
-                <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Section </button>
-              </li>
-            {% elif not sub_collection.is_leaf and not sub_collection.active_children %}
-              {% if access_to_create_section %}
-                <li>
-                  <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Section </button>
-                </li>
-              {% endif %}
-              {% if access_to_create_collections %}
-                <li>
-                  <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Subcollection </button>
-                </li>
-              {% endif %}
-            {% else %}
-              {% if access_to_create_collections %}
-                <li>
-                  <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> New Subcollection </button>
-                </li>
-              {% endif %}
-            {% endif %}
-          </ul>
-        {% endif %}
-
-        {% if access_to_update_collections or access_to_delete_collections %}
-          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-            {% if access_to_update_collections %}
-              <li>
-                <button type="button" id="rename-sub-collection-button-{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> Rename Sub Collection </button>
-              </li>
-            {% endif %}
-            {% if access_to_delete_collections %}
-              <li>
-                <button type="button" id="callDeleteSubCollectionModal" data-modal-target="delete-sub-collection-modal" data-modal-toggle="delete-sub-collection-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> Delete Sub Collection </button>
-              </li>
-            {% endif %}
-          </ul>
-        {% endif %}
-          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-            <li>
-              <button type="button" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> Export Sub Collection </button>
-            </li>
-          </ul>
-      {% else %}
-        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-          <li>
-            <button type="button" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"> Connect your wallet to do this </button>
-          </li>
-        </ul>
-      {% endif %}
+     {% include 'book/components/sub_collection_context_menu.html' %}
     </div>
     <!-- prettier-ignore -->
     <div id="accordion-nested-collapse-body-{{sub_collection.parent.id}}-{{sub_collection.id}}" class="hidden" aria-labelledby="accordion-nested-collapse-heading-{{sub_collection.id}}">
