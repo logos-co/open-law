@@ -63,8 +63,8 @@ export function editInterpretations() {
 
         let newActionPath: string = '';
         newActionPath = defaultActionPath.replace(
-          '0/interpretation_edit',
-          `${interpretationId}/interpretation_edit`,
+          '0/edit_interpretation',
+          `${interpretationId}/edit_interpretation`,
         );
 
         editInterpretationForm.setAttribute('action', `${newActionPath}`);

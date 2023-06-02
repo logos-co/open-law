@@ -42,6 +42,9 @@ def check_permissions(
     if type(entity) == m.Comment:
         log(log.INFO, "Entity is Comment. Replace it by entity.interpretation")
         entity = entity.interpretation
+    elif type(entity) == m.Interpretation and entity.user_id == current_user.id:
+        log(log.INFO, "User [%s] is interpretation creator [%s]", current_user, entity)
+        return None
 
     if not entity or not entity.access_groups:
         log(
