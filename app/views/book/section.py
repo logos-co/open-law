@@ -133,16 +133,47 @@ def section_delete(
 def change_section_position(book_id: int, section_id: int):
     section: m.Section = db.session.get(m.Section, section_id)
     new_position = request.json.get("position")
+    collection_id = request.json.get("collection_id")
 
-    sections_to_edit = m.Section.query.filter(
-        m.Section.collection_id == section.collection.id,
-        m.Section.position >= new_position,
-    ).all()
-    for child in sections_to_edit:
-        child: m.Section
-        if child.position >= new_position:
-            child.position += 1
-            child.save(False)
-    section.position = new_position
+    collection: m.Collection = section.collection
+    if collection_id is not None:
+        collection: m.Collection = db.session.get(m.Collection, collection_id)
+        if not collection:
+            log(log.INFO, "Collection with id [%s] not found", collection_id)
+            return {"message": "collection not found"}, 404
+
+        log(
+            log.INFO,
+            "Change section [%s] collection_id to [%s]",
+            section,
+            collection_id,
+        )
+        section.collection_id = collection_id
+
+    if collection.active_sections:
+        sections_to_edit = m.Section.query.filter(
+            m.Section.collection_id == collection.id,
+            m.Section.position >= new_position,
+        ).all()
+        if sections_to_edit:
+            log(log.INFO, "Calculate new positions of sections in [%s]", collection)
+            for child in sections_to_edit:
+                child: m.Section
+                if child.position >= new_position:
+                    child.position += 1
+                    child.save(False)
+
+        log(log.INFO, "Set new position [%s] of section [%s]", new_position, section)
+        section.position = new_position
+    else:
+        log(
+            log.INFO,
+            "Collection [%s] does not have active sections. Set section [%s] position to 1",
+            collection,
+            section,
+        )
+        section.position = 1
+
+    log(log.INFO, "Apply position changes on [%s]", section)
     section.save()
     return {}

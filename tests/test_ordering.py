@@ -79,10 +79,12 @@ def test_change_section_ordering(client):
     root_collection = m.Collection.query.filter_by(is_root=True).first()
     assert root_collection
     assert root_collection.is_root
+    collection_1, _ = create_sub_collection(client, book.id, root_collection.id)
+    collection_2, _ = create_sub_collection(client, book.id, root_collection.id)
 
     current_ordering = {}  # collection_id : position
     for position in range(0, 10):
-        section, _ = create_section(client, book.id, root_collection.id)
+        section, _ = create_section(client, book.id, collection_1.id)
         assert section.position == position
         current_ordering[section.id] = section.position
 
@@ -92,9 +94,7 @@ def test_change_section_ordering(client):
     response: Response = client.post(
         f"/book/{book.id}/{section.id}/section/change_position",
         headers={"Content-Type": "application/json"},
-        json=dict(
-            position=new_position,
-        ),
+        json=dict(position=new_position),
         follow_redirects=True,
     )
 
@@ -102,8 +102,28 @@ def test_change_section_ordering(client):
     section: m.Section = db.session.get(m.Section, 3)
     assert current_ordering[section.id] != section.position
     assert section.position == new_position
-    for section in m.Section.query.filter_by(collection_id=root_collection.id).all():
+    for section in m.Section.query.filter_by(collection_id=collection_1.id).all():
         if section.position < new_position:
             assert current_ordering[section.id] == section.position
         elif section.position > new_position:
             assert current_ordering[section.id] + 1 == section.position
+
+    new_position = 999
+    assert section.collection_id == collection_1.id
+    assert not len(collection_2.active_sections)
+    response: Response = client.post(
+        f"/book/{book.id}/{section.id}/section/change_position",
+        headers={"Content-Type": "application/json"},
+        json=dict(position=new_position, collection_id=collection_2.id),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    section: m.Section = db.session.get(m.Section, section.id)
+    assert section.collection_id != collection_1.id
+    assert section.collection_id == collection_2.id
+
+    collection: m.Collection = section.collection
+    assert len(collection.active_sections) == 1
+    assert section.position != new_position
+    assert section.position == 1
