@@ -58,6 +58,30 @@ def test_change_collection_ordering(client):
         elif collection.position > new_position:
             assert current_ordering[collection.id] + 1 == collection.position
 
+    collection: m.Collection = db.session.get(m.Collection, 3)
+    collection_1, _ = create_sub_collection(client, book.id, root_collection.id)
+    assert collection.parent_id != collection_1.id
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/collection/change_position",
+        headers={"Content-Type": "application/json"},
+        json=dict(position=999, collection_id=collection_1.id),
+        follow_redirects=True,
+    )
+
+    collection: m.Collection = db.session.get(m.Collection, 3)
+    assert collection.parent_id == collection_1.id
+    assert collection.position == 1
+
+    response: Response = client.post(
+        f"/book/{book.id}/{collection.id}/collection/change_position",
+        headers={"Content-Type": "application/json"},
+        json=dict(position=999, collection_id=999),
+        follow_redirects=True,
+    )
+    assert response.status_code == 404
+    assert response.json["message"] == "new parent collection not found"
+
 
 def test_ordering_on_section_create(client):
     login(client)

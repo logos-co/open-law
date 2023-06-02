@@ -176,4 +176,4 @@ def change_section_position(book_id: int, section_id: int):
 
     log(log.INFO, "Apply position changes on [%s]", section)
     section.save()
-    return {}
+    return {"message": "success"}
