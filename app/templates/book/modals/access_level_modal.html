@@ -20,54 +20,72 @@
       <!-- Modal body -->
       <div class="p-6 space-y-6">
         <div class="checkbox-tree">
-          <ul class="ml-4">
+          <ul class="ml-6">
             <li>
               <div class="flex items-center space-x-2">
-                <input type="checkbox" data-root="true" data-access-to="book" data-access-to-id="{{ book.id }}" class="w-4 h-4 text-blue-600 bg-gray-300 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-400 dark:border-gray-600" />
+                <input type="checkbox" data-root="true" data-permission="C" data-access-to="book" data-access-to-id="{{ book.id }}" class="w-4 h-4 text-purple-600 bg-purple-100 border-purple-400 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-purple-300 dark:border-purple-500" />
+
                 <span class="text-center dark:text-gray-300">{{ book.label }}</span>
               </div>
-              {% for collection in book.last_version.children_collections %}
+              {%- for collection in book.last_version.children_collections recursive %}
+                <div class="flex">
+                <hr class="">
                 <ul class="ml-4">
                   <li>
                     <div class="flex items-center space-x-2">
-                      <input type="checkbox" data-access-to="collection" data-access-to-id="{{ collection.id }}" class="w-4 h-4 text-blue-600 bg-gray-300 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-400 dark:border-gray-600" />
+                      <input type="checkbox" data-access-to="collection" data-access-to-id="{{ collection.id }}" class="w-4 h-4 text-purple-600 bg-purple-100 border-purple-400 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-purple-300 dark:border-purple-500" />
                       <span class="text-center dark:text-gray-300">{{ collection.label }}</span>
                     </div>
 
-                    {% for sub_collection in collection.active_children %}
-                      <ul class="ml-4">
-                        <li>
-                          <div class="flex items-center space-x-2">
-                            <input type="checkbox" data-access-to="sub_collection" data-access-to-id="{{ sub_collection.id }}" class="w-4 h-4 text-blue-600 bg-gray-300 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-400 dark:border-gray-600" />
-                            <span class="text-center dark:text-gray-300">{{ sub_collection.label }}</span>
-                          </div>
-                          {% for section in sub_collection.sections %}
-                            <ul class="ml-4">
-                              <li>
-                                <div class="flex items-center space-x-2">
-                                  <input type="checkbox" data-access-to="section" data-access-to-id="{{ section.id }}" class="w-4 h-4 text-blue-600 bg-gray-300 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-400 dark:border-gray-600" />
-                                  <span class="text-center dark:text-gray-300">{{ section.label }}</span>
-                                </div>
-                              </li>
-                            </ul>
-                          {% endfor %}
-                        </li>
-                      </ul>
-                    {% endfor %}
+                    {% if collection.active_children %}
 
-                    {% for section in collection.sections %}
-                      <ul class="ml-4">
-                        <li>
-                          <div class="flex items-center space-x-2">
-                            <input type="checkbox" data-access-to="section" data-access-to-id="{{ section.id }}" class="w-4 h-4 text-blue-600 bg-gray-300 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-400 dark:border-gray-600" />
-                            <span class="text-center dark:text-gray-300">{{ section.label }}</span>
-                          </div>
-                        </li>
-                      </ul>
-                    {% endfor %}
+                      {{ loop(collection.active_children)}}
+
+                      {#
+                        {% for sub_collection in collection.active_children %}
+                          <ul class="ml-4">
+                            <li>
+                              <div class="flex items-center space-x-2">
+                                <input type="checkbox" data-access-to="sub_collection" data-access-to-id="{{ sub_collection.id }}" class="w-4 h-4 text-blue-600 bg-gray-300 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-400 dark:border-gray-600" />
+                                <span class="text-center dark:text-gray-300">{{ sub_collection.label }}</span>
+                              </div>
+                              {% for section in sub_collection.sections %}
+                                <ul class="ml-4">
+                                  <li>
+                                    <div class="flex items-center space-x-2">
+                                      <input type="checkbox" data-access-to="section" data-access-to-id="{{ section.id }}" class="w-4 h-4 text-blue-600 bg-gray-300 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-400 dark:border-gray-600" />
+                                      <span class="text-center dark:text-gray-300">{{ section.label }}</span>
+                                    </div>
+                                  </li>
+                                </ul>
+                              {% endfor %}
+                            </li>
+                          </ul>
+                        {% endfor %}
+                      #}
+
+
+                    {% else %}
+
+
+                      {% for section in collection.sections %}
+                        <ul class="ml-4">
+                          <li>
+                            <div class="flex items-center space-x-2">
+                              <input type="checkbox" data-access-to="section" data-access-to-id="{{ section.id }}" class="w-4 h-4 text-purple-600 bg-purple-100 border-purple-400 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-purple-300 dark:border-purple-500" />
+
+                              <span class="text-center dark:text-gray-300">{{ section.label }}</span>
+                            </div>
+                          </li>
+                        </ul>
+                      {% endfor %}
+
+
+                    {% endif %}
                   </li>
                 </ul>
-              {% endfor %}
+                </div>
+              {%- endfor %}
             </li>
           </ul>
         </div>

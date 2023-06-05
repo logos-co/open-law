@@ -29,6 +29,7 @@ import {flash} from './flash';
 import {slashSearch} from './slashSearch';
 import {editInterpretations} from './editInterpretations';
 import {deleteInterpretation} from './deleteInterpretation';
+import {indeterminateInputs} from './indeterminateInputs';
 
 initQuillReadOnly();
 initBooks();
@@ -61,3 +62,4 @@ flash();
 slashSearch();
 editInterpretations();
 deleteInterpretation();
+indeterminateInputs();
