@@ -239,25 +239,23 @@ def change_collection_position(book_id: int, collection_id: int):
         collection.parent_id = collection_id
 
     if new_parent.active_children:
-        collections_to_edit = m.Collection.query.filter(
-            m.Collection.parent_id == new_parent.id,
-            m.Collection.position >= new_position,
-        ).all()
-        if collections_to_edit:
-            log(log.INFO, "Calculate new positions of collections in [%s]", collection)
-            for child in collections_to_edit:
-                child: m.Collection
-                if child.position >= new_position:
-                    child.position += 1
-                    child.save(False)
-
+        collections_to_edit = (
+            m.Collection.query.filter(
+                m.Collection.parent_id == new_parent.id,
+                m.Collection.id != collection.id,
+            )
+            .order_by(m.Collection.position)
+            .all()
+        )
+        collections_to_edit.insert(new_position, collection)
         log(
             log.INFO,
-            "Set new position [%s] of collection [%s]",
-            new_position,
-            collection,
+            "Calculate new positions of collections in [%s]",
+            new_parent,
         )
-        collection.position = new_position
+        for position in range(len(collections_to_edit)):
+            collections_to_edit[position].position = position
+            collections_to_edit[position].save(False)
     else:
         log(
             log.INFO,
@@ -268,5 +266,5 @@ def change_collection_position(book_id: int, collection_id: int):
         collection.position = 1
 
     log(log.INFO, "Apply position changes on [%s]", collection)
-    collection.save()
+    db.session.commit()
     return {"message": "success"}

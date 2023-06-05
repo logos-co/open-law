@@ -23,6 +23,7 @@
     "pytest",
     "scrf",
     "siwe",
+    "sortablejs",
     "sqlalchemy",
     "tailwindcss",
     "upvoted",

@@ -36,11 +36,15 @@ class Collection(BaseModel):
 
     @property
     def active_sections(self):
-        return [section for section in self.sections if not section.is_deleted]
+        items = [section for section in self.sections if not section.is_deleted]
+        items.sort(key=lambda item: item.position)
+        return items
 
     @property
     def active_children(self):
-        return [child for child in self.children if not child.is_deleted]
+        items = [child for child in self.children if not child.is_deleted]
+        items.sort(key=lambda item: item.position)
+        return items
 
     @property
     def book_id(self):
