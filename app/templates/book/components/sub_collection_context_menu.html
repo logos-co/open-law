@@ -7,7 +7,7 @@
 {% if access_to_create_collections or access_to_update_collections or access_to_create_section %}
 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
   <!-- prettier-ignore -->
-  {% if access_to_create_section and sub_collection.is_leaf and not sub_collection.active_children %}
+  {% if access_to_create_section and sub_collection.active_sections and not sub_collection.active_children %}
   <li>
     <button
       type="button"
@@ -20,8 +20,8 @@
       New Section
     </button>
   </li>
-  {% elif not sub_collection.is_leaf and not sub_collection.active_children %}
-  {% if access_to_create_section %}
+  <!-- prettier-ignore -->
+  {% elif not sub_collection.active_sections and not sub_collection.active_children %} {% if access_to_create_section %}
   <li>
     <button
       type="button"

@@ -46,16 +46,17 @@
       {% elif collection.active_children %}data-dnd="dnd-sub-collection"
       {% elif collection.active_sections %}id="draggableSectionItems"{% endif %}
       data-entity-type="collection"
-      data-entity-id="{{collection.id}}">
-      <div  class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
+      data-entity-id="{{collection.id}}" class="filter">
+      <div  data-entity-type="collection"
+      data-entity-id="{{collection.id}}"  class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
         <button class="bg-inherit" type="button" data-accordion-target="#accordion-collapse-body-{{collection.id}}" aria-expanded="true" aria-controls="accordion-collapse-body-{{collection.id}}">
         <!-- prettier-ignore -->
         <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
         </button>
-        <button href="#collection-{{collection.label}}" id="accordion-collapse-heading-{{collection.id}}" class=" text-black dark:text-white ">
+        <button href="#collection-{{collection.label}}" id="accordion-collapse-heading-{{collection.id}}" class="text-black dark:text-white ">
           <form id="rename-collection-label-form-{{collection.id}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" method="post" class="mb-0">
             {{ form_hidden_tag() }}
-            <input class=" bg-inherit border-none " value="{{collection.label}}/{{collection.id}}" type="text" name="label" id="edit-collection-label-{{collection.id}}" placeholder="Collection label" required readonly/>
+            <input class=" bg-inherit border-none " value="{{collection.label}}" type="text" name="label" id="edit-collection-label-{{collection.id}}" placeholder="Collection label" required readonly/>
             <button name="submit" type="submit"></button>
           </form>
         </button>
@@ -66,13 +67,26 @@
       {% include 'book/components/collection_context_menu.html' %}
     </div>
     <!-- prettier-ignore -->
+    {% if collection.active_children %}
     <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
       {{recursive_render("book/components/sub_collection_tab_content.html",collection,book)|safe}}
     </div>
+    {% elif collection.active_sections %}
+    <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
+      <div id="draggableSectionItems" data-entity-id="{{collection.id}}" data-entity-type="collection" data-book-id="{{book.id}}">
+      {% for section in collection.active_sections %}
+          {% include 'book/components/section_tab_content.html' %}
+      {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
+    </div>
+    {% endif %}
     {% endfor %}
   </div>
   <!-- Here start book-preview on right side-->
-  <div class="p-3 px-6 w-4/6 dark:text-white overflow-y-scroll h-box ">
+<div class="p-3 px-6 w-4/6 dark:text-white overflow-y-scroll h-box ">
     <p class="text-xs mb-3">Created by <a href="{{url_for('user.profile',user_id=book.owner.id)}}" class=" text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">{{book.owner.username}}</a> on {{book.created_at.strftime('%B %d, %Y')}}. Last updated on {{book.created_at.strftime('%B %d, %Y')}}</p>
     <div class="flex justify-between item-center">
       <h1 class="hidden md:inline font-extrabold text-lg dark:text-white">{{book.label}}</h1>
@@ -104,7 +118,7 @@
     <p class=" text-sm mb-3">{% if book.about==None %}About text{% else %}{{book.about}}{% endif %}</p>
     {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
     <p class="my-3 underline" id="collection-{{collection.label}}">#{{collection.label}}</p>
-    {% if not collection.is_leaf and not collection.active_children %}
+    {% if not collection.active_sections and not collection.active_children %}
     <p class="ml-3 my-3 italic text-sm">Collection is empty</p>
     {% endif %}
       {{recursive_render("book/components/sub_collection_preview_content.html",collection,book)|safe}}

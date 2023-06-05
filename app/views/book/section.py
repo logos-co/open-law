@@ -151,20 +151,19 @@ def change_section_position(book_id: int, section_id: int):
         section.collection_id = collection_id
 
     if collection.active_sections:
-        sections_to_edit = m.Section.query.filter(
-            m.Section.collection_id == collection.id,
-            m.Section.position >= new_position,
-        ).all()
-        if sections_to_edit:
-            log(log.INFO, "Calculate new positions of sections in [%s]", collection)
-            for child in sections_to_edit:
-                child: m.Section
-                if child.position >= new_position:
-                    child.position += 1
-                    child.save(False)
-
-        log(log.INFO, "Set new position [%s] of section [%s]", new_position, section)
-        section.position = new_position
+        sections_to_edit = (
+            m.Section.query.filter(
+                m.Section.collection_id == collection.id,
+                m.Section.id != section.id,
+            )
+            .order_by(m.Section.position)
+            .all()
+        )
+        sections_to_edit.insert(new_position, section)
+        log(log.INFO, "Calculate new positions of sections in [%s]", collection)
+        for position in range(len(sections_to_edit)):
+            sections_to_edit[position].position = position
+            sections_to_edit[position].save(False)
     else:
         log(
             log.INFO,

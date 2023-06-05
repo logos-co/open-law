@@ -10,17 +10,19 @@
   data-entity-type="sub_collection"
   data-entity-id="{{sub_collection.id}}"
   {% endif %}
+  data-book-id="{{book.id}}"
   >
-  {% if not collection.is_leaf %}
+  {% if collection.active_children %}
   <!-- if collection has sub_collection make for loop for it -->
   <!-- Nested accordion -->
   <!-- prettier-ignore -->
-  {% for sub_collection in collection.children if not sub_collection.is_deleted%}
+  {% for sub_collection in collection.active_children if not sub_collection.is_deleted%}
   <div
     id="accordion-nested-collapse"
     data-accordion="open"
     data-entity-id="{{sub_collection.id}}"
-    data-entity-type="sub_collection">
+    data-entity-type="sub_collection"
+    data-book-id="{{book.id}}">
     <!-- prettier-ignore -->
     <div class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
       <button
@@ -37,7 +39,7 @@
         <form id="rename-sub-collection-label-form-{{sub_collection.id}}" data-book-id="{{book.id}}" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" method="post" class="mb-0">
           {{ form_hidden_tag() }}
           <!-- prettier-ignore -->
-          <input class="bg-inherit border-none" value="{{sub_collection.label}}/{{sub_collection.id}}" type="text" name="label" id="edit-sub-collection-label-{{sub_collection.id}}" placeholder="Sub collection label" required readonly />
+          <input class="bg-inherit border-none" value="{{sub_collection.label}}" type="text" name="label" id="edit-sub-collection-label-{{sub_collection.id}}" placeholder="Sub collection label" required readonly />
           <button name="submit" type="submit"></button>
         </form>
       </button>
@@ -53,14 +55,14 @@
     {% if sub_collection.active_children %}
         {{recursive_render("book/components/sub_collection_tab_content.html",sub_collection,book)|safe}}
     {% elif sub_collection.active_sections  %}
-        <div id="draggableSectionItems" data-entity-id="{{sub_collection.id}}" data-entity-type="sub_collection">
+        <div id="draggableSectionItems" data-entity-id="{{sub_collection.id}}" data-entity-type="sub_collection" data-book-id="{{book.id}}">
         <!-- here comes for loop for all section in this sub_collection-->
             {% for section in sub_collection.active_sections %}
                 {% include 'book/components/section_tab_content.html' %}
             {% endfor %}
         </div>
     {% else %}
-    <div id="empty-dnd-entity"></div>
+    <div id="empty-dnd-entity" data-entity-type="sub_collection" data-entity-id="{{sub_collection.id}}"></div>
     {% endif %}
     </div>
   </div>

@@ -1,9 +1,9 @@
 {% if current_user.is_authenticated %}
 <!-- prettier-ignore -->
-{% set access_to_create_collections =has_permission(collection, Access.C) %} 
-{% set access_to_update_collections =has_permission(collection, Access.U) %} 
-{% set access_to_delete_collections =has_permission(collection, Access.D) %} 
-{% set access_to_create_section =has_permission(collection, Access.C, EntityType.SECTION) %} 
+{% set access_to_create_collections =has_permission(collection, Access.C) %}
+{% set access_to_update_collections =has_permission(collection, Access.U) %}
+{% set access_to_delete_collections =has_permission(collection, Access.D) %}
+{% set access_to_create_section =has_permission(collection, Access.C, EntityType.SECTION) %}
 {% if access_to_create_collections or access_to_update_collections %}
 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
   {% if access_to_create_collections %}
@@ -16,7 +16,7 @@
       New Collection
     </button>
   </li>
-  {% if not collection.is_leaf %}
+  {% if collection.active_children or not collection.active_sections%}
   <li>
     <button
       type="button"
@@ -32,7 +32,7 @@
   {% endif %}
   {% endif %}
   {% if access_to_create_section %}
-  {% if collection.active_children|length ==0 or collection.active_children|length ==0 and collection.is_leaf %}
+  {% if not collection.active_children or not collection.active_children and collection.active_sections %}
   <li>
     <button
       type="button"
@@ -46,7 +46,7 @@
     </button>
   </li>
   <!-- prettier-ignore -->
-  {% endif %} 
+  {% endif %}
   {% endif %}
 </ul>
 {% endif %}
