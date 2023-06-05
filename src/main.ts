@@ -30,6 +30,7 @@ import {slashSearch} from './slashSearch';
 import {editInterpretations} from './editInterpretations';
 import {deleteInterpretation} from './deleteInterpretation';
 import {indeterminateInputs} from './indeterminateInputs';
+import {initRefreshAccessLevelTree} from './refreshAccessLevelTree';
 
 initQuillReadOnly();
 initBooks();
@@ -63,3 +64,4 @@ slashSearch();
 editInterpretations();
 deleteInterpretation();
 indeterminateInputs();
+initRefreshAccessLevelTree();

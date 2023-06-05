@@ -59,7 +59,6 @@ const handleCheckboxClick = (checkbox: HTMLInputElement) => {
 export const initCheckBoxTree = () => {
   const permissionsJSON: Permissions = {
     book: [],
-    sub_collection: [],
     collection: [],
     section: [],
   };

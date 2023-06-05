@@ -257,3 +257,33 @@ def test_moderator_access_to_entire_book(client):
     )
     assert b"You do not have permission" not in response.data
     assert b"Success!" in response.data
+
+
+def test_editor_access_tree_entire_book(client):
+    login(client)
+    book = create_book(client)
+    collection_1, _ = create_collection(client, book.id)
+    collection_2, _ = create_collection(client, book.id)
+
+    editor = m.User(username="editor", password="editor").save()
+    response: Response = client.post(
+        f"/book/{book.id}/add_contributor",
+        data=dict(user_id=editor.id, role=m.BookContributor.Roles.EDITOR),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Contributor was added!" in response.data
+
+    response: Response = client.get(
+        f"/permission/access_tree?user_id={editor.id}&book_id={book.id}",
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    json = response.json
+    access_tree = json.get("access_tree")
+    assert access_tree
+    assert book.id in access_tree.get("book")
+    collections_ids = access_tree.get("collection")
+    assert collections_ids
+    assert collection_1.id in collections_ids
+    assert collection_2.id in collections_ids
