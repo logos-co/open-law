@@ -17,8 +17,8 @@ bp = Blueprint("permission", __name__, url_prefix="/permission")
 def set_permissions():
     form: f.EditPermissionForm = f.EditPermissionForm()
 
+    book_id = form.book_id.data
     if form.validate_on_submit():
-        book_id = form.book_id.data
         book: m.Book = db.session.get(m.Book, book_id)
         if not book or book.is_deleted or book.owner != current_user:
             log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
@@ -55,6 +55,19 @@ def set_permissions():
             users_access: m.AccessGroup
             users_access.users.remove(user)
 
+        permissions_json = json.loads(form.permissions.data)
+        book_ids = permissions_json.get("book", [])
+        for book_id in book_ids:
+            entire_boot_access_group = m.AccessGroup.query.filter_by(
+                book_id=book_id, name=contributor.role.name.lower()
+            ).first()
+            m.UserAccessGroups(
+                user_id=user.id, access_group_id=entire_boot_access_group.id
+            ).save(False)
+            db.session.commit()
+            flash("Success!", "success")
+            return redirect(url_for("book.settings", book_id=book_id))
+
         new_access_group = None
         match contributor.role:
             case m.BookContributor.Roles.EDITOR:
@@ -73,13 +86,6 @@ def set_permissions():
         m.UserAccessGroups(user_id=user.id, access_group_id=new_access_group.id).save(
             False
         )
-
-        permissions_json = json.loads(form.permissions.data)
-        book_ids = permissions_json.get("book", [])
-        for book_id in book_ids:
-            m.BookAccessGroups(
-                book_id=book_id, access_group_id=new_access_group.id
-            ).save(False)
 
         collection_ids = permissions_json.get("collection", [])
         for collection_id in collection_ids:
@@ -102,7 +108,9 @@ def set_permissions():
         field_label = form._fields[field].label.text
         for error in errors:
             flash(error.replace("Field", field_label), "danger")
-    return redirect(url_for("book.settings", book_id=book_id))
+    if book_id:
+        return redirect(url_for("book.settings", book_id=book_id))
+    return redirect(url_for("book.my_library"))
 
 
 @bp.route("/access_tree", methods=["GET"])
