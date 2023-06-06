@@ -7,7 +7,7 @@ from app.controllers import create_breadcrumbs
 from .interpretation import Interpretation
 from .comment import Comment
 from .interpretation_vote import InterpretationVote
-from app.controllers.next_prev_section import recursive_move_down
+from app.controllers.next_prev_section import recursive_move_down, recursive_move_up
 
 
 class Section(BaseModel):
@@ -130,10 +130,14 @@ class Section(BaseModel):
 
     @property
     def next_section(self):
-        section = Section.query.filter(
-            Section.collection_id == self.collection_id,
-            Section.position > self.position,
-        ).first()
+        section = (
+            Section.query.filter(
+                Section.collection_id == self.collection_id,
+                Section.position > self.position,
+            )
+            .order_by(Section.position)
+            .first()
+        )
         if section:
             return section
 
@@ -142,8 +146,19 @@ class Section(BaseModel):
 
     @property
     def previous_section(self):
-        previous_section = None
-        return previous_section
+        section = (
+            Section.query.filter(
+                Section.collection_id == self.collection_id,
+                Section.position < self.position,
+            )
+            .order_by(Section.position.desc())
+            .first()
+        )
+        if section:
+            return section
+
+        section = recursive_move_up(self.collection)
+        return section
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"
