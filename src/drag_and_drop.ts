@@ -88,6 +88,7 @@ export function initDnD() {
       fallbackOnBody: true,
       swapThreshold: 20,
       filter: '.filter',
+      disabled: div.classList.contains('denied'),
     }),
   );
 }
