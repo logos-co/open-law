@@ -52,11 +52,14 @@ def test_change_collection_ordering(client):
     collection: m.Collection = db.session.get(m.Collection, 3)
     assert current_ordering[collection.id] != collection.position
     assert collection.position == new_position
-    for collection in m.Collection.query.filter_by(parent_id=root_collection.id).all():
-        if collection.position < new_position:
-            assert current_ordering[collection.id] == collection.position
-        elif collection.position > new_position:
-            assert current_ordering[collection.id] + 1 == collection.position
+    collections = (
+        m.Collection.query.filter_by(parent_id=collection.parent_id)
+        .order_by(m.Collection.position)
+        .all()
+    )
+    assert collections[new_position] == collection
+    assert collections[new_position - 1].position == collection.position - 1
+    assert collections[new_position + 1].position == collection.position + 1
 
     collection: m.Collection = db.session.get(m.Collection, 3)
     collection_1, _ = create_sub_collection(client, book.id, root_collection.id)
@@ -126,11 +129,14 @@ def test_change_section_ordering(client):
     section: m.Section = db.session.get(m.Section, 3)
     assert current_ordering[section.id] != section.position
     assert section.position == new_position
-    for section in m.Section.query.filter_by(collection_id=collection_1.id).all():
-        if section.position < new_position:
-            assert current_ordering[section.id] == section.position
-        elif section.position > new_position:
-            assert current_ordering[section.id] + 1 == section.position
+    sections = (
+        m.Section.query.filter_by(collection_id=collection_1.id)
+        .order_by(m.Section.position)
+        .all()
+    )
+    assert sections[new_position] == section
+    assert sections[new_position - 1].position == section.position - 1
+    assert sections[new_position + 1].position == section.position + 1
 
     new_position = 999
     assert section.collection_id == collection_1.id

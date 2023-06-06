@@ -18,16 +18,12 @@
 {% endif %}
 
 <div class="flex overflow-hidden">
-  <div
-    id="accordion-collapse"
-    data-accordion="open"
-    class="p-3 w-2/6 border-t border-r border-gray-200 dark:border-gray-700 overflow-y-scroll h-box">
+  <!-- prettier-ignore -->
+  <div id="accordion-collapse" data-accordion="open" class="p-3 w-2/6 border-t border-r border-gray-200 dark:border-gray-700 overflow-y-scroll h-box">
     <div class="flex justify-between">
       <div class="flex dark:text-white">
       <svg id="tabGoBackButton" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer"> <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /> </svg>
-      <h1 class="text-l font-extrabold dark:text-white ml-4 mb-3">
-        Table of contents
-      </h1>
+      <h1 class="text-l font-extrabold dark:text-white ml-4 mb-3"> Table of contents </h1>
       </div>
       {% if has_permission(book, Access.U) %}
         <div class="flex text-black dark:text-white">
@@ -42,17 +38,22 @@
           </div>
         </div>
       {% endif %}
-
     </div>
     <!-- prettier-ignore -->
     {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
-    <div>
-      <div class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
+    <div
+      {% if not collection.active_children and not collection.active_sections %}id="empty-dnd-entity"
+      {% elif collection.active_children %}data-dnd="dnd-sub-collection"
+      {% elif collection.active_sections %}id="draggableSectionItems"{% endif %}
+      data-entity-type="collection"
+      data-entity-id="{{collection.id}}" class="filter">
+      <div  data-entity-type="collection"
+      data-entity-id="{{collection.id}}"  class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
         <button class="bg-inherit" type="button" data-accordion-target="#accordion-collapse-body-{{collection.id}}" aria-expanded="true" aria-controls="accordion-collapse-body-{{collection.id}}">
         <!-- prettier-ignore -->
         <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
         </button>
-        <button href="#collection-{{collection.label}}" id="accordion-collapse-heading-{{collection.id}}" class=" text-black dark:text-white ">
+        <button href="#collection-{{collection.label}}" id="accordion-collapse-heading-{{collection.id}}" class="text-black dark:text-white ">
           <form id="rename-collection-label-form-{{collection.id}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" method="post" class="mb-0">
             {{ form_hidden_tag() }}
             <input class=" bg-inherit border-none " value="{{collection.label}}" type="text" name="label" id="edit-collection-label-{{collection.id}}" placeholder="Collection label" required readonly/>
@@ -63,68 +64,29 @@
       <svg id="dropdownCollectionContextButton{{collection.id}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
     </div>
     <div data="collection-context-menu-{{collection.id}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-      {% if current_user.is_authenticated %}
-        {% set access_to_create_collections = has_permission(collection, Access.C) %}
-        {% set access_to_update_collections = has_permission(collection, Access.U) %}
-        {% set access_to_delete_collections = has_permission(collection, Access.D) %}
-        {% set access_to_create_section = has_permission(collection, Access.C, EntityType.SECTION) %}
-
-        {% if access_to_create_collections or access_to_update_collections %}
-          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-            {% if access_to_create_collections %}
-              <li>
-                <button type="button" data-modal-target="add-collection-modal" data-modal-toggle="add-collection-modal" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Collection</button>
-              </li>
-              {% if not collection.is_leaf %}
-                <li>
-                  <button type="button" id="callAddSubCollectionModal" data-modal-target="add-sub-collection-modal" data-modal-toggle="add-sub-collection-modal" data-collection-id="{{collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Subcollection</button>
-                </li>
-              {% endif %}
-            {% endif %}
-            {% if access_to_create_section %}
-              {% if collection.active_children|length ==0  or collection.active_children|length ==0 and collection.is_leaf %}
-                <li>
-                    <button type="button" id="callAddSectionModal" data-modal-target="add-section-modal" data-modal-toggle="add-section-modal" data-collection-id="{{collection.id}}" data-sub-collection-id="_"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">New Section</button>
-                </li>
-              {% endif %}
-            {% endif %}
-          </ul>
-        {% endif %}
-
-        {% if access_to_update_collections or access_to_delete_collections %}
-          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-            {% if access_to_update_collections %}
-              <li>
-                <button type="button" id="rename-collection-button-{{collection.id}}" class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rename Collection</button>
-              </li>
-            {% endif %}
-            {% if access_to_delete_collections %}
-              <li>
-                <button type="button" id="callDeleteCollectionModal" data-modal-target="delete-collection-modal" data-modal-toggle="delete-collection-modal" data-collection-id="{{collection.id}}"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Collection</button>
-              </li>
-            {% endif %}
-          </ul>
-        {% endif %}
-        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-          <li>
-              <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export Collection</button>
-          </li>
-        </ul>
-      {% else %}
-        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-          <li>
-              <button type="button"  class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Connect you wallet to do this</button>
-          </li>
-        </ul>
-      {% endif %}
+      {% include 'book/components/collection_context_menu.html' %}
     </div>
     <!-- prettier-ignore -->
-    <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}">
+    {% if collection.active_children %}
+    <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
       {{recursive_render("book/components/sub_collection_tab_content.html",collection,book)|safe}}
     </div>
+    {% elif collection.active_sections %}
+    <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
+      <div id="draggableSectionItems" data-entity-id="{{collection.id}}" data-entity-type="collection" data-book-id="{{book.id}}">
+      {% for section in collection.active_sections %}
+          {% include 'book/components/section_tab_content.html' %}
+      {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
+    </div>
+    {% endif %}
     {% endfor %}
   </div>
-  <div class="p-3 px-6 w-4/6 dark:text-white overflow-y-scroll h-box ">
+  <!-- Here start book-preview on right side-->
+<div class="p-3 px-6 w-4/6 dark:text-white overflow-y-scroll h-box ">
     <p class="text-xs mb-3">Created by <a href="{{url_for('user.profile',user_id=book.owner.id)}}" class=" text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">{{book.owner.username}}</a> on {{book.created_at.strftime('%B %d, %Y')}}. Last updated on {{book.created_at.strftime('%B %d, %Y')}}</p>
     <div class="flex justify-between item-center">
       <h1 class="hidden md:inline font-extrabold text-lg dark:text-white">{{book.label}}</h1>
@@ -156,7 +118,7 @@
     <p class=" text-sm mb-3">{% if book.about==None %}About text{% else %}{{book.about}}{% endif %}</p>
     {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
     <p class="my-3 underline" id="collection-{{collection.label}}">#{{collection.label}}</p>
-    {% if not collection.is_leaf and not collection.active_children %}
+    {% if not collection.active_sections and not collection.active_children %}
     <p class="ml-3 my-3 italic text-sm">Collection is empty</p>
     {% endif %}
       {{recursive_render("book/components/sub_collection_preview_content.html",collection,book)|safe}}

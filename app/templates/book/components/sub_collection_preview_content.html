@@ -1,10 +1,12 @@
-{% if not collection.is_leaf %}
+{% if not collection.active_sections %}
 <!-- if collection has sub_collection make for loop for it -->
+<!-- prettier-ignore -->
 {% for sub_collection in collection.active_children if not sub_collection.is_deleted%}
 <p class="my-3" id="collection-{{sub_collection.label}}">
   ##{{sub_collection.label}}
 </p>
-{% if not sub_collection.active_sections and not sub_collection.active_children %}
+<!-- prettier-ignore -->
+{% if not sub_collection.active_sections and not sub_collection.active_children%}
 <p class="ml-3 my-3 italic text-sm">This sub collection is empty</p>
 {% endif %}
 <!-- prettier-ignore -->
@@ -24,7 +26,10 @@
       {% else %}
       <div class="ql-snow truncate md:max-w-xl">
         <div class="dark:text-white h-30 ql-editor-readonly !px-0">
-          <p>{{display_inline_elements(section.approved_interpretation.text)|safe }}</p>
+          <p>
+            {{display_inline_elements(section.approved_interpretation.text)|safe
+            }}
+          </p>
         </div>
       </div>
       <div
@@ -172,7 +177,9 @@
 {% else %}
 <div class="ql-snow truncate md:max-w-xl mb-3">
   <div class="dark:text-white h-30 ql-editor-readonly !px-0">
-    <p>{{ display_inline_elements(section.approved_interpretation.text)|safe }}</p>
+    <p>
+      {{ display_inline_elements(section.approved_interpretation.text)|safe }}
+    </p>
   </div>
 </div>
 <!-- prettier-ignore -->
