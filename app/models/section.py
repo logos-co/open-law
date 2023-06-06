@@ -7,6 +7,7 @@ from app.controllers import create_breadcrumbs
 from .interpretation import Interpretation
 from .comment import Comment
 from .interpretation_vote import InterpretationVote
+from app.controllers.next_prev_section import recursive_move_down
 
 
 class Section(BaseModel):
@@ -129,18 +130,15 @@ class Section(BaseModel):
 
     @property
     def next_section(self):
-        next_section = Section.query.filter(
+        section = Section.query.filter(
             Section.collection_id == self.collection_id,
             Section.position > self.position,
         ).first()
-        if not next_section:
-            next_collections = Collection.query.filter(
-                Collection.version_id == self.collection.version_id,
-                Collection.position > self.collection.position,
-                Collection.parent_id == self.collection.parent_id,
-            ).order_by(Collection.position)
-            # Move on parent -> childern
-        return next_section
+        if section:
+            return section
+
+        section = recursive_move_down(self.collection)
+        return section
 
     @property
     def previous_section(self):

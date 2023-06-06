@@ -1,0 +1,28 @@
+from app import models as m
+
+
+def get_next_section(collection: m.Collection):
+    if collection.active_sections:
+        return collection.active_sections[0]
+
+    # find on current level in next by order collections
+    for child in collection.active_children:
+        if section := get_next_section(child):
+            return section
+
+
+def recursive_move_down(collection: m.Collection):
+    parent: m.Collection = collection.parent
+    current: m.Collection = collection
+    while True:
+        if len(parent.active_children) > current.position + 1:
+            index = parent.active_children.index(current) + 1
+            for child in parent.active_children[index:]:
+                if section := get_next_section(child):
+                    return section
+
+        if current.is_root:
+            return None
+
+        current = parent
+        parent = parent.parent
