@@ -1,6 +1,7 @@
-from sqlalchemy import func, text
+from sqlalchemy import func, text, and_
 
 from app import db
+from .collection import Collection
 from app.models.utils import BaseModel
 from app.controllers import create_breadcrumbs
 from .interpretation import Interpretation
@@ -125,6 +126,26 @@ class Section(BaseModel):
         )
 
         return comments
+
+    @property
+    def next_section(self):
+        next_section = Section.query.filter(
+            Section.collection_id == self.collection_id,
+            Section.position > self.position,
+        ).first()
+        if not next_section:
+            next_collections = Collection.query.filter(
+                Collection.version_id == self.collection.version_id,
+                Collection.position > self.collection.position,
+                Collection.parent_id == self.collection.parent_id,
+            ).order_by(Collection.position)
+            # Move on parent -> childern
+        return next_section
+
+    @property
+    def previous_section(self):
+        previous_section = None
+        return previous_section
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"
