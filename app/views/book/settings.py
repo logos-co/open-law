@@ -130,7 +130,7 @@ def delete_contributor(book_id: int):
         flash("Success!", "success")
         return redirect(url_for("book.settings", book_id=book_id))
     else:
-        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        log(log.ERROR, "Delete contributor errors: [%s]", form.errors)
         for field, errors in form.errors.items():
             field_label = form._fields[field].label.text
             for error in errors:
@@ -195,7 +195,7 @@ def edit_contributor_role(book_id: int):
         flash("Success!", "success")
         return redirect(url_for("book.settings", book_id=book_id))
     else:
-        log(log.ERROR, "Book create errors: [%s]", form.errors)
+        log(log.ERROR, "Edit contributor errors: [%s]", form.errors)
         for field, errors in form.errors.items():
             field_label = form._fields[field].label.text
             for error in errors:

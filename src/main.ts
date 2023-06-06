@@ -32,6 +32,7 @@ import {editInterpretations} from './editInterpretations';
 import {deleteInterpretation} from './deleteInterpretation';
 import {indeterminateInputs} from './indeterminateInputs';
 import {initRefreshAccessLevelTree} from './refreshAccessLevelTree';
+import {deleteContributor} from './deleteContributor';
 
 initQuillReadOnly();
 initBooks();
@@ -67,3 +68,4 @@ editInterpretations();
 deleteInterpretation();
 indeterminateInputs();
 initRefreshAccessLevelTree();
+deleteContributor();
