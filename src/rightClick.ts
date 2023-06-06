@@ -23,7 +23,7 @@ const contextSectionMenuTriggers: NodeListOf<HTMLElement> =
 let currentElement: DropdownInterface | null = null;
 
 const options: DropdownOptions = {
-  offsetSkidding: 410,
+  offsetSkidding: 200,
   offsetDistance: 0,
   onHide: () => {},
   onShow: tooltip => {
