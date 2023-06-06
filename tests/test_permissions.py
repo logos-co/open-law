@@ -1,3 +1,5 @@
+import json
+
 from flask import current_app as Response
 
 from app import models as m
@@ -287,3 +289,44 @@ def test_editor_access_tree_entire_book(client):
     assert collections_ids
     assert collection_1.id in collections_ids
     assert collection_2.id in collections_ids
+
+
+def test_set_access_level(client):
+    login(client)
+    book = create_book(client)
+    collection_1, _ = create_collection(client, book.id)
+    collection_2, _ = create_collection(client, book.id)
+
+    editor = m.User(username="editor", password="editor").save()
+    response: Response = client.post(
+        f"/book/{book.id}/add_contributor",
+        data=dict(user_id=editor.id, role=m.BookContributor.Roles.EDITOR),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Contributor was added!" in response.data
+    assert len(book.list_access_groups) == 2
+
+    json_string = json.dumps({"collection": [collection_1.id]})
+    response: Response = client.post(
+        "/permission/set",
+        data=dict(
+            book_id=book.id,
+            user_id=editor.id,
+            permissions=json_string,
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert len(book.list_access_groups) == 3
+
+    response: Response = client.post(
+        "/permission/set",
+        data=dict(
+            book_id=book.id,
+            user_id=editor.id,
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Success!" not in response.data

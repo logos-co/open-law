@@ -69,5 +69,4 @@ def create_editor_group(book_id: int):
         m.PermissionAccessGroups(
             permission_id=permission.id, access_group_id=group.id
         ).save()
-
     return group
