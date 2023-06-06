@@ -1,35 +1,36 @@
 {% if current_user.is_authenticated %}
 <!-- prettier-ignore -->
-{% set access_to_create_collections =has_permission(collection, Access.C) %}
-{% set access_to_update_collections =has_permission(collection, Access.U) %}
-{% set access_to_delete_collections =has_permission(collection, Access.D) %}
-{% set access_to_create_section =has_permission(collection, Access.C, EntityType.SECTION) %}
+{% set access_to_create_collections_in_root = has_permission(collection.parent, Access.C) %}
+{% set access_to_create_collections = has_permission(collection, Access.C) %}
+{% set access_to_update_collections = has_permission(collection, Access.U) %}
+{% set access_to_delete_collections = has_permission(collection, Access.D) %}
+{% set access_to_create_section = has_permission(collection, Access.C, EntityType.SECTION) %}
 {% if access_to_create_collections or access_to_update_collections %}
 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-  {% if access_to_create_collections %}
-  <li>
-    <button
-      type="button"
-      data-modal-target="add-collection-modal"
-      data-modal-toggle="add-collection-modal"
-      class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-      New Collection
-    </button>
-  </li>
-  {% if collection.active_children or not collection.active_sections%}
-  <li>
-    <button
-      type="button"
-      id="callAddSubCollectionModal"
-      data-modal-target="add-sub-collection-modal"
-      data-modal-toggle="add-sub-collection-modal"
-      data-collection-id="{{collection.id}}"
-      class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-      New Subcollection
-    </button>
-  </li>
-  <!-- prettier-ignore -->
+  {% if access_to_create_collections_in_root %}
+    <li>
+      <button
+        type="button"
+        data-modal-target="add-collection-modal"
+        data-modal-toggle="add-collection-modal"
+        class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+        New Collection
+      </button>
+    </li>
   {% endif %}
+  {% if collection.active_children or not collection.active_sections%}
+    <li>
+      <button
+        type="button"
+        id="callAddSubCollectionModal"
+        data-modal-target="add-sub-collection-modal"
+        data-modal-toggle="add-sub-collection-modal"
+        data-collection-id="{{collection.id}}"
+        class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+        New Subcollection
+      </button>
+    </li>
+  <!-- prettier-ignore -->
   {% endif %}
   {% if access_to_create_section %}
   {% if not collection.active_children or not collection.active_children and collection.active_sections %}

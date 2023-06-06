@@ -1,3 +1,5 @@
+// Will be useful in next OpenLaw version
+
 interface Permissions {
   [key: string]: number[];
 }
@@ -29,11 +31,15 @@ const uncheckParentInputs = (checkbox: HTMLElement) => {
   const parentLiElement: HTMLElement =
     checkbox.parentElement.parentElement.parentElement.parentElement;
 
+  const dataPermission = checkbox.getAttribute('data-permission');
+
   const parentInputElement: HTMLInputElement = parentLiElement.querySelector(
-    'input[type=checkbox]',
+    `input[type=checkbox][data-permission=${dataPermission}]`,
   );
 
-  parentInputElement.checked = false;
+  if (!parentInputElement.disabled) {
+    parentInputElement.checked = false;
+  }
 
   if (parentInputElement.getAttribute('data-root') != 'true') {
     uncheckParentInputs(parentInputElement);
@@ -49,16 +55,23 @@ const handleCheckboxClick = (checkbox: HTMLInputElement) => {
     uncheckParentInputs(checkbox);
   }
 
-  const checkboxes = parentLiElement.querySelectorAll('input[type=checkbox]');
+  const dataPermission = checkbox.getAttribute('data-permission');
+
+  const checkboxes = parentLiElement.querySelectorAll(
+    `input[type=checkbox][data-permission=${dataPermission}]`,
+  );
 
   checkboxes.forEach((checkbox: HTMLInputElement) => {
-    checkbox.checked = checked;
+    if (!checkbox.disabled) {
+      checkbox.checked = checked;
+    }
   });
 };
 
 export const initCheckBoxTree = () => {
   const permissionsJSON: Permissions = {
     book: [],
+    sub_collection: [],
     collection: [],
     section: [],
   };
