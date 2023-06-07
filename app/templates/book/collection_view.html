@@ -43,10 +43,10 @@
     {% for collection in book.versions[-1].children_collections if not collection.is_root and not collection.is_deleted %}
     <div
       {% if not collection.active_children and not collection.active_sections %}id="empty-dnd-entity"
-      {% elif collection.active_children %}data-dnd="dnd-sub-collection"
-      {% elif collection.active_sections %}id="draggableSectionItems"{% endif %}
+      {% elif collection.active_children %}{% if has_permission(collection, Access.U) %}data-dnd="dnd-sub-collection"{% endif %}
+      {% elif collection.active_sections %}{% if has_permission(collection, Access.U) %}id="draggableSectionItems"{% endif %}{% endif %}
       data-entity-type="collection"
-      data-entity-id="{{collection.id}}" class="filter">
+      data-entity-id="{{collection.id}}" class="filter {% if not has_permission(collection, Access.U) %}denied{% endif %}">
       <div  data-entity-type="collection"
       data-entity-id="{{collection.id}}"  class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
         <button class="bg-inherit" type="button" data-accordion-target="#accordion-collapse-body-{{collection.id}}" aria-expanded="true" aria-controls="accordion-collapse-body-{{collection.id}}">
@@ -73,7 +73,7 @@
     </div>
     {% elif collection.active_sections %}
     <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
-      <div id="draggableSectionItems" data-entity-id="{{collection.id}}" data-entity-type="collection" data-book-id="{{book.id}}">
+      <div {% if has_permission(collection, Access.U) %}id="draggableSectionItems"{% endif %} data-entity-id="{{collection.id}}" data-entity-type="collection" data-book-id="{{book.id}}" class="{% if not has_permission(collection, Access.U) %}filter{% endif %}">
       {% for section in collection.active_sections %}
           {% include 'book/components/section_tab_content.html' %}
       {% endfor %}

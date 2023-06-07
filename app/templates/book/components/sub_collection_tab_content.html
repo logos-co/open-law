@@ -1,7 +1,7 @@
 <!-- prettier-ignore -->
 <div
-  class="ml-6"
-  data-dnd="dnd-sub-collection"
+  class="ml-6 {% if not has_permission(collection, Access.U) %}filter{% endif %}"
+  {% if has_permission(collection, Access.U) %}data-dnd="dnd-sub-collection"{% endif %}
   {% if collection %}
   data-entity-type="collection"
   data-entity-id="{{collection.id}}"
@@ -55,14 +55,14 @@
     {% if sub_collection.active_children %}
         {{recursive_render("book/components/sub_collection_tab_content.html",sub_collection,book)|safe}}
     {% elif sub_collection.active_sections  %}
-        <div id="draggableSectionItems" data-entity-id="{{sub_collection.id}}" data-entity-type="sub_collection" data-book-id="{{book.id}}">
+        <div {% if has_permission(collection, Access.U) %}id="draggableSectionItems"{% endif %} data-entity-id="{{sub_collection.id}}" data-entity-type="sub_collection" data-book-id="{{book.id}}" class="{% if not has_permission(collection, Access.U) %}filter{% endif %}">
         <!-- here comes for loop for all section in this sub_collection-->
             {% for section in sub_collection.active_sections %}
                 {% include 'book/components/section_tab_content.html' %}
             {% endfor %}
         </div>
     {% else %}
-    <div id="empty-dnd-entity" data-entity-type="sub_collection" data-entity-id="{{sub_collection.id}}"></div>
+    <div id="empty-dnd-entity" data-entity-type="sub_collection" data-entity-id="{{sub_collection.id}}" class="{% if not has_permission(collection, Access.U) %}filter{% endif %}"></div>
     {% endif %}
     </div>
   </div>
@@ -71,8 +71,8 @@
   {% else %}
   <!-- if collection doesn't have sub_collection -->
   <div
-    class="ml-6"
-    id="draggableSectionItems"
+    class="ml-6 {% if not has_permission(collection, Access.U) %}filter{% endif %}"
+    {% if has_permission(collection, Access.U) %}id="draggableSectionItems"{% endif %}
     data-entity-id="{{collection.id}}"
     data-entity-type="collection">
     <!-- here comes for loop for all section in this collection-->
