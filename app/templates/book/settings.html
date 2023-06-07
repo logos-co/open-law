@@ -9,6 +9,7 @@
 {% include 'book/modals/access_level_modal.html' %}
 {% include 'book/modals/add_contributor_modal.html' %}
 {% include 'book/modals/delete_book_modal.html' %}
+{% include 'book/modals/delete_contributor_modal.html' %}
 
 <!-- Hide right_sidebar -->
 <!-- prettier-ignore -->
@@ -146,13 +147,9 @@
                 <td class="px-6 py-4">
                   <!-- prettier-ignore -->
                   {% if current_user.id != contributor.user_id %}
-                    <form class="mb-0 flex justify-end" action="{{ url_for('book.delete_contributor', book_id=book.id) }}" method="post">
-                      {{ form_hidden_tag() }}
-                      <input type="hidden" name="user_id" id="user_id" value="{{ contributor.user_id }}" />
-                      <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-sm rounded-lg text-sm px-5 py-1.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
+                      <button type="button" id="callDeleteContributorModal" data-user-id="{{contributor.user.id}}" data-modal-target="delete_contributor_modal" data-modal-toggle="delete_contributor_modal" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-sm rounded-lg text-sm px-5 py-1.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
                         Delete
                       </button>
-                    </form>
                   {% endif %}
                 </td>
               </tr>

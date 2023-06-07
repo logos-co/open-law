@@ -15,6 +15,7 @@ export function initDnD() {
         put: ['sections'],
       },
       animation: 100,
+      filter: '.filter',
       onEnd: async function (/**Event*/ evt) {
         var itemEl = evt.item; // dragged HTMLElement
         const bookId = itemEl.getAttribute('data-book-id');
@@ -49,6 +50,7 @@ export function initDnD() {
         put: ['sub_collections'],
       },
       animation: 100,
+      filter: '.filter',
       onEnd: async function (/**Event*/ evt) {
         var itemEl = evt.item; // dragged HTMLElement
         const bookId = itemEl.getAttribute('data-book-id');
@@ -86,6 +88,7 @@ export function initDnD() {
       fallbackOnBody: true,
       swapThreshold: 20,
       filter: '.filter',
+      disabled: div.classList.contains('denied'),
     }),
   );
 }

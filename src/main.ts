@@ -30,6 +30,9 @@ import {slashSearch} from './slashSearch';
 import {initDnD} from './drag_and_drop';
 import {editInterpretations} from './editInterpretations';
 import {deleteInterpretation} from './deleteInterpretation';
+import {indeterminateInputs} from './indeterminateInputs';
+import {initRefreshAccessLevelTree} from './refreshAccessLevelTree';
+import {deleteContributor} from './deleteContributor';
 
 initQuillReadOnly();
 initBooks();
@@ -63,3 +66,6 @@ slashSearch();
 initDnD();
 editInterpretations();
 deleteInterpretation();
+indeterminateInputs();
+initRefreshAccessLevelTree();
+deleteContributor();

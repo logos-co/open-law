@@ -42,7 +42,6 @@ export function deleteInterpretation() {
           '0/delete_interpretation',
           `${interpretationId}/delete_interpretation`,
         );
-        console.log(defaultActionPath);
 
         deleteInterpretationForm.setAttribute('action', `${newActionPath}`);
         interpretationDeleteModal.show();

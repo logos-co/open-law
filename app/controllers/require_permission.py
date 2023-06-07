@@ -20,11 +20,12 @@ def check_permissions(
     )
     entity = None
     for model in entities:
-        entity_id_field = (model.__name__ + "_id").lower()
-        entity_id = request_args.get(entity_id_field)
-        entity: m.Book | m.Collection | m.Section | m.Interpretation | m.Comment = (
-            db.session.get(model, entity_id)
-        )
+        if not entity:
+            entity_id_field = (model.__name__ + "_id").lower()
+            entity_id = request_args.get(entity_id_field)
+            entity: m.Book | m.Collection | m.Section | m.Interpretation | m.Comment = (
+                db.session.get(model, entity_id)
+            )
 
     if entity is None:
         log(log.INFO, "No entity [%s] found", entities)

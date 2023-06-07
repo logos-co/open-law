@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user, logout_user
 from app.controllers import create_pagination
-from sqlalchemy import not_
+from sqlalchemy import func, not_, or_
 
 from app import models as m, db
 from app import forms as f
@@ -112,7 +112,7 @@ def profile_reactivate():
 @bp.route("/search", methods=["GET"])
 @login_required
 def search():
-    q = request.args.get("q", type=str, default=None)
+    q = request.args.get("q", type=str, default="").lower()
     if not q:
         return jsonify({"message": "q parameter is required"}), 422
 
@@ -121,7 +121,12 @@ def search():
     query_user = m.User.query
     query_user = query_user.order_by(m.User.username)
 
-    query_user = query_user.filter(m.User.username.ilike(f"{q}%"))
+    query_user = query_user.filter(
+        or_(
+            func.lower(m.User.username).like(f"%{q}%"),
+            func.lower(m.User.wallet_id).like(f"%{q}%"),
+        )
+    )
     if book_id:
         book_contributors = m.BookContributor.query.filter_by(book_id=book_id).all()
         user_ids = [contributor.user_id for contributor in book_contributors]
