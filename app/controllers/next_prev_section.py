@@ -15,14 +15,14 @@ def recursive_move_down(collection: m.Collection):
     parent: m.Collection = collection.parent
     current: m.Collection = collection
     while True:
+        if current.is_root or not current.parent:
+            return None
+
         if len(parent.active_children) > current.position + 1:
             index = parent.active_children.index(current) + 1
             for child in parent.active_children[index:]:
                 if section := get_next_section(child):
                     return section
-
-        if current.is_root or not current.parent:
-            return None
 
         current = parent
         parent = parent.parent
@@ -42,14 +42,14 @@ def recursive_move_up(collection: m.Collection):
     parent: m.Collection = collection.parent
     current: m.Collection = collection
     while True:
+        if current.is_root or not current.parent:
+            return None
+
         index = parent.active_children.index(current)
         if parent.active_children[:index]:
             for child in parent.active_children[:index][::-1]:
                 if section := get_prev_section(child):
                     return section
-
-        if current.is_root or not current.parent:
-            return None
 
         current = parent
         parent = parent.parent
