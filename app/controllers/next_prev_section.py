@@ -21,14 +21,11 @@ def recursive_move_down(collection: m.Collection):
                 if section := get_next_section(child):
                     return section
 
-        if current.is_root:
+        if current.is_root or not current.parent:
             return None
 
         current = parent
         parent = parent.parent
-
-
-#
 
 
 def get_prev_section(collection: m.Collection):
@@ -51,7 +48,7 @@ def recursive_move_up(collection: m.Collection):
                 if section := get_prev_section(child):
                     return section
 
-        if current.is_root:
+        if current.is_root or not current.parent:
             return None
 
         current = parent
