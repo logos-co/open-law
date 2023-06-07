@@ -80,7 +80,12 @@
       </div>
     </div>
     {% else %}
-    <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
+    <div id="accordion-collapse-body-{{collection.id}}"  class="pl-6 pb-6 {% if not has_permission(collection, Access.U) %}filter{% endif %}"
+        data-dnd="dnd-sub-collection"
+        data-book-id="{{book.id}}"
+        data-entity-type="collection"
+        data-entity-id="{{collection.id}}"
+        aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
     </div>
     {% endif %}
     {% endfor %}

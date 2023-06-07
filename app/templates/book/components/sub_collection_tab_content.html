@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
 <div
-  class="ml-6 {% if not has_permission(collection, Access.U) %}filter{% endif %}"
+  class="pl-6 pb-1 {% if not has_permission(collection, Access.U) %}filter{% endif %}"
   {% if has_permission(collection, Access.U) %}data-dnd="dnd-sub-collection"{% endif %}
   {% if collection %}
   data-entity-type="collection"
@@ -51,7 +51,7 @@
      {% include 'book/components/sub_collection_context_menu.html' %}
     </div>
     <!-- prettier-ignore -->
-    <div id="accordion-nested-collapse-body-{{sub_collection.parent.id}}-{{sub_collection.id}}" class="hidden" aria-labelledby="accordion-nested-collapse-heading-{{sub_collection.id}}">
+    <div id="accordion-nested-collapse-body-{{sub_collection.parent.id}}-{{sub_collection.id}}" class="hidden pl-6 pb-1" aria-labelledby="accordion-nested-collapse-heading-{{sub_collection.id}}">
     {% if sub_collection.active_children %}
         {{recursive_render("book/components/sub_collection_tab_content.html",sub_collection,book)|safe}}
     {% elif sub_collection.active_sections  %}
