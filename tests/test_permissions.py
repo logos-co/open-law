@@ -281,7 +281,7 @@ def test_editor_permissions_entire_and_local(client):
     assert b"Success" in response.data
 
 
-def test_moderator_access_to_entire_book(client):
+def test_moderator_permissions_entire_and_local(client):
     login(client)
     book = create_book(client)
 
