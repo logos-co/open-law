@@ -10,7 +10,7 @@ from tests.utils import (
 
 
 def test_approve_interpretation(client: FlaskClient):
-    _, user = login(client)
+    login(client)
 
     book = create_book(client)
 
