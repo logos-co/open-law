@@ -1,11 +1,13 @@
-from sqlalchemy import func, text
+from sqlalchemy import func, text, and_
 
 from app import db
+from .collection import Collection
 from app.models.utils import BaseModel
 from app.controllers import create_breadcrumbs
 from .interpretation import Interpretation
 from .comment import Comment
 from .interpretation_vote import InterpretationVote
+from app.controllers.next_prev_section import recursive_move_down, recursive_move_up
 
 
 class Section(BaseModel):
@@ -125,6 +127,38 @@ class Section(BaseModel):
         )
 
         return comments
+
+    @property
+    def next_section(self):
+        section = (
+            Section.query.filter(
+                Section.collection_id == self.collection_id,
+                Section.position > self.position,
+            )
+            .order_by(Section.position)
+            .first()
+        )
+        if section:
+            return section
+
+        section = recursive_move_down(self.collection)
+        return section
+
+    @property
+    def previous_section(self):
+        section = (
+            Section.query.filter(
+                Section.collection_id == self.collection_id,
+                Section.position < self.position,
+            )
+            .order_by(Section.position.desc())
+            .first()
+        )
+        if section:
+            return section
+
+        section = recursive_move_up(self.collection)
+        return section
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"
