@@ -38,6 +38,8 @@ class UserForm(FlaskForm):
             is not None
         ):
             raise ValidationError("This username is taken.")
+        elif " " in field.data:
+            raise ValidationError("User name couldn't have spaces.")
 
 
 class NewUserForm(FlaskForm):
@@ -59,7 +61,7 @@ class NewUserForm(FlaskForm):
 
 
 class EditUserForm(FlaskForm):
-    name = StringField("Name", [DataRequired()])
+    username = StringField("Username", [DataRequired()])
     avatar_img = FileField("Avatar file (max 1mb, formats: jpg,jpeg,png)")
     submit = SubmitField("Save")
 
@@ -70,6 +72,8 @@ class EditUserForm(FlaskForm):
             .first()
         ):
             raise ValidationError("This username is taken.")
+        elif " " in field.data:
+            raise ValidationError("User name couldn't have spaces.")
 
     def validate_avatar_img(self, field):
         if field.data:

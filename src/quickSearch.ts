@@ -7,10 +7,16 @@ const currentSearchInput: HTMLInputElement =
 const searchDiv: HTMLElement = document.querySelector('#quickSearchModal');
 
 const modalOptions: ModalOptions = {
+  backdrop: 'dynamic',
   closable: true,
-  backdrop: 'static',
   onHide: () => {},
-  onShow: () => {},
+  onShow: () => {
+    const modalBack = document.querySelector('.bg-opacity-50');
+    modalBack.addEventListener('click', () => {
+      currentSearchInput.value = '';
+      quickSearchModal.hide();
+    });
+  },
   onToggle: () => {},
 };
 

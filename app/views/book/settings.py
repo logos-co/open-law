@@ -3,6 +3,7 @@ from flask import (
     flash,
     redirect,
     url_for,
+    request,
 )
 from flask_login import login_required
 
@@ -25,9 +26,13 @@ from .bp import bp
 @login_required
 def settings(book_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
+    selected_tab = request.args.get("selected_tab", "book_settings")
 
     return render_template(
-        "book/settings.html", book=book, roles=m.BookContributor.Roles
+        "book/settings.html",
+        book=book,
+        selected_tab=selected_tab,
+        roles=m.BookContributor.Roles,
     )
 
 
@@ -41,7 +46,7 @@ def settings(book_id: int):
 @login_required
 def add_contributor(book_id: int):
     form = f.AddContributorForm()
-
+    selected_tab = "user_permissions"
     if form.validate_on_submit():
         user_id = form.user_id.data
         book_contributor = m.BookContributor.query.filter_by(
@@ -50,7 +55,9 @@ def add_contributor(book_id: int):
         if book_contributor:
             log(log.INFO, "Contributor: [%s] already exists", book_contributor)
             flash("Already exists!", "danger")
-            return redirect(url_for("book.settings", book_id=book_id))
+            return redirect(
+                url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
+            )
 
         role = m.BookContributor.Roles(int(form.role.data))
         contributor = m.BookContributor(user_id=user_id, book_id=book_id, role=role)
@@ -70,14 +77,18 @@ def add_contributor(book_id: int):
             m.UserAccessGroups(user_id=user_id, access_group_id=group.id).save()
 
         flash("Contributor was added!", "success")
-        return redirect(url_for("book.settings", book_id=book_id))
+        return redirect(
+            url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
+        )
     else:
         log(log.ERROR, "Book create errors: [%s]", form.errors)
         for field, errors in form.errors.items():
             field_label = form._fields[field].label.text
             for error in errors:
                 flash(error.replace("Field", field_label), "danger")
-        return redirect(url_for("book.settings", book_id=book_id))
+        return redirect(
+            url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
+        )
 
 
 @bp.route("/<int:book_id>/delete_contributor", methods=["POST"])
@@ -90,6 +101,7 @@ def add_contributor(book_id: int):
 @login_required
 def delete_contributor(book_id: int):
     form = f.DeleteContributorForm()
+    selected_tab = "user_permissions"
 
     if form.validate_on_submit():
         user_id = int(form.user_id.data)
@@ -104,7 +116,9 @@ def delete_contributor(book_id: int):
                 book_id,
             )
             flash("Does not exists!", "success")
-            return redirect(url_for("book.settings", book_id=book_id))
+            return redirect(
+                url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
+            )
 
         book: m.Book = db.session.get(m.Book, book_id)
         user: m.User = db.session.get(m.User, user_id)
@@ -128,14 +142,18 @@ def delete_contributor(book_id: int):
         db.session.commit()
 
         flash("Success!", "success")
-        return redirect(url_for("book.settings", book_id=book_id))
+        return redirect(
+            url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
+        )
     else:
         log(log.ERROR, "Delete contributor errors: [%s]", form.errors)
         for field, errors in form.errors.items():
             field_label = form._fields[field].label.text
             for error in errors:
                 flash(error.replace("Field", field_label), "danger")
-        return redirect(url_for("book.settings", book_id=book_id))
+        return redirect(
+            url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
+        )
 
 
 @bp.route("/<int:book_id>/edit_contributor_role", methods=["POST"])
@@ -148,6 +166,7 @@ def delete_contributor(book_id: int):
 @login_required
 def edit_contributor_role(book_id: int):
     form = f.EditContributorRoleForm()
+    selected_tab = "user_permissions"
 
     if form.validate_on_submit():
         book_contributor: m.BookContributor = m.BookContributor.query.filter_by(
@@ -161,7 +180,9 @@ def edit_contributor_role(book_id: int):
                 book_id,
             )
             flash("Does not exists!", "success")
-            return redirect(url_for("book.settings", book_id=book_id))
+            return redirect(
+                url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
+            )
 
         role = m.BookContributor.Roles(int(form.role.data))
 
@@ -193,11 +214,15 @@ def edit_contributor_role(book_id: int):
         book_contributor.save()
 
         flash("Success!", "success")
-        return redirect(url_for("book.settings", book_id=book_id))
+        return redirect(
+            url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
+        )
     else:
         log(log.ERROR, "Edit contributor errors: [%s]", form.errors)
         for field, errors in form.errors.items():
             field_label = form._fields[field].label.text
             for error in errors:
                 flash(error.replace("Field", field_label), "danger")
-        return redirect(url_for("book.settings", book_id=book_id))
+        return redirect(
+            url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
+        )
