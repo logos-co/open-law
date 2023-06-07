@@ -1,7 +1,5 @@
-from flask import current_app as Response
 from flask.testing import FlaskClient
 
-from app import models as m
 from tests.utils import (
     login,
     create_book,
