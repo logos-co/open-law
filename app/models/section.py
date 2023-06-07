@@ -1,7 +1,6 @@
-from sqlalchemy import func, text, and_
+from sqlalchemy import func, text
 
 from app import db
-from .collection import Collection
 from app.models.utils import BaseModel
 from app.controllers import create_breadcrumbs
 from .interpretation import Interpretation
