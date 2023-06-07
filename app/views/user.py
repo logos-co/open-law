@@ -36,7 +36,7 @@ def edit_profile():
     form = f.EditUserForm()
     if form.validate_on_submit():
         user: m.User = current_user
-        user.username = form.name.data
+        user.username = form.username.data
         if form.avatar_img.data:
             current_user.avatar_img = (
                 form.avatar_img.data
@@ -52,7 +52,7 @@ def edit_profile():
                 flash(error.replace("Field", field_label), "danger")
 
     if current_user.is_activated:
-        form.name.data = current_user.username
+        form.username.data = current_user.username
     return render_template("user/edit_profile.html", form=form)
 
 
