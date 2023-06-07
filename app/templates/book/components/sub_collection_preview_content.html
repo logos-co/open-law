@@ -24,7 +24,7 @@
       {% if not section.active_interpretations %}
       <p class="ml-3 my-3 italic text-sm">This section is empty</p>
       {% else %}
-      <div class="ql-snow truncate md:max-w-xl">
+      <div class="ql-snow">
         <div class="dark:text-white h-30 ql-editor-readonly !px-0">
           <p>
             {{display_inline_elements(section.approved_interpretation.text)|safe
@@ -108,7 +108,7 @@
           {% for comment in section.approved_comments %}
           <div class="p-5 ml-6">
             <div class="dark:text-white h-30">
-              <div class="ql-snow mb-2 md:max-w-xl">
+              <div class="ql-snow mb-2">
                 <div class="dark:text-white h-30 ql-editor-readonly !px-0">
                   <p>{{ display_inline_elements(comment.text)|safe }}</p>
                 </div>
@@ -175,7 +175,7 @@
 {% if not section.active_interpretations %}
 <p class="ml-3 my-3 italic text-sm">This section is empty</p>
 {% else %}
-<div class="ql-snow truncate md:max-w-xl mb-3">
+<div class="ql-snow mb-3">
   <div class="dark:text-white h-30 ql-editor-readonly !px-0">
     <p>
       {{ display_inline_elements(section.approved_interpretation.text)|safe }}
@@ -261,7 +261,7 @@
     {% for comment in section.approved_comments %}
     <div class="p-5 ml-6">
       <div class="dark:text-white h-30">
-        <div class="ql-snow mb-2 md:max-w-xl">
+        <div class="ql-snow mb-2">
           <div class="dark:text-white h-30 ql-editor-readonly !px-0">
             <p>{{ display_inline_elements(comment.text)|safe }}</p>
           </div>
