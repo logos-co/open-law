@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
 <div
-  class="ml-6 {% if not has_permission(collection, Access.U) %}filter{% endif %}"
+  class="pl-6 pb-1 {% if not has_permission(collection, Access.U) %}filter{% endif %}"
   {% if has_permission(collection, Access.U) %}data-dnd="dnd-sub-collection"{% endif %}
   {% if collection %}
   data-entity-type="collection"
