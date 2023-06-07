@@ -27,7 +27,7 @@
   {% endif %}
   <!-- prettier-ignore -->
 <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-    <div class="flex flex-row pb-3 p-3 w-2/3 md:w-10/12">
+    <div class="flex flex-row pb-3 p-3">
         <div class="vote-block flex flex-col m-5 justify-center items-center">
             <div class="vote-button cursor-pointer" data-vote-for="interpretation" data-entity-id="{{ interpretation.id }}" data-positive="true">
             <svg class="w-6 h-6 select-none
@@ -57,7 +57,7 @@
         </div>
         <!-- prettier-ignore -->
         <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
-        <div class="ql-snow truncate md:max-w-xl">
+        <div class="ql-snow">
             {% set local_breadcrumbs = interpretation.section.breadcrumbs_path %}
             {% include 'book/local_breadcrumbs_navigation.html'%}
             <p>{{ interpretation.section.label }}</p>
