@@ -22,7 +22,6 @@ export function renameSection() {
         inputsForRename[index].addEventListener('blur', () => {
           inputsForRename[index].value = oldName;
         });
-        console.log(sectionRenameForms[index]);
         sectionRenameForms[index].addEventListener('submit', async e => {
           e.preventDefault();
           const bookId = sectionRenameForms[index].getAttribute('data-book-id');
