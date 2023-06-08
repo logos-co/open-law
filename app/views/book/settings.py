@@ -49,6 +49,7 @@ def add_contributor(book_id: int):
     selected_tab = "user_permissions"
     if form.validate_on_submit():
         user_id = form.user_id.data
+        book: m.Book = db.session.get(m.Book, book_id)
         book_contributor = m.BookContributor.query.filter_by(
             user_id=user_id, book_id=book_id
         ).first()
@@ -63,6 +64,22 @@ def add_contributor(book_id: int):
         contributor = m.BookContributor(user_id=user_id, book_id=book_id, role=role)
         log(log.INFO, "New contributor [%s]", contributor)
         contributor.save()
+
+        # notifications
+        redirect_url = url_for(
+            "book.collection_view",
+            book_id=book_id,
+        )
+        notification_text = f"You've been added to {book.label} as an Editor/Moderator"
+        m.Notification(
+            link=redirect_url, text=notification_text, user_id=user_id
+        ).save()
+        log(
+            log.INFO,
+            "Create notification for user with id [%s]",
+            user_id,
+        )
+        # -------------
 
         groups = (
             db.session.query(m.AccessGroup)
@@ -140,6 +157,24 @@ def delete_contributor(book_id: int):
         log(log.INFO, "Delete BookContributor [%s]", book_contributor)
         db.session.delete(book_contributor)
         db.session.commit()
+
+        # notifications
+        redirect_url = url_for(
+            "book.collection_view",
+            book_id=book_id,
+        )
+        notification_text = (
+            f"You've been removed from {book.label} as an Editor/Moderator"
+        )
+        m.Notification(
+            link=redirect_url, text=notification_text, user_id=user_id
+        ).save()
+        log(
+            log.INFO,
+            "Create notification for user with id [%s]",
+            user_id,
+        )
+        # -------------
 
         flash("Success!", "success")
         return redirect(

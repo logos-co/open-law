@@ -1,8 +1,4 @@
-from flask import (
-    Blueprint,
-    jsonify,
-    request,
-)
+from flask import Blueprint, jsonify, request, url_for
 from flask_login import login_required, current_user
 
 from app import models as m, db
@@ -23,6 +19,7 @@ def vote_interpretation(interpretation_id: int):
     if not interpretation:
         log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
         return jsonify({"message": "Interpretation not found"}), 404
+    book: m.Book = db.session.get(m.Book, interpretation.book.id)
 
     vote: m.InterpretationVote = m.InterpretationVote.query.filter_by(
         user_id=current_user.id, interpretation_id=interpretation_id
@@ -55,6 +52,24 @@ def vote_interpretation(interpretation_id: int):
             interpretation,
         )
     db.session.commit()
+
+    # notifications
+    if current_user.id != book.owner.id:
+        redirect_url = url_for(
+            "book.interpretation_view",
+            book_id=book.id,
+            section_id=interpretation.section_id,
+        )
+        notification_text = f"{current_user.username} voted your interpretation"
+        m.Notification(
+            link=redirect_url, text=notification_text, user_id=book.owner.id
+        ).save()
+        log(
+            log.INFO,
+            "Create notification for user with id [%s]",
+            book.owner.id,
+        )
+    # -------------
 
     return jsonify(
         {
