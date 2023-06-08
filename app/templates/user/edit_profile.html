@@ -1,10 +1,12 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
-{% include 'user/delete_profile_modal.html' %}
 
 {% block title %}Edit Profile{% endblock %}
 
 {% block content %}
+
+{% include 'user/delete_profile_modal.html' %}
+
 <!-- component -->
 <section>
   <div class="w-full lg:w-4/12 px-4 mx-auto pt-6">
@@ -30,8 +32,8 @@
             {{ form.hidden_tag() }}
             <div>
               <!-- prettier-ignore -->
-              {{form.name.label(class='block mb-2 text-sm font-medium text-gray-900 dark:text-white')}}
-              {{form.name(autocomplete="off", class='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500')}}
+              {{form.username.label(class='block mb-2 text-sm font-medium text-gray-900 dark:text-white')}}
+              {{form.username(autocomplete="off", class='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500')}}
             </div>
             <!-- prettier-ignore -->
              {{form.avatar_img.label(class='block mb-2 text-sm font-medium text-gray-900 dark:text-white')}}

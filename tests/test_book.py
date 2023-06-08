@@ -1,8 +1,8 @@
-# flake8: noqa F501
-from flask import current_app as Response, url_for
+from flask import current_app as Response
 from flask.testing import FlaskClient, FlaskCliRunner
 
 from app import models as m, db
+from app.controllers.create_access_groups import create_moderator_group
 from tests.utils import (
     login,
     logout,
@@ -10,6 +10,7 @@ from tests.utils import (
     check_if_nested_collection_entities_is_deleted,
     check_if_nested_section_entities_is_deleted,
     check_if_nested_interpretation_entities_is_deleted,
+    create_test_book,
 )
 
 
@@ -30,7 +31,7 @@ def test_create_edit_delete_book(client: FlaskClient):
     assert response.status_code == 200
     assert b"Label must be between 6 and 256 characters long." in response.data
 
-    book = m.Book.query.filter_by(label=BOOK_NAME).first()
+    book: m.Book = m.Book.query.filter_by(label=BOOK_NAME).first()
 
     assert not book
     assert not m.Book.query.count()
@@ -47,7 +48,7 @@ def test_create_edit_delete_book(client: FlaskClient):
     assert response.status_code == 200
     assert b"Label must be between 6 and 256 characters long." in response.data
 
-    book = m.Book.query.filter_by(label=BOOK_NAME).first()
+    book: m.Book = m.Book.query.filter_by(label=BOOK_NAME).first()
 
     assert not book
     assert not m.Book.query.count()
@@ -63,11 +64,18 @@ def test_create_edit_delete_book(client: FlaskClient):
     assert response.status_code == 200
     assert b"Book added!" in response.data
 
-    book = m.Book.query.filter_by(label=BOOK_NAME).first()
+    book: m.Book = m.Book.query.filter_by(label=BOOK_NAME).first()
 
     assert book
     assert book.versions
     assert len(book.versions) == 1
+    assert book.access_groups
+    assert len(book.access_groups) == 2
+
+    root_collection: m.Collection = book.last_version.collections[0]
+    assert root_collection
+    assert root_collection.access_groups
+    assert len(root_collection.access_groups) == 2
 
     response: Response = client.post(
         "/book/999/edit",
@@ -79,7 +87,7 @@ def test_create_edit_delete_book(client: FlaskClient):
     )
 
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
+    assert b"Book not found!" in response.data
 
     response: Response = client.post(
         f"/book/{book.id}/edit",
@@ -106,17 +114,17 @@ def test_create_edit_delete_book(client: FlaskClient):
     assert response.status_code == 200
     assert b"Success!" in response.data
     book = db.session.get(m.Book, book.id)
-    assert book.is_deleted == True
+    assert book.is_deleted
     check_if_nested_book_entities_is_deleted(book)
 
 
-def test_add_contributor(client: FlaskClient):
+def test_add_delete_contributor(client: FlaskClient):
     _, user = login(client)
     user: m.User
 
     moderator = m.User(username="Moderator", password="test").save()
 
-    moderators_book = m.Book(label="Test Book", user_id=moderator.id).save()
+    moderators_book: m.Book = create_test_book(moderator.id)
     response: Response = client.post(
         f"/book/{moderators_book.id}/add_contributor",
         data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
@@ -124,9 +132,10 @@ def test_add_contributor(client: FlaskClient):
     )
 
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
+    assert b"You do not have permission" in response.data
 
-    book = m.Book(label="Test Book", user_id=user.id).save()
+    book: m.Book = create_test_book(user.id)
+    m.BookVersion(semver="1.0.0", book_id=book.id).save()
 
     response: Response = client.post(
         f"/book/{book.id}/add_contributor",
@@ -136,6 +145,12 @@ def test_add_contributor(client: FlaskClient):
 
     assert response.status_code == 200
     assert b"Contributor was added!" in response.data
+    moderator: m.User = db.session.get(m.User, moderator.id)
+    assert moderator.access_groups
+    for access_group in moderator.access_groups:
+        access_group: m.AccessGroup
+        assert access_group.book_id == book.id
+
     response: Response = client.post(
         f"/book/{book.id}/add_contributor",
         data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
@@ -149,7 +164,7 @@ def test_add_contributor(client: FlaskClient):
         user=moderator, book=book
     ).first()
     assert contributor.role == m.BookContributor.Roles.MODERATOR
-    assert len(book.contributors) == 1
+    assert len(book.contributors) == 2
 
     editor = m.User(username="Editor", password="test").save()
     response: Response = client.post(
@@ -165,30 +180,20 @@ def test_add_contributor(client: FlaskClient):
         user=editor, book=book
     ).first()
     assert contributor.role == m.BookContributor.Roles.EDITOR
-    assert len(book.contributors) == 2
+    assert len(book.contributors) == 3
 
+    contributor_to_delete = m.BookContributor.query.filter_by(
+        user_id=moderator.id, book_id=book.id
+    ).first()
 
-def test_delete_contributor(client: FlaskClient, runner: FlaskCliRunner):
-    _, user = login(client)
-    user: m.User
-
-    # add dummmy data
-    runner.invoke(args=["db-populate"])
-
-    book = db.session.get(m.Book, 1)
-    book.user_id = user.id
-    book.save()
-
-    contributors_len = len(book.contributors)
-    assert contributors_len
-
-    contributor_to_delete = book.contributors[0]
-
+    assert moderator.access_groups
     response: Response = client.post(
         f"/book/{book.id}/delete_contributor",
         data=dict(user_id=contributor_to_delete.user_id),
         follow_redirects=True,
     )
+    moderator: m.User = db.session.get(m.User, moderator.id)
+    assert not moderator.access_groups
 
     assert response.status_code == 200
     assert b"Success!" in response.data
@@ -209,17 +214,19 @@ def test_delete_contributor(client: FlaskClient, runner: FlaskCliRunner):
     )
 
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
+    assert b"Book not found!" in response.data
 
 
 def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
     _, user = login(client)
     user: m.User
 
-    # add dummmy data
-    runner.invoke(args=["db-populate"])
+    book = create_test_book(user.id)
 
-    book = db.session.get(m.Book, 1)
+    # for contributor in m.BookContributor.query.all():
+    #     db.session.delete(contributor)
+    # db.session.commit()
+
     book.user_id = user.id
     book.save()
 
@@ -244,7 +251,7 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
 
     moderator = m.User(username="Moderator", password="test").save()
 
-    moderators_book = m.Book(label="Test Book", user_id=moderator.id).save()
+    moderators_book: m.Book = create_test_book(moderator.id)
     response: Response = client.post(
         f"/book/{moderators_book.id}/add_contributor",
         data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
@@ -252,28 +259,22 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
     )
 
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
+    assert b"You do not have permission" in response.data
 
     response: Response = client.post(
-        f"/book/999/add_contributor",
+        "/book/999/add_contributor",
         data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
         follow_redirects=True,
     )
 
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
+    assert b"Book not found!" in response.data
 
 
-def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
+def test_crud_collection(client: FlaskClient):
     _, user = login(client)
     user: m.User
-
-    # add dummmy data
-    runner.invoke(args=["db-populate"])
-
-    book = db.session.get(m.Book, 1)
-    book.user_id = user.id
-    book.save()
+    book = create_test_book(user.id)
 
     response: Response = client.post(
         f"/book/{book.id}/create_collection",
@@ -294,16 +295,24 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Collection label must be unique!" in response.data
 
     response: Response = client.post(
-        f"/book/999/create_collection",
+        "/book/999/create_collection",
         data=dict(label="Test Collection #1 Label", about="Test Collection #1 About"),
         follow_redirects=True,
     )
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
+    assert b"Book not found!" in response.data
 
     collection: m.Collection = m.Collection.query.filter_by(
         label="Test Collection #1 Label"
     ).first()
+
+    assert collection
+    assert collection.access_groups
+    assert len(collection.access_groups) == 2
+    for access_group in collection.access_groups:
+        access_group: m.AccessGroup
+        assert access_group.book_id == collection.version.book_id
+
     m.Collection(
         label="Test Collection #2 Label",
         version_id=collection.version_id,
@@ -342,7 +351,7 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
         follow_redirects=True,
     )
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
+    assert b"Book not found!" in response.data
 
     edited_collection: m.Collection = m.Collection.query.filter_by(
         label=new_label, about=new_about
@@ -387,29 +396,26 @@ def test_crud_collection(client: FlaskClient, runner: FlaskCliRunner):
     )
 
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
+    assert b"Book not found!" in response.data
 
 
-def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
+def test_crud_subcollection(client: FlaskClient):
     _, user = login(client)
     user: m.User
 
-    # add dummy data
-    runner.invoke(args=["db-populate"])
+    book = create_test_book(user.id)
 
-    book: m.Book = db.session.get(m.Book, 1)
-    book.user_id = user.id
-    book.save()
+    collection: m.Collection = m.Collection.query.filter_by(
+        version_id=book.last_version.id,
+        is_leaf=False,
+        parent_id=book.last_version.root_collection.id,
+    ).first()
 
-    leaf_collection: m.Collection = m.Collection(
-        label="Test Leaf Collection #1 Label",
+    leaf_collection: m.Collection = m.Collection.query.filter_by(
         version_id=book.last_version.id,
         is_leaf=True,
-        parent_id=book.last_version.root_collection.id,
-    ).save()
-    collection: m.Collection = m.Collection(
-        label="Test Collection #1 Label", version_id=book.last_version.id
-    ).save()
+        parent_id=collection.id,
+    ).first()
 
     response: Response = client.post(
         f"/book/999/{leaf_collection.id}/create_sub_collection",
@@ -419,7 +425,7 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
         follow_redirects=True,
     )
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
+    assert b"Book not found!" in response.data
 
     response: Response = client.post(
         f"/book/{book.id}/{leaf_collection.id}/create_sub_collection",
@@ -460,6 +466,12 @@ def test_crud_subcollection(client: FlaskClient, runner: FlaskCliRunner):
     assert sub_collection
     assert not sub_collection.is_leaf
     assert sub_collection.parent_id == collection.id
+
+    assert sub_collection.access_groups
+    assert len(sub_collection.access_groups) == 2
+    for access_group in sub_collection.access_groups:
+        access_group: m.AccessGroup
+        assert access_group.book_id == sub_collection.version.book_id
 
     m.Collection(
         label="Test SubCollection #2 Label",
@@ -535,31 +547,20 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     _, user = login(client)
     user: m.User
 
-    # add dummmy data
-    runner.invoke(args=["db-populate"])
+    book = create_test_book(user.id)
 
-    book: m.Book = db.session.get(m.Book, 1)
-    book.user_id = user.id
-    book.save()
-
-    leaf_collection: m.Collection = m.Collection(
-        label="Test Leaf Collection #1 Label",
+    collection: m.Collection = m.Collection.query.filter_by(
         version_id=book.last_version.id,
-        is_leaf=True,
+        is_leaf=False,
         parent_id=book.last_version.root_collection.id,
-    ).save()
-    collection: m.Collection = m.Collection(
-        label="Test Collection #1 Label", version_id=book.last_version.id
-    ).save()
-    sub_collection: m.Collection = m.Collection(
-        label="Test SubCollection #1 Label",
-        version_id=book.last_version.id,
-        parent_id=collection.id,
-        is_leaf=True,
-    ).save()
+    ).first()
 
-    leaf_collection.is_leaf = False
-    leaf_collection.save()
+    sub_collection: m.Collection = m.Collection.query.filter_by(
+        version_id=book.last_version.id,
+        is_leaf=True,
+        parent_id=collection.id,
+    ).first()
+
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/create_section",
         data=dict(
@@ -571,14 +572,11 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     )
     assert b"You can't create section for this collection" in response.data
 
-    leaf_collection.is_leaf = True
-    leaf_collection.save()
-
     label_1 = "Test Section #1 Label"
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/create_section",
+        f"/book/{book.id}/{sub_collection.id}/create_section",
         data=dict(
-            collection_id=leaf_collection.id,
+            collection_id=sub_collection.id,
             label=label_1,
             about="Test Section #1 About",
         ),
@@ -587,17 +585,23 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
 
     assert response.status_code == 200
     section: m.Section = m.Section.query.filter_by(
-        label=label_1, collection_id=leaf_collection.id
+        label=label_1, collection_id=sub_collection.id
     ).first()
     assert section
-    assert section.collection_id == leaf_collection.id
+    assert section.collection_id == sub_collection.id
     assert section.version_id == book.last_version.id
     assert not section.interpretations
 
+    assert section.access_groups
+    assert len(section.access_groups) == 2
+    for access_group in section.access_groups:
+        access_group: m.AccessGroup
+        assert access_group.book_id == section.version.book_id
+
     response: Response = client.post(
-        f"/book/{book.id}/{leaf_collection.id}/create_section",
+        f"/book/{book.id}/{sub_collection.id}/create_section",
         data=dict(
-            collection_id=leaf_collection.id,
+            collection_id=sub_collection.id,
             label=label_1,
             about="Test Section #1 About",
         ),
@@ -663,7 +667,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
 
     m.Section(
         label="Test",
-        collection_id=leaf_collection.id,
+        collection_id=sub_collection.id,
         version_id=book.last_version.id,
     ).save()
 
@@ -674,7 +678,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     ).save()
 
     section: m.Section = m.Section.query.filter_by(
-        label=label_1, collection_id=leaf_collection.id
+        label=label_1, collection_id=sub_collection.id
     ).first()
 
     response: Response = client.post(
@@ -707,7 +711,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
 
     #
     section_2: m.Section = m.Section.query.filter_by(
-        label=label_1, collection_id=sub_collection.id
+        label="Test Section #1 Label(edited)", collection_id=sub_collection.id
     ).first()
     response: Response = client.post(
         f"/book/{book.id}/{section_2.id}/edit_section",
@@ -776,43 +780,35 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     assert b"Section not found" in response.data
 
 
-def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
+def test_crud_interpretation(client: FlaskClient):
     _, user = login(client)
     user: m.User
+    book = create_test_book(user.id)
 
-    # add dummmy data
-    runner.invoke(args=["db-populate"])
-
-    book: m.Book = db.session.get(m.Book, 1)
-    book.user_id = user.id
-    book.save()
-
-    leaf_collection: m.Collection = m.Collection(
-        label="Test Leaf Collection #1 Label",
+    collection: m.Collection = m.Collection.query.filter_by(
         version_id=book.last_version.id,
         is_leaf=True,
         parent_id=book.last_version.root_collection.id,
-    ).save()
-    section_in_collection: m.Section = m.Section(
-        label="Test Section in Collection #1 Label",
-        collection_id=leaf_collection.id,
+    ).first()
+    section_in_collection: m.Section = m.Section.query.filter_by(
+        collection_id=collection.id,
         version_id=book.last_version.id,
-    ).save()
+    ).first()
 
-    collection: m.Collection = m.Collection(
-        label="Test Collection #1 Label", version_id=book.last_version.id
-    ).save()
-    sub_collection: m.Collection = m.Collection(
-        label="Test SubCollection #1 Label",
+    collection: m.Collection = m.Collection.query.filter_by(
         version_id=book.last_version.id,
-        parent_id=collection.id,
+        is_leaf=False,
+        parent_id=book.last_version.root_collection.id,
+    ).first()
+    sub_collection: m.Collection = m.Collection.query.filter_by(
+        version_id=book.last_version.id,
         is_leaf=True,
-    ).save()
-    section_in_subcollection: m.Section = m.Section(
-        label="Test Section in Subcollection #1 Label",
+        parent_id=collection.id,
+    ).first()
+    section_in_subcollection: m.Section = m.Section.query.filter_by(
         collection_id=sub_collection.id,
         version_id=book.last_version.id,
-    ).save()
+    ).first()
 
     text_1 = "Test Interpretation #1 Text"
 
@@ -829,6 +825,12 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
     assert interpretation
     assert interpretation.section_id == section_in_subcollection.id
     assert not interpretation.comments
+
+    assert interpretation.access_groups
+    assert len(interpretation.access_groups) == 2
+    for access_group in interpretation.access_groups:
+        access_group: m.AccessGroup
+        assert access_group.book_id == interpretation.section.version.book_id
 
     response: Response = client.post(
         f"/book/{book.id}/{section_in_collection.id}/create_interpretation",
@@ -873,13 +875,21 @@ def test_crud_interpretation(client: FlaskClient, runner: FlaskCliRunner):
 
     # edit
 
-    m.Interpretation(
+    i_1 = m.Interpretation(
         text="Test", section_id=section_in_collection.id, user_id=user.id
     ).save()
 
-    m.Interpretation(
+    i_2 = m.Interpretation(
         text="Test",
         section_id=section_in_subcollection.id,
+    ).save()
+
+    group = create_moderator_group(book.id)
+    m.InterpretationAccessGroups(
+        interpretation_id=i_1.id, access_group_id=group.id
+    ).save()
+    m.InterpretationAccessGroups(
+        interpretation_id=i_2.id, access_group_id=group.id
     ).save()
 
     interpretation: m.Interpretation = m.Interpretation.query.filter_by(
@@ -967,7 +977,7 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
         is_leaf=True,
         parent_id=book.last_version.root_collection.id,
     ).save()
-    section_in_collection: m.Section = m.Section(
+    m.Section(
         label="Test Section in Collection #1 Label",
         collection_id=leaf_collection.id,
         version_id=book.last_version.id,
@@ -986,6 +996,10 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
         label="Test Section in Subcollection #1 Label",
         collection_id=sub_collection.id,
         version_id=book.last_version.id,
+    ).save()
+    group = create_moderator_group(book.id)
+    m.SectionAccessGroups(
+        section_id=section_in_subcollection.id, access_group_id=group.id
     ).save()
 
     label_1 = "Test Interpretation #1 Label"
@@ -1082,7 +1096,6 @@ def test_access_to_settings_page(client: FlaskClient):
     )
 
     assert response.status_code == 200
-    assert b"You are not owner of this book!" not in response.data
 
     logout(client)
 
@@ -1092,7 +1105,7 @@ def test_access_to_settings_page(client: FlaskClient):
     )
 
     assert response.status_code == 200
-    assert b"You are not owner of this book!" in response.data
+    assert b"You do not have permission" in response.data
 
 
 def test_interpretation_in_home_last_inter_section(
@@ -1134,9 +1147,16 @@ def test_interpretation_in_home_last_inter_section(
         collection_id=sub_collection.id,
         version_id=book.last_version.id,
     ).save()
+    group = create_moderator_group(book.id)
+    m.SectionAccessGroups(
+        section_id=section_in_subcollection.id, access_group_id=group.id
+    ).save()
+    m.SectionAccessGroups(
+        section_id=section_in_collection.id, access_group_id=group.id
+    ).save()
 
-    label_1 = "Test Interpretation #1 Label"
-    text_1 = "Test Interpretation #1 Text"
+    label_1 = "Test Interpretation no1 Label"
+    text_1 = "Test Interpretation no1 Text"
 
     response: Response = client.post(
         f"/book/{book.id}/{section_in_subcollection.id}/create_interpretation",
@@ -1194,7 +1214,7 @@ def test_interpretation_in_home_last_inter_section(
     assert b"Section not found" in response.data
 
     response: Response = client.get(
-        f"/home",
+        "/home",
         follow_redirects=True,
     )
 

@@ -37,9 +37,10 @@ export function deleteInterpretation() {
         const interpretationId = btn.getAttribute('data-interpretation-id');
         interpretationIdInDeleteInterpretationModal.value = interpretationId;
         let newActionPath: string = '';
+
         newActionPath = defaultActionPath.replace(
-          '0/interpretation_delete',
-          `${interpretationId}/interpretation_delete`,
+          '0/delete_interpretation',
+          `${interpretationId}/delete_interpretation`,
         );
 
         deleteInterpretationForm.setAttribute('action', `${newActionPath}`);
@@ -47,7 +48,6 @@ export function deleteInterpretation() {
       }),
     );
     const modalOptions: ModalOptions = {
-      placement: 'bottom-right',
       closable: true,
       onHide: () => {
         deleteInterpretationForm.setAttribute('action', '');

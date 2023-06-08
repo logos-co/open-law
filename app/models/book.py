@@ -18,7 +18,14 @@ class Book(BaseModel):
     owner = db.relationship("User", viewonly=True)
     stars = db.relationship("User", secondary="books_stars", back_populates="stars")
     contributors = db.relationship("BookContributor")
-    versions = db.relationship("BookVersion")
+    versions = db.relationship("BookVersion", order_by="asc(BookVersion.id)")
+    list_access_groups = db.relationship(
+        "AccessGroup"
+    )  # all access_groups in current book(in nested entities)
+    access_groups = db.relationship(
+        "AccessGroup",
+        secondary="books_access_groups",
+    )  # access_groups related to current entity
     tags = db.relationship(
         "Tag",
         secondary="book_tags",
@@ -81,6 +88,30 @@ class Book(BaseModel):
                     m.Collection.id == m.Section.collection_id,
                     m.Interpretation.section_id == m.Section.id,
                     m.Interpretation.approved.is_(True),
+                    m.BookVersion.is_deleted.is_(False),
+                    m.Interpretation.is_deleted.is_(False),
+                    m.Section.is_deleted.is_(False),
+                    m.Collection.is_deleted.is_(False),
+                ),
+            )
+            .order_by(m.Interpretation.created_at.desc())
+            .all()
+        )
+
+        return interpretations
+
+    @property
+    def interpretations(self):
+        interpretations = (
+            db.session.query(
+                m.Interpretation,
+            )
+            .filter(
+                and_(
+                    m.BookVersion.id == self.last_version.id,
+                    m.Section.version_id == m.BookVersion.id,
+                    m.Collection.id == m.Section.collection_id,
+                    m.Interpretation.section_id == m.Section.id,
                     m.BookVersion.is_deleted.is_(False),
                     m.Interpretation.is_deleted.is_(False),
                     m.Section.is_deleted.is_(False),

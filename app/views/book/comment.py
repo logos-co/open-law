@@ -25,7 +25,7 @@ def create_comment(
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
+        flash("Book not found!", "danger")
         return redirect(url_for("book.my_library"))
     redirect_url = url_for(
         "book.qa_view", book_id=book_id, interpretation_id=interpretation_id
@@ -61,6 +61,8 @@ def create_comment(
 
         tags = current_app.config["TAG_REGEX"].findall(text)
         set_comment_tags(comment, tags)
+        # TODO Send notifications
+        # users_mentions = current_app.config["USER_MENTION_REGEX"].findall(text)
 
         flash("Success!", "success")
         return redirect(redirect_url)

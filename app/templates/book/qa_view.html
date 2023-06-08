@@ -1,18 +1,17 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
 
-
-
-{% if current_user.is_authenticated %}
-{% include 'book/modals/delete_comment_modal.html' %}
-{% include 'book/modals/edit_comment_modal.html' %}
-{% block right_sidebar %}
-{% endblock %}
-{% endif %}
-
 {% block title %}{{ section.label[:32] }}{% endblock %}
 
 {% block content %}
+
+{% if current_user.is_authenticated %}
+  {% include 'book/modals/delete_comment_modal.html' %}
+  {% include 'book/modals/edit_comment_modal.html' %}
+  {% block right_sidebar %}
+  {% endblock %}
+{% endif %}
+
 {% include 'book/breadcrumbs_navigation.html'%}
 <div class="shadow-md mt-5 h-auto overflow-x-hidden">
   <div class="ql-snow mt-20">
@@ -20,7 +19,7 @@
       {{ section.label }}
     </h1>
     <div class="ql-editor-readonly text-lg dark:text-white p-3">
-      {{display_tags(interpretation.text)|safe}}
+      {{display_inline_elements(interpretation.text)|safe}}
     </div>
   </div>
   <div class="p-1">
@@ -72,25 +71,20 @@
   </div>
   <!-- prettier-ignore -->
   <dl class="w-md md:w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
+    {% set access_to_delete_comment = has_permission(section, Access.D, EntityType.COMMENT) %}
+    {% set access_to_approve_comment = has_permission(section, Access.A, EntityType.COMMENT) %}
+
     <!-- prettier-ignore -->
     <div class="text-sm dark:text-white p-3">Comments:</div>
-    {% for comment in interpretation.comments if not comment.is_deleted and not comment.parent_id%}
+    {% for comment in interpretation.comments if not comment.is_deleted and not comment.parent_id %}
       <!-- prettier-ignore -->
       <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
         <div class="flex flex-row pb-3 p-3 w-2/3 md:w-full">
           <div class="vote-block flex flex-col m-5 mr-8 justify-center items-center">
-            {% if comment.user_id != current_user.id %}
-              <div class="vote-button cursor-pointer" data-vote-for="comment" data-entity-id="{{ comment.id }}" data-positive="true">
-                <svg
-                  class="w-6 h-6 select-none
-                    {% if comment.current_user_vote %}
-                      stroke-green-500
-                    {% endif %}
-                  "
-                  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" > <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /> </svg>
-              </div>
-            {% endif %}
 
+            <div class="vote-button cursor-pointer" data-vote-for="comment" data-entity-id="{{ comment.id }}" data-positive="true">
+              <svg class="w-6 h-6 select-none {% if comment.current_user_vote %} stroke-green-500 {% endif %} " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" > <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /> </svg>
+            </div>
             <span
               class="vote-count text-3xl select-none
               {% if comment.vote_count < 0 %}
@@ -102,19 +96,12 @@
             >
               {{ comment.vote_count }}
             </span>
+            <div class="vote-button cursor-pointer" data-vote-for="comment" data-entity-id="{{ comment.id }}" data-positive="false">
+              <svg class="w-6 h-6 select-none {% if comment.current_user_vote == False %} stroke-red-500 {% endif %} " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /> </svg>
+            </div>
 
-            {% if comment.user_id != current_user.id %}
-              <div class="vote-button cursor-pointer" data-vote-for="comment" data-entity-id="{{ comment.id }}" data-positive="false">
-                <svg class="w-6 h-6 select-none
-                {% if comment.current_user_vote == False %}
-                  stroke-red-500
-                {% endif %}
-                " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /> </svg>
-              </div>
-            {% endif %}
 
-            <!-- TODO check permissions -->
-            {% if interpretation.book.owner == current_user %}
+            {% if access_to_approve_comment %}
               <div class="approve-button select-none approve-btn mt-3 cursor-pointer" data-approve="comment" data-entity-id="{{ comment.id }}">
                 <!-- outline -->
                 <svg class="not-approved-icon w-6 h-6 {% if comment.approved %} hidden {% endif %}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -132,9 +119,9 @@
           <dt class="flex justify-center w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
             <div>
               <div class="dark:text-white h-30">
-                <div class="ql-snow mb-2 truncate md:max-w-xl">
+                <div class="ql-snow mb-2">
                   <div class="dark:text-white h-30 ql-editor-readonly !px-0">
-                    <p>{{ display_tags(comment.text)|safe }}</p>
+                    <p>{{ display_inline_elements(comment.text)|safe }}</p>
                   </div>
                 </div>
               </div>
@@ -152,28 +139,31 @@
 
               <div class="flex ml-auto justify-end space-x-2 w-24">
                 {% if comment.user_id == current_user.id %}
-                <div class="relative">
-                  <button id="edit_comment_btn" data-popover-target="popover-edit" data-edit-comment-id="{{comment.id}}" data-edit-comment-text="{{comment.text}}" type="button" data-modal-target="edit_comment_modal" data-modal-toggle="edit_comment_modal" class="space-x-0.5 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /> </svg>
-                  </button>
-                  <div data-popover id="popover-edit" role="tooltip" class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800">
-                    <div class="px-3 py-2">
-                      <p>Edit this comment</p>
+                  <div class="relative">
+                    <button id="edit_comment_btn" data-popover-target="popover-edit" data-edit-comment-id="{{comment.id}}" data-edit-comment-text="{{comment.text}}" type="button" data-modal-target="edit_comment_modal" data-modal-toggle="edit_comment_modal" class="space-x-0.5 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /> </svg>
+                    </button>
+                    <div data-popover id="popover-edit" role="tooltip" class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800">
+                      <div class="px-3 py-2">
+                        <p>Edit this comment</p>
+                      </div>
+                      <div data-popper-arrow></div>
                     </div>
-                    <div data-popper-arrow></div>
                   </div>
-                </div>
-                <div class="relative">
-                  <button id="delete_comment_btn" data-popover-target="popover-delete" data-comment-id="{{comment.id}}" type="button" data-modal-target="delete_comment_modal" data-modal-toggle="delete_comment_modal" class="space-x-0.5 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /> </svg>
-                  </button>
-                  <div data-popover id="popover-delete" role="tooltip" class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800">
-                    <div class="px-3 py-2">
-                      <p>Delete this comment</p>
+                {% endif %}
+
+                {% if comment.user_id == current_user.id or access_to_delete_comment %}
+                  <div class="relative">
+                    <button id="delete_comment_btn" data-popover-target="popover-delete" data-comment-id="{{comment.id}}" type="button" data-modal-target="delete_comment_modal" data-modal-toggle="delete_comment_modal" class="space-x-0.5 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /> </svg>
+                    </button>
+                    <div data-popover id="popover-delete" role="tooltip" class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800">
+                      <div class="px-3 py-2">
+                        <p>Delete this comment</p>
+                      </div>
+                      <div data-popper-arrow></div>
                     </div>
-                    <div data-popper-arrow></div>
                   </div>
-                </div>
                 {% endif %}
 
                 <div class="relative">
@@ -195,7 +185,7 @@
             <div class="p-5 mb-2 flex justify-between items-end bg-slate-100 dark:bg-slate-600 rounded-lg">
               <div class="ql-snow">
                 <div class="inline-block mb-4 ql-editor-readonly !p-0">
-                  {{display_tags(child.text)|safe}}
+                  {{display_inline_elements(child.text)|safe}}
                 </div>
                 <span>
                   <div>

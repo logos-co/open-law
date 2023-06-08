@@ -12,6 +12,7 @@ from app.controllers.delete_nested_book_entities import (
     delete_nested_interpretation_entities,
 )
 from app import models as m, db, forms as f
+from app.controllers.require_permission import require_permission
 from app.controllers.tags import set_interpretation_tags
 from app.logger import log
 from .bp import bp
@@ -69,7 +70,7 @@ def interpretation_create(
         plain_text = clean_html(text).lower()
         tags = current_app.config["TAG_REGEX"].findall(text)
         for tag in tags:
-            word = tag.lower().replace("[", "").replace("]", "")
+            word = tag.lower().replace("#", "")
             plain_text = plain_text.replace(tag.lower(), word)
 
         interpretation: m.Interpretation = m.Interpretation(
@@ -85,6 +86,13 @@ def interpretation_create(
             section,
         )
         interpretation.save()
+
+        # access groups
+        for access_group in interpretation.section.access_groups:
+            m.InterpretationAccessGroups(
+                interpretation_id=interpretation.id, access_group_id=access_group.id
+            ).save()
+        # -------------
 
         tags = current_app.config["TAG_REGEX"].findall(text)
         set_interpretation_tags(interpretation, tags)
@@ -109,14 +117,18 @@ def interpretation_edit(
     book_id: int,
     interpretation_id: int,
 ):
+    interpretation: m.Interpretation = db.session.get(
+        m.Interpretation, interpretation_id
+    )
+
+    if interpretation and interpretation.user_id != current_user.id:
+        flash("You dont have permission to edit this interpretation", "danger")
+        return redirect(url_for("book.collection_view", book_id=book_id))
+
     form = f.EditInterpretationForm()
 
     if form.validate_on_submit():
         text = form.text.data
-        interpretation_id = form.interpretation_id.data
-        interpretation: m.Interpretation = db.session.get(
-            m.Interpretation, interpretation_id
-        )
         redirect_url = url_for(
             "book.interpretation_view",
             book_id=book_id,
@@ -135,7 +147,7 @@ def interpretation_edit(
         plain_text = clean_html(text).lower()
         tags = current_app.config["TAG_REGEX"].findall(text)
         for tag in tags:
-            word = tag.lower().replace("[", "").replace("]", "")
+            word = tag.lower().replace("#", "")
             plain_text = plain_text.replace(tag.lower(), word)
 
         interpretation.plain_text = plain_text
@@ -161,26 +173,24 @@ def interpretation_edit(
     "/<int:book_id>/<int:interpretation_id>/delete_interpretation", methods=["POST"]
 )
 @register_book_verify_route(bp.name)
+@require_permission(
+    entity_type=m.Permission.Entity.INTERPRETATION,
+    access=[m.Permission.Access.D],
+    entities=[m.Interpretation],
+)
 @login_required
 def interpretation_delete(
     book_id: int,
     interpretation_id: int,
 ):
     form = f.DeleteInterpretationForm()
-    interpretation_id = form.interpretation_id.data
     interpretation: m.Interpretation = db.session.get(
         m.Interpretation, interpretation_id
     )
     if not interpretation or interpretation.is_deleted:
         log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
         flash("Interpretation not found", "danger")
-        return redirect(
-            url_for(
-                "book.interpretation_view",
-                book_id=book_id,
-                section_id=interpretation.section_id,
-            )
-        )
+        return redirect(url_for("book.collection_view", book_id=book_id))
     form = f.DeleteInterpretationForm()
     if form.validate_on_submit():
         interpretation.is_deleted = True
@@ -209,7 +219,7 @@ def qa_view(book_id: int, interpretation_id: int):
     book: m.Book = db.session.get(m.Book, book_id)
     if not book or book.is_deleted:
         log(log.INFO, "User: [%s] is not owner of book: [%s]", current_user, book)
-        flash("You are not owner of this book!", "danger")
+        flash("Book not found!", "danger")
         return redirect(url_for("book.my_library"))
 
     interpretation: m.Interpretation = db.session.get(

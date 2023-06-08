@@ -9,10 +9,15 @@ export function renameCollection() {
       btn.addEventListener('click', () => {
         const inputsForRename: NodeListOf<HTMLInputElement> =
           document.querySelectorAll(`[id^="edit-collection-label-"]`);
+        const scrfInput: HTMLInputElement =
+          document.querySelector('#csrf_token');
         inputsForRename[index].removeAttribute('readonly');
         const oldName = inputsForRename[index].value;
-        inputsForRename[index].value = '';
+        inputsForRename[index].value = oldName;
         inputsForRename[index].focus();
+        inputsForRename[index].selectionStart = inputsForRename[
+          index
+        ].selectionEnd = 257;
         inputsForRename[index].addEventListener('blur', () => {
           inputsForRename[index].value = oldName;
         });
@@ -35,6 +40,7 @@ export function renameCollection() {
             },
             body: JSON.stringify({
               label: newLabel,
+              csrf_token: scrfInput ? scrfInput.value : '',
             }),
           });
           if (response.status == 200) {

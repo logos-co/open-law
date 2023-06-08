@@ -26,6 +26,7 @@ def create_app(environment="development"):
         vote_blueprint,
         approve_blueprint,
         star_blueprint,
+        permissions_blueprint,
         search_blueprint,
     )
     from app import models as m
@@ -54,6 +55,7 @@ def create_app(environment="development"):
     app.register_blueprint(vote_blueprint)
     app.register_blueprint(approve_blueprint)
     app.register_blueprint(star_blueprint)
+    app.register_blueprint(permissions_blueprint)
     app.register_blueprint(search_blueprint)
 
     # Set up flask login.
@@ -68,15 +70,20 @@ def create_app(environment="development"):
     # Jinja globals
     from app.controllers.jinja_globals import (
         form_hidden_tag,
-        display_tags,
+        display_inline_elements,
         build_qa_url_using_interpretation,
         recursive_render,
+        has_permission,
     )
 
+    app.jinja_env.globals["Access"] = m.Permission.Access
+    app.jinja_env.globals["EntityType"] = m.Permission.Entity
+
     app.jinja_env.globals["form_hidden_tag"] = form_hidden_tag
-    app.jinja_env.globals["display_tags"] = display_tags
+    app.jinja_env.globals["display_inline_elements"] = display_inline_elements
     app.jinja_env.globals["build_qa_url"] = build_qa_url_using_interpretation
     app.jinja_env.globals["recursive_render"] = recursive_render
+    app.jinja_env.globals["has_permission"] = has_permission
 
     # Error handlers.
     @app.errorhandler(HTTPException)

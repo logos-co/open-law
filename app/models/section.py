@@ -6,6 +6,7 @@ from app.controllers import create_breadcrumbs
 from .interpretation import Interpretation
 from .comment import Comment
 from .interpretation_vote import InterpretationVote
+from app.controllers.next_prev_section import recursive_move_down, recursive_move_up
 
 
 class Section(BaseModel):
@@ -17,6 +18,8 @@ class Section(BaseModel):
     collection_id = db.Column(db.ForeignKey("collections.id"))
     user_id = db.Column(db.ForeignKey("users.id"))
     version_id = db.Column(db.ForeignKey("book_versions.id"))
+    selected_interpretation_id = db.Column(db.Integer, nullable=True)
+    position = db.Column(db.Integer, default=-1, nullable=True)
 
     # Relationships
     collection = db.relationship("Collection", viewonly=True)
@@ -25,6 +28,10 @@ class Section(BaseModel):
     interpretations = db.relationship(
         "Interpretation", viewonly=True, order_by="desc(Interpretation.id)"
     )
+    access_groups = db.relationship(
+        "AccessGroup",
+        secondary="sections_access_groups",
+    )  # access_groups related to current entity
     tags = db.relationship(
         "Tag",
         secondary="section_tags",
@@ -119,6 +126,38 @@ class Section(BaseModel):
         )
 
         return comments
+
+    @property
+    def next_section(self):
+        section = (
+            Section.query.filter(
+                Section.collection_id == self.collection_id,
+                Section.position > self.position,
+            )
+            .order_by(Section.position)
+            .first()
+        )
+        if section:
+            return section
+
+        section = recursive_move_down(self.collection)
+        return section
+
+    @property
+    def previous_section(self):
+        section = (
+            Section.query.filter(
+                Section.collection_id == self.collection_id,
+                Section.position < self.position,
+            )
+            .order_by(Section.position.desc())
+            .first()
+        )
+        if section:
+            return section
+
+        section = recursive_move_up(self.collection)
+        return section
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"

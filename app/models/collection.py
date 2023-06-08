@@ -11,6 +11,7 @@ class Collection(BaseModel):
     about = db.Column(db.Text, unique=False, nullable=True)
     is_root = db.Column(db.Boolean, default=False)
     is_leaf = db.Column(db.Boolean, default=False)
+    position = db.Column(db.Integer, default=-1, nullable=True)
 
     # Foreign keys
     version_id = db.Column(db.ForeignKey("book_versions.id"))
@@ -25,13 +26,29 @@ class Collection(BaseModel):
         order_by="asc(Collection.id)",
     )
     sections = db.relationship("Section")
+    access_groups = db.relationship(
+        "AccessGroup",
+        secondary="collections_access_groups",
+    )  # access_groups related to current entity
 
     def __repr__(self):
         return f"<{self.id}: {self.label}>"
 
     @property
     def active_sections(self):
-        return [section for section in self.sections if not section.is_deleted]
+        items = [section for section in self.sections if not section.is_deleted]
+        items.sort(key=lambda item: item.position)
+        return items
+
+    @property
+    def active_children(self):
+        items = [child for child in self.children if not child.is_deleted]
+        items.sort(key=lambda item: item.position)
+        return items
+
+    @property
+    def book_id(self):
+        return self.version.book_id
 
     @property
     def sub_collections(self):

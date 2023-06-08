@@ -4,15 +4,21 @@ export function renameSection() {
   );
   const sectionRenameForms: NodeListOf<HTMLFormElement> =
     document.querySelectorAll('[id^="rename-section-label-form-"]');
+
   if (renameSectionBtns.length > 0 && sectionRenameForms.length > 0) {
     renameSectionBtns.forEach((btn, index) => {
       btn.addEventListener('click', () => {
         const inputsForRename: NodeListOf<HTMLInputElement> =
           document.querySelectorAll(`[id^="edit-section-label-"]`);
+        const scrfInput: HTMLInputElement =
+          document.querySelector('#csrf_token');
         const oldName = inputsForRename[index].value;
         inputsForRename[index].removeAttribute('readonly');
-        inputsForRename[index].value = '';
+        inputsForRename[index].value = oldName;
         inputsForRename[index].focus();
+        inputsForRename[index].selectionStart = inputsForRename[
+          index
+        ].selectionEnd = 257;
         inputsForRename[index].addEventListener('blur', () => {
           inputsForRename[index].value = oldName;
         });
@@ -36,6 +42,7 @@ export function renameSection() {
             body: JSON.stringify({
               label: newLabel,
               section_id: sectionId,
+              csrf_token: scrfInput ? scrfInput.value : '',
             }),
           });
           if (response.status == 200) {

@@ -101,11 +101,11 @@ def test_profile(client):
     login(client, username=user.username, password="password")
 
     # edit_profile
-    new_name = "Some other name"
+    new_name = "Some_other_name"
     res = client.post(
         "/user/edit_profile",
         data={
-            "name": new_name,
+            "username": new_name,
             "avatar_img": avatar_img,
         },
         follow_redirects=True,

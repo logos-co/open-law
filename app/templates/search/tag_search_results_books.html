@@ -2,9 +2,10 @@
 {% extends 'base.html' %}
 
 {% block title %}Tag search results{% endblock %}
-
+{% block right_sidebar %}
+{% endblock %}
 {% block content %}
-<div class="border-b border-gray-200 dark:border-gray-700 md:mr-64">
+<div class="border-b border-gray-200 dark:border-gray-700">
   <!-- prettier-ignore -->
   <h1 class="hidden md:inline font-extrabold text-lg dark:text-white ml-4 mt-5">Tag search results</h1>
   <!-- prettier-ignore -->
@@ -15,13 +16,13 @@
   <div class="border-b border-gray-200 dark:border-gray-700">
     <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
         <li class="mr-2">
-            <a href="{{url_for('search.tag_search_interpretations',tag_name=tag_name)}}" class="inline-flex p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" >
+            <a href="{{url_for('search.tag_search_interpretations',tag_name=tag_name)}}" class="inline-flex p-4 rounded-t-lg hover:text-gray-600 dark:hover:text-gray-300 group" >
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5" > <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /> </svg>
                 Interpretations
             </a>
         </li>
         <li class="mr-2">
-            <a   class="inline-flex p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 group" aria-current="page">
+            <a   class="inline-flex p-4 text-blue-600 rounded-t-lg active dark:text-blue-500 group" aria-current="page">
                 <svg aria-hidden="true"  class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
                 Books
             </a>
@@ -30,8 +31,8 @@
 </div>
 </div>
 <!-- prettier-ignore -->
-<div class="md:mr-64 p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="books" role="tabpanel" aria-labelledby="books-tab">
-{% if count<1 %}
+<div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="books" role="tabpanel" aria-labelledby="books-tab">
+{% if count < 1 %}
 <h1 class="hidden md:inline font-extrabold text-lg dark:text-white ml-4 mt-5">No {{query}} in any book name or included content, try another search query.</h1>
 {% else %}
 {% endif %}
@@ -50,7 +51,7 @@
           </span>
           <span class="space-x-0.5 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor" class="w-4 h-4 inline-flex mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /> </svg>
-            <p>{{ book.approved_interpretations|length }}</p>
+            <p>{{ book.interpretations|length }}</p>
           </span>
           <span class="space-x-0.5 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 22" stroke-width="1" stroke="currentColor" class="w-4 h-4 inline-flex mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /> </svg>

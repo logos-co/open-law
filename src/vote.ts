@@ -17,7 +17,6 @@ const voteClickEventListener = async (
 
   const positive = btn.getAttribute('data-positive');
   const entityId = btn.getAttribute('data-entity-id');
-
   const requestUrl = REQUEST_URLS[voteFor] + entityId;
   const response = await fetch(requestUrl, {
     method: 'POST',

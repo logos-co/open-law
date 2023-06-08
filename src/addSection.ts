@@ -34,7 +34,6 @@ export function addSection() {
           );
         }
         if (newActionPath.includes('/0')) {
-          console.log('ALERT');
           return;
         }
 
