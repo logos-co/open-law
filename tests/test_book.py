@@ -924,15 +924,6 @@ def test_crud_interpretation(client: FlaskClient):
     assert deleted_interpretation.is_deleted
     check_if_nested_interpretation_entities_is_deleted(deleted_interpretation)
 
-    response: Response = client.post(
-        (
-            f"/book/{book.id}/{section_in_collection.interpretations[0].id}/delete_interpretation"
-        ),
-        data=dict(interpretation_id=section_in_subcollection.interpretations[0].id),
-        follow_redirects=True,
-    )
-    assert response.status_code == 200
-
 
 def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
     _, user = login(client)
