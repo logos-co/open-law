@@ -91,9 +91,15 @@ def create_app(environment="development"):
         return render_template("error.html", error=exc), exc.code
 
     # flask admin
-    from app.controllers.flask_admin_customization import (
+    from app.controllers.admin import (
         CustomAdminIndexView,
-        ProtectedModelView,
+        UsersView,
+        BooksView,
+        CollectionsView,
+        SectionsView,
+        InterpretationView,
+        CommentView,
+        TagView,
     )
 
     app.config["FLASK_ADMIN_SWATCH"] = "Flatly"
@@ -105,20 +111,20 @@ def create_app(environment="development"):
     )
 
     for view in [
-        ProtectedModelView(m.User, db.session, name="User", endpoint="/user_"),
-        ProtectedModelView(m.Book, db.session, name="Book", endpoint="/book_"),
-        ProtectedModelView(
+        UsersView(m.User, db.session, name="User", endpoint="/user_"),
+        BooksView(m.Book, db.session, name="Book", endpoint="/book_"),
+        CollectionsView(
             m.Collection, db.session, name="Collection", endpoint="/collection_"
         ),
-        ProtectedModelView(m.Section, db.session, name="Section", endpoint="/section_"),
-        ProtectedModelView(
+        SectionsView(m.Section, db.session, name="Section", endpoint="/section_"),
+        InterpretationView(
             m.Interpretation,
             db.session,
             name="Interpretation",
             endpoint="/interpretation_",
         ),
-        ProtectedModelView(m.Comment, db.session, name="Comment", endpoint="/comment_"),
-        ProtectedModelView(m.Tag, db.session, name="Tag", endpoint="/tag_"),
+        CommentView(m.Comment, db.session, name="Comment", endpoint="/comment_"),
+        TagView(m.Tag, db.session, name="Tag", endpoint="/tag_"),
     ]:
         admin.add_view(view)
 
