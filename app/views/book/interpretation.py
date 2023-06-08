@@ -210,13 +210,13 @@ def interpretation_delete(
         delete_nested_interpretation_entities(interpretation)
         log(log.INFO, "Delete interpretation [%s]", interpretation)
         interpretation.save()
+        redirect_url = url_for(
+            "book.interpretation_view",
+            book_id=book_id,
+            section_id=interpretation.section_id,
+        )
         # notifications
         if current_user.id != interpretation.user_id:
-            redirect_url = url_for(
-                "book.interpretation_view",
-                book_id=book_id,
-                section_id=interpretation.section_id,
-            )
             notification_text = "A moderator has removed your interpretation"
             m.Notification(
                 link=redirect_url,

@@ -2,7 +2,13 @@ from flask import current_app as Response
 from flask.testing import FlaskClient
 
 from app import models as m
-from tests.utils import login
+from tests.utils import (
+    login,
+    create_interpretation,
+    create_section,
+    create_book,
+    create_collection,
+)
 
 
 def test_upvote_interpretation(client: FlaskClient):
@@ -21,10 +27,17 @@ def test_upvote_interpretation(client: FlaskClient):
     assert response.status_code == 404
     assert response.json["message"] == "Interpretation not found"
 
-    interpretation = m.Interpretation(
-        text="Test Interpretation 1 Text",
-        user_id=user.id,
-    ).save()
+    book = create_book(client)
+    assert book
+    collection, _ = create_collection(client=client, book_id=book.id)
+    assert collection
+    section, _ = create_section(
+        client=client, book_id=book.id, collection_id=collection.id
+    )
+    assert section
+    interpretation, _ = create_interpretation(
+        client=client, book_id=book.id, section_id=section.id
+    )
 
     assert interpretation.vote_count == 0
 
