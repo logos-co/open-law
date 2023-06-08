@@ -71,6 +71,16 @@ class User(BaseModel, UserMixin):
                 contributions.append(comment.interpretation)
         return contributions
 
+    @property
+    def active_notifications(self):
+        items = [
+            notification
+            for notification in self.notifications
+            if not notification.is_read
+        ]
+        items.sort(key=lambda x: x.created_at)
+        return items
+
 
 class AnonymousUser(AnonymousUserMixin):
     pass
