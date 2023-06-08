@@ -31,6 +31,7 @@ class User(BaseModel, UserMixin):
     )
     stars = db.relationship("Book", secondary="books_stars", back_populates="stars")
     books = db.relationship("Book")
+    notifications = db.relationship("Notification")
 
     @hybrid_property
     def password(self):

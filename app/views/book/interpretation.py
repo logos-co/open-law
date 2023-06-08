@@ -66,6 +66,7 @@ def interpretation_create(
     section_id: int,
 ):
     section: m.Section = db.session.get(m.Section, section_id)
+    book: m.Book = db.session.get(m.Book, book_id)
     form = f.CreateInterpretationForm()
     redirect_url = url_for(
         "book.interpretation_view",
@@ -102,6 +103,19 @@ def interpretation_create(
             ).save()
         # -------------
 
+        # notifications
+        if current_user.id != book.owner.id:
+            notification_text = f"New interpretation to {section.label} on {book.label}"
+            m.Notification(
+                link=redirect_url, text=notification_text, user_id=book.owner.id
+            ).save()
+            log(
+                log.INFO,
+                "Create notification for user with id [%s]",
+                book.owner.id,
+            )
+        # -------------
+
         tags = current_app.config["TAG_REGEX"].findall(text)
         set_interpretation_tags(interpretation, tags)
 
@@ -128,7 +142,6 @@ def interpretation_edit(
     interpretation: m.Interpretation = db.session.get(
         m.Interpretation, interpretation_id
     )
-
     if interpretation and interpretation.user_id != current_user.id:
         flash("You dont have permission to edit this interpretation", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
@@ -205,15 +218,28 @@ def interpretation_delete(
         delete_nested_interpretation_entities(interpretation)
         log(log.INFO, "Delete interpretation [%s]", interpretation)
         interpretation.save()
-
-        flash("Success!", "success")
-        return redirect(
-            url_for(
+        # notifications
+        if current_user.id != interpretation.user_id:
+            redirect_url = url_for(
                 "book.interpretation_view",
                 book_id=book_id,
                 section_id=interpretation.section_id,
             )
-        )
+            notification_text = "A moderator has removed your interpretation"
+            m.Notification(
+                link=redirect_url,
+                text=notification_text,
+                user_id=interpretation.user_id,
+            ).save()
+            log(
+                log.INFO,
+                "Create notification for user with id [%s]",
+                interpretation.user_id,
+            )
+        # -------------
+
+        flash("Success!", "success")
+        return redirect(redirect_url)
     return redirect(
         url_for(
             "book.collection_view",

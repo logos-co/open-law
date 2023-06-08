@@ -59,6 +59,21 @@ def create_comment(
         )
         comment.save()
 
+        # notifications
+        if current_user.id != book.owner.id:
+            notification_text = "New comment to your interpretation"
+            m.Notification(
+                link=redirect_url,
+                text=notification_text,
+                user_id=interpretation.user_id,
+            ).save()
+            log(
+                log.INFO,
+                "Create notification for user with id [%s]",
+                interpretation.user_id,
+            )
+        # -------------
+
         tags = current_app.config["TAG_REGEX"].findall(text)
         set_comment_tags(comment, tags)
         # TODO Send notifications
@@ -86,12 +101,28 @@ def comment_delete(book_id: int, interpretation_id: int):
     form = f.DeleteCommentForm()
     comment_id = form.comment_id.data
     comment: m.Comment = db.session.get(m.Comment, comment_id)
+    interpretation: m.Interpretation = db.session.get(
+        m.Interpretation, interpretation_id
+    )
 
     if form.validate_on_submit():
         comment.is_deleted = True
         delete_nested_comment_entities(comment)
         log(log.INFO, "Delete comment [%s]", comment)
         comment.save()
+
+        # notifications
+        if current_user.id != interpretation.user_id:
+            notification_text = "A moderator has removed your comment"
+            m.Notification(
+                link=redirect_url, text=notification_text, user_id=comment.user_id
+            ).save()
+            log(
+                log.INFO,
+                "Create notification for user with id [%s]",
+                comment.user_id,
+            )
+        # -------------
 
         flash("Success!", "success")
         return redirect(redirect_url)

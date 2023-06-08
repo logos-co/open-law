@@ -1,0 +1,23 @@
+<!-- prettier-ignore -->
+{% if not current_user.notifications %}
+<div class="flex px-4 py-3">
+  <div class="w-full pl-3">
+    <div class="text-gray-500 text-sm mb-1.5 dark:text-gray-400">
+      You haven't notifications!
+    </div>
+  </div>
+</div>
+<!-- prettier-ignore -->
+{% endif %}
+<!-- prettier-ignore -->
+{% for notification in current_user.notifications[:5]%}
+<a
+  href="{{notification.link}}"
+  class="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+  <div class="w-full pl-3">
+    <div class="text-gray-500 text-sm mb-1.5 dark:text-gray-400">
+      {{notification.text}}
+    </div>
+  </div>
+</a>
+{% endfor %}

@@ -1,6 +1,6 @@
 from flask_login import current_user
 
-from app import db
+from app import db, models as m
 from app.models.utils import BaseModel
 
 
@@ -50,6 +50,10 @@ class Comment(BaseModel):
             if vote.user_id == current_user.id:
                 return vote.positive
         return None
+
+    @property
+    def book(self) -> m.Book:
+        return self.interpretation.book
 
     def __repr__(self):
         return f"<{self.id}: {self.text[:20]}>"
