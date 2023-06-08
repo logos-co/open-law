@@ -1,7 +1,7 @@
 """remove mark fields
 
 Revision ID: 7c8a5aefe801
-Revises: a41f004cad1a
+Revises: 776fd9579f1f
 Create Date: 2023-05-25 15:44:06.072076
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "7c8a5aefe801"
-down_revision = "a41f004cad1a"
+down_revision = "776fd9579f1f"
 branch_labels = None
 depends_on = None
 
