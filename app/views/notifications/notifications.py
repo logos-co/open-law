@@ -32,3 +32,8 @@ def get_all():
         ),
         page=pagination,
     )
+
+@bp.route('/mark_as_read',methods=["GET"])
+@login_required
+def mark_as_read():
+    
