@@ -35,6 +35,7 @@ import {initRefreshAccessLevelTree} from './refreshAccessLevelTree';
 import {deleteContributor} from './deleteContributor';
 import {initUnsavedChangedAlerts} from './unsavedChangedAlert';
 import {initVersions} from './versions';
+import {activeNotifications} from './activeNotifications';
 
 initQuillReadOnly();
 initBooks();
@@ -73,3 +74,4 @@ initRefreshAccessLevelTree();
 deleteContributor();
 initUnsavedChangedAlerts();
 initVersions();
+activeNotifications();
