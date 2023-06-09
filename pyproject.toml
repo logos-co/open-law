@@ -2,7 +2,7 @@
 name = "flask.app"
 version = "0.1.0"
 description = ""
-authors = ["denys <denysburimov@gmail.com>"]
+authors = ["Simple2b https://www.simple2b.net/"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
