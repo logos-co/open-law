@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from werkzeug.exceptions import HTTPException
 from flask_migrate import Migrate
+from flask_admin import Admin
 
 from app.logger import log
 
@@ -28,7 +29,7 @@ def create_app(environment="development"):
         permissions_blueprint,
         search_blueprint,
     )
-    from app.models import User, AnonymousUser, Permission
+    from app import models as m
 
     # Instantiate app.
     app = Flask(__name__)
@@ -60,11 +61,11 @@ def create_app(environment="development"):
     # Set up flask login.
     @login_manager.user_loader
     def get_user(id):
-        return User.query.get(int(id))
+        return m.User.query.get(int(id))
 
     login_manager.login_view = "auth.login"
     login_manager.login_message_category = "info"
-    login_manager.anonymous_user = AnonymousUser
+    login_manager.anonymous_user = m.AnonymousUser
 
     # Jinja globals
     from app.controllers.jinja_globals import (
@@ -75,8 +76,8 @@ def create_app(environment="development"):
         has_permission,
     )
 
-    app.jinja_env.globals["Access"] = Permission.Access
-    app.jinja_env.globals["EntityType"] = Permission.Entity
+    app.jinja_env.globals["Access"] = m.Permission.Access
+    app.jinja_env.globals["EntityType"] = m.Permission.Entity
 
     app.jinja_env.globals["form_hidden_tag"] = form_hidden_tag
     app.jinja_env.globals["display_inline_elements"] = display_inline_elements
@@ -88,5 +89,50 @@ def create_app(environment="development"):
     @app.errorhandler(HTTPException)
     def handle_http_error(exc):
         return render_template("error.html", error=exc), exc.code
+
+    # flask admin
+    from app.controllers.admin import (
+        CustomAdminIndexView,
+        UsersView,
+        BooksView,
+        CollectionsView,
+        SectionsView,
+        InterpretationView,
+        CommentView,
+        TagView,
+        BookContributorView,
+    )
+
+    app.config["FLASK_ADMIN_SWATCH"] = "Flatly"
+    admin = Admin(
+        app,
+        name="Open Law Admin",
+        template_mode="bootstrap3",
+        index_view=CustomAdminIndexView(),
+    )
+
+    for view in [
+        UsersView(m.User, db.session, name="User", endpoint="/user_"),
+        BooksView(m.Book, db.session, name="Book", endpoint="/book_"),
+        CollectionsView(
+            m.Collection, db.session, name="Collection", endpoint="/collection_"
+        ),
+        SectionsView(m.Section, db.session, name="Section", endpoint="/section_"),
+        InterpretationView(
+            m.Interpretation,
+            db.session,
+            name="Interpretation",
+            endpoint="/interpretation_",
+        ),
+        CommentView(m.Comment, db.session, name="Comment", endpoint="/comment_"),
+        TagView(m.Tag, db.session, name="Tag", endpoint="/tag_"),
+        BookContributorView(
+            m.BookContributor,
+            db.session,
+            name="BookContributor",
+            endpoint="/book_contributor_",
+        ),
+    ]:
+        admin.add_view(view)
 
     return app

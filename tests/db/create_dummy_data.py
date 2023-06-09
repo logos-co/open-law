@@ -119,14 +119,12 @@ def create_dummy_data():
         text="Dummy Interpretation 2 About",
         section_id=section_2_1_1.id,
         user_id=user.id,
-        marked=True,
     ).save()
 
     interpretation_3 = m.Interpretation(
         text="Dummy Interpretation 3 About",
         section_id=section_2_1_2.id,
         user_id=user.id,
-        marked=True,
     ).save()
 
     m.Interpretation(
@@ -163,7 +161,6 @@ def create_dummy_data():
         text="Dummy Comment 1.2 Text",
         user_id=user_2.id,
         parent_id=comment_1.id,
-        marked=True,
         interpretation_id=interpretation_2.id,
     ).save()
 
@@ -182,7 +179,6 @@ def create_dummy_data():
     comment_3_1 = m.Comment(
         text="Dummy Comment 3.1 Text",
         user_id=user.id,
-        marked=True,
         parent_id=comment_3.id,
         interpretation_id=interpretation_2.id,
     ).save()

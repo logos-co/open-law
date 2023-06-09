@@ -1,0 +1,70 @@
+{% extends 'admin/base.html' %}
+
+{% block head_css %}
+  {{ super() }}
+{% endblock %}
+
+{% block body %}
+  <span class="hidden trigger-refreshAccessLevelTree"></span>
+  <div>
+    <div>Edit {{ user }} access level in book {{ book }}</div>
+    <form action="{{ url_for('.edit_access_level', id=id) }}" method="post">
+      {{ form_hidden_tag() }}
+      <input type="hidden" value="{{ book.id }}" name="book_id" id="permission_modal_book_id"/>
+      <input type="hidden" value="{{ user.id }}" name="user_id" id="permission_modal_user_id"/>
+      <input type="hidden" name="permissions" id="permissions_json"/>
+      <div>
+        <div class="checkbox-tree">
+          <ul>
+            <li>
+              <div>
+                <input
+                  type="checkbox"
+                  data-root="true"
+                  data-access-to="book"
+                  data-access-to-id="{{ book.id }}"
+                />
+                <span>{{ book.label }}</span>
+              </div>
+              {%- for collection in book.last_version.children_collections recursive %}
+                <ul>
+                  <li>
+                    <div>
+                      <input type="checkbox" data-access-to="collection" data-access-to-id="{{ collection.id }}"/>
+                      <span>{{ collection.label }}</span>
+                    </div>
+
+                    {% if collection.active_children %}
+                      {{ loop(collection.active_children)}}
+                    {% else %}
+
+                    {% for section in collection.sections %}
+                      <ul>
+                        <li>
+                          <div>
+                            <input type="checkbox" data-access-to="section" data-access-to-id="{{ section.id }}"/>
+                            <span>{{ section.label }}</span>
+                          </div>
+                        </li>
+                      </ul>
+                    {% endfor %}
+
+
+                    {% endif %}
+                  </li>
+                </ul>
+              {%- endfor %}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+        <button name="submit" type="submit"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
+      </div>
+    </form>
+  </div>
+
+
+  <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript" defer></script>
+{% endblock %}

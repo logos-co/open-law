@@ -161,7 +161,6 @@ def test_dummy_data(runner: FlaskCliRunner):
     ).first()
 
     assert interpretation_2
-    assert interpretation_2.marked
     assert interpretation_2.user == user
     assert interpretation_2.section == section_2_1_1
 
@@ -170,7 +169,6 @@ def test_dummy_data(runner: FlaskCliRunner):
     ).first()
 
     assert interpretation_3
-    assert interpretation_3.marked
     assert interpretation_3.user == user
     assert interpretation_3.section == section_2_1_2
 
@@ -211,7 +209,6 @@ def test_dummy_data(runner: FlaskCliRunner):
     assert comment_1_1 in comment_1.children
     assert comment_1_2.parent == comment_1
     assert comment_1_2.parent == comment_1
-    assert comment_1_2.marked
 
     comment_2: m.Comment = m.Comment.query.filter_by(
         text="Dummy Comment 2 Text"
@@ -242,7 +239,6 @@ def test_dummy_data(runner: FlaskCliRunner):
     assert comment_3_1 in comment_3.children
     assert comment_3_2 in comment_3.children
     assert comment_3_3 in comment_3.children
-    assert comment_3_1.marked
     assert comment_3_2.approved
 
     assert comment_1 in interpretation_2.comments
