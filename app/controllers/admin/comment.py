@@ -16,6 +16,14 @@ class CommentView(ProtectedModelView):
         "approved",
         "edited",
         "is_deleted",
+        "user",
+        "created_at",
+    )
+    form_edit_rules = (
+        "text",
+        "approved",
+        "edited",
+        "is_deleted",
         "created_at",
     )
 

@@ -15,6 +15,11 @@ class TagView(ProtectedModelView):
         "name",
         "created_at",
     )
+    form_edit_rules = (
+        "id",
+        "name",
+        "created_at",
+    )
 
     @expose("/delete/", methods=("POST",))
     def delete_view(self):

@@ -100,6 +100,7 @@ def create_app(environment="development"):
         InterpretationView,
         CommentView,
         TagView,
+        BookContributorView,
     )
 
     app.config["FLASK_ADMIN_SWATCH"] = "Flatly"
@@ -125,6 +126,12 @@ def create_app(environment="development"):
         ),
         CommentView(m.Comment, db.session, name="Comment", endpoint="/comment_"),
         TagView(m.Tag, db.session, name="Tag", endpoint="/tag_"),
+        BookContributorView(
+            m.BookContributor,
+            db.session,
+            name="BookContributor",
+            endpoint="/book_contributor_",
+        ),
     ]:
         admin.add_view(view)
 

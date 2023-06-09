@@ -15,6 +15,13 @@ class SectionsView(ProtectedModelView):
         "label",
         "position",
         "is_deleted",
+        "user",
+        "created_at",
+    )
+    form_edit_rules = (
+        "label",
+        "position",
+        "is_deleted",
         "created_at",
     )
 

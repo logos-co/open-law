@@ -32,4 +32,17 @@ export function initRefreshAccessLevelTree() {
       refreshAccessLevelTree(userId, bookId);
     });
   });
+
+  const trigger = document.querySelector('.trigger-refreshAccessLevelTree');
+  if (trigger) {
+    const userIdInput: HTMLInputElement = document.querySelector(
+      'input[name=user_id]',
+    );
+    const bookIdInput: HTMLInputElement = document.querySelector(
+      'input[name=book_id]',
+    );
+    const userId = userIdInput.value;
+    const bookId = bookIdInput.value;
+    refreshAccessLevelTree(userId, bookId);
+  }
 }

@@ -8,8 +8,13 @@ from .protected_model_view import ProtectedModelView
 
 
 class BooksView(ProtectedModelView):
-    column_list = ("id", "label", "about", "is_deleted", "user_id", "created_at")
-    column_labels = dict(user_id="Created by")
+    column_list = ("id", "label", "about", "is_deleted", "owner", "created_at")
+    form_edit_rules = (
+        "label",
+        "about",
+        "is_deleted",
+        "created_at",
+    )
 
     @expose("/delete/", methods=("POST",))
     def delete_view(self):

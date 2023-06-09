@@ -15,6 +15,14 @@ class InterpretationView(ProtectedModelView):
         "plain_text",
         "approved",
         "is_deleted",
+        "user",
+        "created_at",
+    )
+    form_edit_rules = (
+        "text",
+        "plain_text",
+        "approved",
+        "is_deleted",
         "created_at",
     )
 

@@ -8,3 +8,4 @@ from .section import SectionsView
 from .interpretation import InterpretationView
 from .comment import CommentView
 from .tag import TagView
+from .book_contributors import BookContributorView

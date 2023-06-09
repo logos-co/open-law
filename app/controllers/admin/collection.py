@@ -20,6 +20,13 @@ class CollectionsView(ProtectedModelView):
         "is_deleted",
         "created_at",
     )
+    form_edit_rules = (
+        "label",
+        "about",
+        "position",
+        "is_deleted",
+        "created_at",
+    )
 
     @expose("/delete/", methods=("POST",))
     def delete_view(self):
