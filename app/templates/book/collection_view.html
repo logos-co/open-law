@@ -48,22 +48,22 @@
       data-entity-type="collection"
       data-entity-id="{{collection.id}}" class="filter {% if not has_permission(collection, Access.U) %}denied{% endif %}">
       <div  data-entity-type="collection"
-      data-entity-id="{{collection.id}}"  class="flex items-center justify-start w-full font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
+      data-entity-id="{{collection.id}}"  class="flex items-center justify-start font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400">
         <button class="bg-inherit" type="button" data-accordion-target="#accordion-collapse-body-{{collection.id}}" aria-expanded="true" aria-controls="accordion-collapse-body-{{collection.id}}">
         <!-- prettier-ignore -->
         <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
         </button>
-        <button href="#collection-{{collection.label}}" id="accordion-collapse-heading-{{collection.id}}" class="text-black dark:text-white ">
+        <button href="#collection-{{collection.label}}" id="accordion-collapse-heading-{{collection.id}}" class="w-full text-black dark:text-white ">
           <form id="rename-collection-label-form-{{collection.id}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" method="post" class="mb-0">
             {{ form_hidden_tag() }}
-            <input class=" bg-inherit border-none " value="{{collection.label}}" type="text" name="label" id="edit-collection-label-{{collection.id}}" placeholder="Collection label" required readonly/>
+            <input class="w-full truncate bg-inherit border-none" value="{{collection.label}}" type="text" name="label" id="edit-collection-label-{{collection.id}}" placeholder="Collection label" required readonly/>
             <button name="submit" type="submit"></button>
           </form>
         </button>
       </div>
       <svg id="dropdownCollectionContextButton{{collection.id}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
     </div>
-    <div data="collection-context-menu-{{collection.id}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+    <div data="collection-context-menu-{{collection.id}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow dark:bg-gray-700">
       {% include 'book/components/collection_context_menu.html' %}
     </div>
     <!-- prettier-ignore -->
