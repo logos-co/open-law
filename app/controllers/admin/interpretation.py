@@ -36,7 +36,6 @@ class InterpretationView(ProtectedModelView):
         form = self.delete_form()
 
         if self.validate_form(form):
-            # id is InputRequired()
             id = form.id.data
 
             model = self.get_one(id)
