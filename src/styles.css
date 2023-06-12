@@ -37,3 +37,7 @@
 .mt-135 {
   margin-top: 135px;
 }
+.disabled {
+  pointer-events: none;
+  cursor: default;
+}

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
 
 
@@ -41,3 +41,13 @@ def mark_as_read(notification_id: int):
     notification.is_read = True
     notification.save()
     return redirect(notification.link)
+
+
+@bp.route("/mark_all_as_read", methods=["GET"])
+@login_required
+def mark_all_as_read():
+    for notification in current_user.notifications:
+        notification.is_read = True
+        notification.save(False)
+    db.session.commit()
+    return redirect(url_for("notifications.get_all"))

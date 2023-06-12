@@ -177,3 +177,10 @@ def test_notifications(client: FlaskClient):
         ).first()
         assert notification
         assert notification.user_id == user_2.id
+
+    response: Response = client.get(
+        "/notifications/mark_all_as_read",
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert len(user_2.active_notifications) == 0
