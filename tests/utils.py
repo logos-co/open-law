@@ -21,9 +21,14 @@ def create(username=TEST_ADMIN_NAME, password=TEST_ADMIN_PASSWORD):
     return user
 
 
-def login(client, username=TEST_ADMIN_NAME, password=TEST_ADMIN_PASSWORD):
+def login(
+    client,
+    username=TEST_ADMIN_NAME,
+    password=TEST_ADMIN_PASSWORD,
+    create_user_if_not_exists=True,
+):
     user = m.User.query.filter_by(username=username).first()
-    if not user:
+    if create_user_if_not_exists and not user:
         user = create(username, password)
 
     response = client.post(
