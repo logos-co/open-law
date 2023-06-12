@@ -23,6 +23,7 @@ class User(BaseModel, UserMixin):
     is_activated = db.Column(db.Boolean, default=False)
     wallet_id = db.Column(db.String(64), nullable=True)
     avatar_img = db.Column(db.Text, nullable=True)
+    is_super_user = db.Column(db.Boolean, default=False)
 
     # Relationships
     access_groups = db.relationship(

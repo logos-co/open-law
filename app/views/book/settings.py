@@ -11,6 +11,10 @@ from app.controllers import register_book_verify_route
 from app.controllers.notification_producer import contributor_notification
 from app import models as m, db, forms as f
 from app.controllers.require_permission import require_permission
+from app.controllers.contributor import (
+    add_contributor_to_book,
+    delete_contributor_from_book,
+)
 from app.logger import log
 from .bp import bp
 
@@ -48,42 +52,11 @@ def add_contributor(book_id: int):
     selected_tab = "user_permissions"
     if form.validate_on_submit():
         user_id = form.user_id.data
-        book: m.Book = db.session.get(m.Book, book_id)
-        book_contributor = m.BookContributor.query.filter_by(
-            user_id=user_id, book_id=book_id
-        ).first()
-        if book_contributor:
-            log(log.INFO, "Contributor: [%s] already exists", book_contributor)
-            flash("Already exists!", "danger")
-            return redirect(
-                url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
-            )
-
-        role = m.BookContributor.Roles(int(form.role.data))
-        contributor = m.BookContributor(user_id=user_id, book_id=book_id, role=role)
-        log(log.INFO, "New contributor [%s]", contributor)
-        contributor.save()
-
         # notifications
-        contributor_notification(m.Notification.Actions.CONTRIBUTING, book.id, user_id)
+        contributor_notification(m.Notification.Actions.CONTRIBUTING, book_id, user_id)
         # -------------
-
-        groups = (
-            db.session.query(m.AccessGroup)
-            .filter(
-                m.BookAccessGroups.book_id == book_id,
-                m.AccessGroup.id == m.BookAccessGroups.access_group_id,
-                m.AccessGroup.name == role.name.lower(),
-            )
-            .all()
-        )
-        for group in groups:
-            m.UserAccessGroups(user_id=user_id, access_group_id=group.id).save()
-
-        flash("Contributor was added!", "success")
-        return redirect(
-            url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
-        )
+        response = add_contributor_to_book(form, book_id, selected_tab)
+        return response
     else:
         log(log.ERROR, "Book create errors: [%s]", form.errors)
         for field, errors in form.errors.items():
@@ -108,51 +81,12 @@ def delete_contributor(book_id: int):
     selected_tab = "user_permissions"
 
     if form.validate_on_submit():
-        user_id = int(form.user_id.data)
-        book_contributor = m.BookContributor.query.filter_by(
-            user_id=user_id, book_id=book_id
-        ).first()
-        if not book_contributor:
-            log(
-                log.INFO,
-                "BookContributor does not exists user: [%s], book: [%s]",
-                user_id,
-                book_id,
-            )
-            flash("Does not exists!", "success")
-            return redirect(
-                url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
-            )
-
-        book: m.Book = db.session.get(m.Book, book_id)
-        user: m.User = db.session.get(m.User, user_id)
-        for access_group in book.access_groups:
-            access_group: m.AccessGroup
-            if user in access_group.users:
-                log(
-                    log.INFO,
-                    "Delete user [%s] from AccessGroup [%s]",
-                    user,
-                    access_group,
-                )
-                relationships_to_delete = m.UserAccessGroups.query.filter_by(
-                    user_id=user_id, access_group_id=access_group.id
-                ).all()
-                for relationship in relationships_to_delete:
-                    db.session.delete(relationship)
-
-        log(log.INFO, "Delete BookContributor [%s]", book_contributor)
-        db.session.delete(book_contributor)
-        db.session.commit()
-
+        user_id = form.user_id.data
         # notifications
-        contributor_notification(m.Notification.Actions.DELETE, book.id, user_id)
+        contributor_notification(m.Notification.Actions.DELETE, book_id, user_id)
         # -------------
-
-        flash("Success!", "success")
-        return redirect(
-            url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
-        )
+        response = delete_contributor_from_book(form, book_id, selected_tab)
+        return response
     else:
         log(log.ERROR, "Delete contributor errors: [%s]", form.errors)
         for field, errors in form.errors.items():

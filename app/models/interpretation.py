@@ -10,7 +10,6 @@ class Interpretation(BaseModel):
     text = db.Column(db.Text, unique=False, nullable=False)
     plain_text = db.Column(db.Text, unique=False)
     approved = db.Column(db.Boolean, default=False)
-    marked = db.Column(db.Boolean, default=False)
 
     # Foreign keys
     user_id = db.Column(db.ForeignKey("users.id"))
