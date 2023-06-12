@@ -43,7 +43,7 @@ def section_notification(action: m.Notification.Actions, entity_id: int, user_id
             )
 
         case m.Notification.Actions.EDIT:
-            text = f"{current_user.username} rename a section on {book.label}"
+            text = f"{current_user.username} renamed a section on {book.label}"
             link = (
                 url_for("book.collection_view", book_id=book.id)
                 + f"#section-{section.label}"
@@ -115,6 +115,8 @@ def interpretation_notification(
 
         case m.Notification.Actions.APPROVE:
             if user_id == book.owner.id:
+                if current_user.id == book.owner.id:
+                    return
                 # This for the book owner
                 text = f"{current_user.username} approved an interpretation for {section.label} on {book.label}"
                 link = url_for(
@@ -125,6 +127,11 @@ def interpretation_notification(
             elif user_id == interpretation.user_id and user_id != book.owner.id:
                 # This for the interpretation owner
                 text = f"Your interpretation has been approved for {section.label} on {book.label}"
+                link = url_for(
+                    "book.interpretation_view",
+                    book_id=book.id,
+                    section_id=section.id,
+                )
             else:
                 return
 
