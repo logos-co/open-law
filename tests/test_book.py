@@ -17,8 +17,6 @@ from tests.utils import (
     create_collection,
     create_section,
     create_sub_collection,
-    create_interpretation,
-    create_comment,
 )
 
 
