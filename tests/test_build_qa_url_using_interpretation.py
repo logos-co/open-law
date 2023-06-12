@@ -4,15 +4,25 @@ from flask import current_app as Response
 from app.controllers.jinja_globals import (
     build_qa_url_using_interpretation,
 )
-from .utils import create_test_book, login
+from .utils import (
+    create_book,
+    login,
+    create_collection,
+    create_section,
+    create_interpretation,
+    create_comment,
+)
 from app import models as m
 
 
 def test_build_qa_url_using_interpretation(client: FlaskClient):
-    _, user = login(client)
-    user: m.User
+    login(client)
 
-    create_test_book(user.id)
+    book = create_book(client)
+    collection, _ = create_collection(client, book.id)
+    section, _ = create_section(client, book.id, collection.id)
+    interpretation, _ = create_interpretation(client, book.id, section.id)
+    create_comment(client, book.id, interpretation.id)
 
     interpretation: m.Interpretation = m.Interpretation.query.first()
 
