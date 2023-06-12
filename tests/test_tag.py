@@ -2,7 +2,15 @@ from flask import current_app as Response
 from flask.testing import FlaskClient
 
 from app import models as m, db
-from tests.utils import login, create_test_book
+from tests.utils import (
+    create_book,
+    create_collection,
+    create_comment,
+    create_interpretation,
+    create_section,
+    login,
+    create_test_book,
+)
 
 
 def test_create_tags_on_book_create_and_edit(client: FlaskClient):
@@ -79,12 +87,12 @@ def test_create_tags_on_book_create_and_edit(client: FlaskClient):
 
 
 def test_create_tags_on_comment_create_and_edit(client: FlaskClient):
-    _, user = login(client)
-    create_test_book(user.id, 1)
-
-    book = db.session.get(m.Book, 1)
-    section = db.session.get(m.Section, 1)
-    interpretation = db.session.get(m.Interpretation, 1)
+    login(client)
+    book = create_book(client)
+    collection, _ = create_collection(client, book.id)
+    section, _ = create_section(client, book.id, collection.id)
+    interpretation, _ = create_interpretation(client, book.id, section.id)
+    comment, _ = create_comment(client, book.id, interpretation.id)
 
     tags = "#tag1 #tag2 #tag3"
     response: Response = client.post(
@@ -134,11 +142,11 @@ def test_create_tags_on_comment_create_and_edit(client: FlaskClient):
 
 
 def test_create_tags_on_interpretation_create_and_edit(client: FlaskClient):
-    _, user = login(client)
-    create_test_book(user.id, 1)
-
-    book = db.session.get(m.Book, 1)
-    section = db.session.get(m.Section, 1)
+    login(client)
+    book = create_book(client)
+    collection, _ = create_collection(client, book.id)
+    section, _ = create_section(client, book.id, collection.id)
+    interpretation, _ = create_interpretation(client, book.id, section.id)
 
     tags = "#tag1 #tag2 #tag3"
     text_1 = "Test Interpretation no1 Text"
