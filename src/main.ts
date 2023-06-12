@@ -34,6 +34,7 @@ import {indeterminateInputs} from './indeterminateInputs';
 import {initRefreshAccessLevelTree} from './refreshAccessLevelTree';
 import {deleteContributor} from './deleteContributor';
 import {initUnsavedChangedAlerts} from './unsavedChangedAlert';
+import {initVersions} from './versions';
 
 initQuillReadOnly();
 initBooks();
@@ -71,3 +72,4 @@ indeterminateInputs();
 initRefreshAccessLevelTree();
 deleteContributor();
 initUnsavedChangedAlerts();
+initVersions();

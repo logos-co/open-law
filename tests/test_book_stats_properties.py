@@ -40,7 +40,7 @@ def test_approved_interpretations(client: FlaskClient):
         label="123",
     ).save()
     section: m.Section = m.Section(
-        label="123", collection_id=sub_collection.id, version_id=book.last_version.id
+        label="123", collection_id=sub_collection.id, version_id=book.active_version.id
     ).save()
     interpretation: m.Interpretation = m.Interpretation(
         section_id=section.id, text="123", approved=True

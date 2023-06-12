@@ -90,7 +90,7 @@ def collection_create(book_id: int, collection_id: int | None = None):
             label=label,
             about=form.about.data,
             parent_id=book.versions[-1].root_collection.id,
-            version_id=book.last_version.id,
+            version_id=book.active_version.id,
             position=position,
         )
         if collection_id:

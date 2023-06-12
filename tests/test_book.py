@@ -72,7 +72,7 @@ def test_create_edit_delete_book(client: FlaskClient):
     assert book.access_groups
     assert len(book.access_groups) == 2
 
-    root_collection: m.Collection = book.last_version.collections[0]
+    root_collection: m.Collection = book.active_version.collections[0]
     assert root_collection
     assert root_collection.access_groups
     assert len(root_collection.access_groups) == 2
@@ -406,13 +406,13 @@ def test_crud_subcollection(client: FlaskClient):
     book = create_test_book(user.id)
 
     collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
         is_leaf=False,
-        parent_id=book.last_version.root_collection.id,
+        parent_id=book.active_version.root_collection.id,
     ).first()
 
     leaf_collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
         is_leaf=True,
         parent_id=collection.id,
     ).first()
@@ -550,13 +550,13 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     book = create_test_book(user.id)
 
     collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
         is_leaf=False,
-        parent_id=book.last_version.root_collection.id,
+        parent_id=book.active_version.root_collection.id,
     ).first()
 
     sub_collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
         is_leaf=True,
         parent_id=collection.id,
     ).first()
@@ -589,7 +589,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     ).first()
     assert section
     assert section.collection_id == sub_collection.id
-    assert section.version_id == book.last_version.id
+    assert section.version_id == book.active_version.id
     assert not section.interpretations
 
     assert section.access_groups
@@ -625,7 +625,7 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     ).first()
     assert section
     assert section.collection_id == sub_collection.id
-    assert section.version_id == book.last_version.id
+    assert section.version_id == book.active_version.id
     assert not section.interpretations
 
     response: Response = client.post(
@@ -668,13 +668,13 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     m.Section(
         label="Test",
         collection_id=sub_collection.id,
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
     ).save()
 
     m.Section(
         label="Test",
         collection_id=sub_collection.id,
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
     ).save()
 
     section: m.Section = m.Section.query.filter_by(
@@ -786,28 +786,28 @@ def test_crud_interpretation(client: FlaskClient):
     book = create_test_book(user.id)
 
     collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
         is_leaf=True,
-        parent_id=book.last_version.root_collection.id,
+        parent_id=book.active_version.root_collection.id,
     ).first()
     section_in_collection: m.Section = m.Section.query.filter_by(
         collection_id=collection.id,
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
     ).first()
 
     collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
         is_leaf=False,
-        parent_id=book.last_version.root_collection.id,
+        parent_id=book.active_version.root_collection.id,
     ).first()
     sub_collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
         is_leaf=True,
         parent_id=collection.id,
     ).first()
     section_in_subcollection: m.Section = m.Section.query.filter_by(
         collection_id=sub_collection.id,
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
     ).first()
 
     text_1 = "Test Interpretation #1 Text"
@@ -973,29 +973,29 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
 
     leaf_collection: m.Collection = m.Collection(
         label="Test Leaf Collection #1 Label",
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
         is_leaf=True,
-        parent_id=book.last_version.root_collection.id,
+        parent_id=book.active_version.root_collection.id,
     ).save()
     m.Section(
         label="Test Section in Collection #1 Label",
         collection_id=leaf_collection.id,
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
     ).save()
 
     collection: m.Collection = m.Collection(
-        label="Test Collection #1 Label", version_id=book.last_version.id
+        label="Test Collection #1 Label", version_id=book.active_version.id
     ).save()
     sub_collection: m.Collection = m.Collection(
         label="Test SubCollection #1 Label",
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
         parent_id=collection.id,
         is_leaf=True,
     ).save()
     section_in_subcollection: m.Section = m.Section(
         label="Test Section in Subcollection #1 Label",
         collection_id=sub_collection.id,
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
     ).save()
     group = create_moderator_group(book.id)
     m.SectionAccessGroups(
@@ -1123,29 +1123,29 @@ def test_interpretation_in_home_last_inter_section(
 
     leaf_collection: m.Collection = m.Collection(
         label="Test Leaf Collection #1 Label",
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
         is_leaf=True,
-        parent_id=book.last_version.root_collection.id,
+        parent_id=book.active_version.root_collection.id,
     ).save()
     section_in_collection: m.Section = m.Section(
         label="Test Section in Collection #1 Label",
         collection_id=leaf_collection.id,
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
     ).save()
 
     collection: m.Collection = m.Collection(
-        label="Test Collection #1 Label", version_id=book.last_version.id
+        label="Test Collection #1 Label", version_id=book.active_version.id
     ).save()
     sub_collection: m.Collection = m.Collection(
         label="Test SubCollection #1 Label",
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
         parent_id=collection.id,
         is_leaf=True,
     ).save()
     section_in_subcollection: m.Section = m.Section(
         label="Test Section in Subcollection #1 Label",
         collection_id=sub_collection.id,
-        version_id=book.last_version.id,
+        version_id=book.active_version.id,
     ).save()
     group = create_moderator_group(book.id)
     m.SectionAccessGroups(

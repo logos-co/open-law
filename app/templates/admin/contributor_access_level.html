@@ -26,7 +26,7 @@
                 />
                 <span>{{ book.label }}</span>
               </div>
-              {%- for collection in book.last_version.children_collections recursive %}
+              {%- for collection in book.active_version.children_collections recursive %}
                 <ul>
                   <li>
                     <div>

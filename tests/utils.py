@@ -18,11 +18,14 @@ def create(username=TEST_ADMIN_NAME, password=TEST_ADMIN_PASSWORD):
     user = m.User(username=username)
     user.password = password
     user.save()
-    return user.id
+    return user
 
 
 def login(client, username=TEST_ADMIN_NAME, password=TEST_ADMIN_PASSWORD):
     user = m.User.query.filter_by(username=username).first()
+    if not user:
+        user = create(username, password)
+
     response = client.post(
         "/login", data=dict(user_id=username, password=password), follow_redirects=True
     )
@@ -212,7 +215,7 @@ def create_book(client):
     assert book.access_groups
     assert len(book.access_groups) == 2
 
-    root_collection: m.Collection = book.last_version.collections[0]
+    root_collection: m.Collection = book.active_version.collections[0]
     assert root_collection
     assert root_collection.access_groups
     assert len(root_collection.access_groups) == 2
