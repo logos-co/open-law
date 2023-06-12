@@ -5,6 +5,7 @@ from app.controllers import (
     create_breadcrumbs,
     register_book_verify_route,
 )
+from app.controllers.notification_producer import collection_notification
 from app.controllers.delete_nested_book_entities import (
     delete_nested_collection_entities,
 )
@@ -110,16 +111,8 @@ def collection_create(book_id: int, collection_id: int | None = None):
 
         # notifications
         if current_user.id != book.owner.id:
-            notification_text = (
-                f"{current_user.username} added a collection on {book.label}"
-            )
-            m.Notification(
-                link=redirect_url, text=notification_text, user_id=book.owner.id
-            ).save()
-            log(
-                log.INFO,
-                "Create notification for user with id [%s]",
-                book.owner.id,
+            collection_notification(
+                m.Notification.Actions.CREATE, collection.id, book.owner.id
             )
         # -------------
 
@@ -194,16 +187,8 @@ def collection_edit(book_id: int, collection_id: int):
 
         # notifications
         if current_user.id != book.owner.id:
-            notification_text = (
-                f"{current_user.username} renamed a collection on {book.label}"
-            )
-            m.Notification(
-                link=redirect_url, text=notification_text, user_id=book.owner.id
-            ).save()
-            log(
-                log.INFO,
-                "Create notification for user with id [%s]",
-                book.owner.id,
+            collection_notification(
+                m.Notification.Actions.EDIT, collection.id, book.owner.id
             )
         # -------------
 
@@ -246,16 +231,8 @@ def collection_delete(book_id: int, collection_id: int):
 
     # notifications
     if current_user.id != book.owner.id:
-        notification_text = (
-            f"{current_user.username} deleted a collection on {book.label}"
-        )
-        m.Notification(
-            link=redirect_url, text=notification_text, user_id=book.owner.id
-        ).save()
-        log(
-            log.INFO,
-            "Create notification for user with id [%s]",
-            book.owner.id,
+        collection_notification(
+            m.Notification.Actions.DELETE, collection.id, book.owner.id
         )
     # -------------
 

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect
 from flask_login import login_required, current_user
 
 
@@ -7,7 +7,7 @@ from app.controllers import (
 )
 
 
-from app import models as m
+from app import models as m, db
 from app.logger import log
 
 bp = Blueprint("notifications", __name__, url_prefix="/notifications")
@@ -33,7 +33,11 @@ def get_all():
         page=pagination,
     )
 
-@bp.route('/mark_as_read',methods=["GET"])
+
+@bp.route("/<int:notification_id>/mark_as_read", methods=["GET"])
 @login_required
-def mark_as_read():
-    
+def mark_as_read(notification_id: int):
+    notification: m.Notification = db.session.get(m.Notification, notification_id)
+    notification.is_read = True
+    notification.save()
+    return redirect(notification.link)

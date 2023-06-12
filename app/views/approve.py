@@ -1,11 +1,14 @@
 from flask import (
     Blueprint,
     jsonify,
-    url_for,
 )
 from flask_login import login_required, current_user
 
 from app import models as m, db
+from app.controllers.notification_producer import (
+    interpretation_notification,
+    comment_notification,
+)
 from app.controllers.require_permission import require_permission
 from app.logger import log
 
@@ -27,7 +30,6 @@ def approve_interpretation(interpretation_id: int):
         m.Interpretation, interpretation_id
     )
     book: m.Book = db.session.get(m.Book, interpretation.book.id)
-    section: m.Section = db.session.get(m.Section, interpretation.section_id)
     if not interpretation:
         log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
         return jsonify({"message": "Interpretation not found"}), 404
@@ -64,33 +66,12 @@ def approve_interpretation(interpretation_id: int):
         and current_user.id != interpretation.user_id
     ):
         # notifications
-        redirect_url = url_for(
-            "book.interpretation_view", book_id=book.id, section_id=section.id
+        interpretation_notification(
+            m.Notification.Actions.APPROVE, interpretation.id, book.owner.id
         )
-        notification_text = f"{current_user.username} approved an interpretation for {section.label} on {book.label}"
-        m.Notification(
-            link=redirect_url, text=notification_text, user_id=book.owner.id
-        ).save()
-        log(
-            log.INFO,
-            "Create notification for user with id [%s]",
-            book.owner.id,
+        interpretation_notification(
+            m.Notification.Actions.APPROVE, interpretation.id, interpretation.user_id
         )
-    elif interpretation.approved and current_user.id != interpretation.user_id:
-        # Your interpretation has been approved for SectionLabel on BookLabel
-        notification_text = (
-            f"Your interpretation has been approved for {section.label} on {book.label}"
-        )
-        m.Notification(
-            link=redirect_url, text=notification_text, user_id=interpretation.user_id
-        ).save()
-        log(
-            log.INFO,
-            "Create notification for user with id [%s]",
-            book.owner.id,
-        )
-
-        # -------------
 
     interpretation.save()
 
@@ -110,7 +91,6 @@ def approve_interpretation(interpretation_id: int):
 def approve_comment(comment_id: int):
     comment: m.Comment = db.session.get(m.Comment, comment_id)
     book: m.Book = db.session.get(m.Book, comment.book.id)
-    section: m.Section = db.session.get(m.Section, comment.interpretation.section_id)
     if not comment:
         log(log.WARNING, "Comment with id [%s] not found", comment_id)
         return jsonify({"message": "Comment not found"}), 404
@@ -123,36 +103,19 @@ def approve_comment(comment_id: int):
         "Approve" if comment.approved else "Cancel approve",
         comment,
     )
+    # TODO:refactor if
     if (
         comment.approved
         and current_user.id != comment.book.owner.id
         and current_user.id != comment.user_id
     ):
         # notifications
-        redirect_url = url_for(
-            "book.qa_view",
-            book_id=comment.book.id,
-            interpretation_id=comment.interpretation_id,
-        )
-        notification_text = f"{current_user.username} approved an comment for {section.label} on {book.label}"
-        m.Notification(
-            link=redirect_url, text=notification_text, user_id=book.owner.id
-        ).save()
-        log(
-            log.INFO,
-            "Create notification for user with id [%s]",
-            book.owner.id,
-        )
+        comment_notification(m.Notification.Actions.APPROVE, comment.id, book.owner.id)
     elif comment.approved and current_user.id != comment.user_id:
         # Your interpretation has been approved for SectionLabel on BookLabel
-        notification_text = (
-            f"Your interpretation has been approved for {section.label} on {book.label}"
+        comment_notification(
+            m.Notification.Actions.APPROVE, comment.id, comment.user_id
         )
-        m.Notification(
-            link=redirect_url, text=notification_text, user_id=comment.user_id
-        ).save()
-        log(log.INFO, "Create notification for user with id [%s]", comment.user_id)
-
         # -------------
     comment.save()
 

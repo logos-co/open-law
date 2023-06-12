@@ -2,6 +2,7 @@ from flask import flash, redirect, url_for, request
 from flask_login import login_required, current_user
 
 from app.controllers import register_book_verify_route
+from app.controllers.notification_producer import section_notification
 from app.controllers.delete_nested_book_entities import delete_nested_section_entities
 from app import models as m, db, forms as f
 from app.controllers.require_permission import require_permission
@@ -49,16 +50,8 @@ def section_create(book_id: int, collection_id: int):
 
         if current_user.id != book.owner.id:
             # notifications
-            notification_text = (
-                f"{current_user.username} create a section on {book.label}"
-            )
-            m.Notification(
-                link=redirect_url, text=notification_text, user_id=book.owner.id
-            ).save()
-            log(
-                log.INFO,
-                "Create notification for user with id[%s]",
-                book.owner.id,
+            section_notification(
+                m.Notification.Actions.CREATE, section.id, book.owner.id
             )
         # -------------
         flash("Success!", "success")
@@ -97,17 +90,7 @@ def section_edit(book_id: int, section_id: int):
 
         if current_user.id != book.owner.id:
             # notifications
-            notification_text = (
-                f"{current_user.username} renamed a section on {book.label}"
-            )
-            m.Notification(
-                link=redirect_url, text=notification_text, user_id=book.owner.id
-            ).save()
-            log(
-                log.INFO,
-                "Create notification for user with id[%s]",
-                book.owner.id,
-            )
+            section_notification(m.Notification.Actions.EDIT, section.id, book.owner.id)
             # -------------
 
         flash("Success!", "success")
@@ -152,15 +135,7 @@ def section_delete(
 
     if current_user.id != book.owner.id:
         # notifications
-        notification_text = f"{current_user.username} deleted a section on {book.label}"
-        m.Notification(
-            link=redirect_url, text=notification_text, user_id=book.owner.id
-        ).save()
-        log(
-            log.INFO,
-            "Create notification for user with id[%s]",
-            book.owner.id,
-        )
+        section_notification(m.Notification.Actions.DELETE, section.id, book.owner.id)
         # -------------
 
     flash("Success!", "success")

@@ -7,9 +7,8 @@ from flask import (
 )
 from flask_login import login_required
 
-from app.controllers import (
-    register_book_verify_route,
-)
+from app.controllers import register_book_verify_route
+from app.controllers.notification_producer import contributor_notification
 from app import models as m, db, forms as f
 from app.controllers.require_permission import require_permission
 from app.controllers.contributor import (

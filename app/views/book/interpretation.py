@@ -7,7 +7,12 @@ from flask import (
 )
 from flask_login import login_required, current_user
 
-from app.controllers import register_book_verify_route, create_breadcrumbs, clean_html
+from app.controllers import (
+    register_book_verify_route,
+    create_breadcrumbs,
+    clean_html,
+)
+from app.controllers.notification_producer import interpretation_notification
 from app.controllers.delete_nested_book_entities import (
     delete_nested_interpretation_entities,
 )
@@ -105,14 +110,8 @@ def interpretation_create(
 
         # notifications
         if current_user.id != book.owner.id:
-            notification_text = f"New interpretation to {section.label} on {book.label}"
-            m.Notification(
-                link=redirect_url, text=notification_text, user_id=book.owner.id
-            ).save()
-            log(
-                log.INFO,
-                "Create notification for user with id [%s]",
-                book.owner.id,
+            interpretation_notification(
+                m.Notification.Actions.CREATE, interpretation.id, book.owner.id
             )
         # -------------
 
@@ -225,16 +224,8 @@ def interpretation_delete(
         )
         # notifications
         if current_user.id != interpretation.user_id:
-            notification_text = "A moderator has removed your interpretation"
-            m.Notification(
-                link=redirect_url,
-                text=notification_text,
-                user_id=interpretation.user_id,
-            ).save()
-            log(
-                log.INFO,
-                "Create notification for user with id [%s]",
-                interpretation.user_id,
+            interpretation_notification(
+                m.Notification.Actions.DELETE, interpretation.id, interpretation.user_id
             )
         # -------------
 
