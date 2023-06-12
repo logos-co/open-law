@@ -99,15 +99,13 @@ def collection_create(book_id: int, collection_id: int | None = None):
 
         log(log.INFO, "Create collection [%s]. Book: [%s]", collection, book.id)
 
+        collection.save()
         # notifications
         if current_user.id != book.owner.id:
             collection_notification(
                 m.Notification.Actions.CREATE, collection.id, book.owner.id
             )
         # -------------
-
-        collection.save()
-
         for access_group in collection.parent.access_groups:
             m.CollectionAccessGroups(
                 collection_id=collection.id, access_group_id=access_group.id
