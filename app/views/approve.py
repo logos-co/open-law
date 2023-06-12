@@ -60,11 +60,7 @@ def approve_interpretation(interpretation_id: int):
         "Approve" if interpretation.approved else "Cancel approve",
         interpretation,
     )
-    if (
-        interpretation.approved
-        and current_user.id != book.owner.id
-        and current_user.id != interpretation.user_id
-    ):
+    if interpretation.approved and current_user.id != interpretation.user_id:
         # notifications
         interpretation_notification(
             m.Notification.Actions.APPROVE, interpretation.id, book.owner.id
