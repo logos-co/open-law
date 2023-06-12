@@ -4,7 +4,6 @@ from app import models as m
 from tests.utils import (
     login,
     logout,
-    create_test_book,
     create_book,
     create_collection,
     create_section,

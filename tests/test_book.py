@@ -4,6 +4,8 @@ from flask.testing import FlaskClient, FlaskCliRunner
 from app import models as m, db
 from app.controllers.create_access_groups import create_moderator_group
 from tests.utils import (
+    add_contributor,
+    create,
     login,
     logout,
     check_if_nested_book_entities_is_deleted,
@@ -11,6 +13,12 @@ from tests.utils import (
     check_if_nested_section_entities_is_deleted,
     check_if_nested_interpretation_entities_is_deleted,
     create_test_book,
+    create_book,
+    create_collection,
+    create_section,
+    create_sub_collection,
+    create_interpretation,
+    create_comment,
 )
 
 
@@ -119,12 +127,12 @@ def test_create_edit_delete_book(client: FlaskClient):
 
 
 def test_add_delete_contributor(client: FlaskClient):
+    _, moderator = login(client, "Moderator", "test")
+    moderators_book = create_book(client)
+    logout(client)
     _, user = login(client)
     user: m.User
 
-    moderator = m.User(username="Moderator", password="test").save()
-
-    moderators_book: m.Book = create_test_book(moderator.id)
     response: Response = client.post(
         f"/book/{moderators_book.id}/add_contributor",
         data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
@@ -134,8 +142,7 @@ def test_add_delete_contributor(client: FlaskClient):
     assert response.status_code == 200
     assert b"You do not have permission" in response.data
 
-    book: m.Book = create_test_book(user.id)
-    m.BookVersion(semver="1.0.0", book_id=book.id).save()
+    book = create_book(client)
 
     response: Response = client.post(
         f"/book/{book.id}/add_contributor",
@@ -164,7 +171,7 @@ def test_add_delete_contributor(client: FlaskClient):
         user=moderator, book=book
     ).first()
     assert contributor.role == m.BookContributor.Roles.MODERATOR
-    assert len(book.contributors) == 2
+    assert len(book.contributors) == 1
 
     editor = m.User(username="Editor", password="test").save()
     response: Response = client.post(
@@ -180,7 +187,7 @@ def test_add_delete_contributor(client: FlaskClient):
         user=editor, book=book
     ).first()
     assert contributor.role == m.BookContributor.Roles.EDITOR
-    assert len(book.contributors) == 3
+    assert len(book.contributors) == 2
 
     contributor_to_delete = m.BookContributor.query.filter_by(
         user_id=moderator.id, book_id=book.id
@@ -221,14 +228,13 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
     _, user = login(client)
     user: m.User
 
-    book = create_test_book(user.id)
-
-    # for contributor in m.BookContributor.query.all():
-    #     db.session.delete(contributor)
-    # db.session.commit()
+    book = create_book(client)
 
     book.user_id = user.id
     book.save()
+
+    contributor = create("test", "text")
+    add_contributor(client, book.id, contributor.id, m.BookContributor.Roles.MODERATOR)
 
     contributors_len = len(book.contributors)
     assert contributors_len
@@ -251,7 +257,12 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
 
     moderator = m.User(username="Moderator", password="test").save()
 
-    moderators_book: m.Book = create_test_book(moderator.id)
+    logout(client)
+    login(client, "Moderator", "test")
+    moderators_book: m.Book = create_book(client)
+    logout(client)
+    login(client)
+
     response: Response = client.post(
         f"/book/{moderators_book.id}/add_contributor",
         data=dict(user_id=moderator.id, role=m.BookContributor.Roles.MODERATOR),
@@ -274,7 +285,7 @@ def test_edit_contributor_role(client: FlaskClient, runner: FlaskCliRunner):
 def test_crud_collection(client: FlaskClient):
     _, user = login(client)
     user: m.User
-    book = create_test_book(user.id)
+    book = create_test_book(client)
 
     response: Response = client.post(
         f"/book/{book.id}/create_collection",
@@ -403,19 +414,12 @@ def test_crud_subcollection(client: FlaskClient):
     _, user = login(client)
     user: m.User
 
-    book = create_test_book(user.id)
+    book = create_test_book(client)
 
-    collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.active_version.id,
-        is_leaf=False,
-        parent_id=book.active_version.root_collection.id,
-    ).first()
-
-    leaf_collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.active_version.id,
-        is_leaf=True,
-        parent_id=collection.id,
-    ).first()
+    collection, _ = create_collection(client, book.id)
+    leaf_collection, _ = create_sub_collection(client, book.id, collection.id)
+    leaf_collection.is_leaf = True
+    leaf_collection.save()
 
     response: Response = client.post(
         f"/book/999/{leaf_collection.id}/create_sub_collection",
@@ -547,19 +551,9 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
     _, user = login(client)
     user: m.User
 
-    book = create_test_book(user.id)
-
-    collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.active_version.id,
-        is_leaf=False,
-        parent_id=book.active_version.root_collection.id,
-    ).first()
-
-    sub_collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.active_version.id,
-        is_leaf=True,
-        parent_id=collection.id,
-    ).first()
+    book = create_test_book(client)
+    collection, _ = create_collection(client, book.id)
+    sub_collection, _ = create_sub_collection(client, book.id, collection.id)
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/create_section",
@@ -783,32 +777,14 @@ def test_crud_sections(client: FlaskClient, runner: FlaskCliRunner):
 def test_crud_interpretation(client: FlaskClient):
     _, user = login(client)
     user: m.User
-    book = create_test_book(user.id)
+    book = create_test_book(client)
 
-    collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.active_version.id,
-        is_leaf=True,
-        parent_id=book.active_version.root_collection.id,
-    ).first()
-    section_in_collection: m.Section = m.Section.query.filter_by(
-        collection_id=collection.id,
-        version_id=book.active_version.id,
-    ).first()
+    collection, _ = create_collection(client, book.id)
+    section_in_collection, _ = create_section(client, book.id, collection.id)
 
-    collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.active_version.id,
-        is_leaf=False,
-        parent_id=book.active_version.root_collection.id,
-    ).first()
-    sub_collection: m.Collection = m.Collection.query.filter_by(
-        version_id=book.active_version.id,
-        is_leaf=True,
-        parent_id=collection.id,
-    ).first()
-    section_in_subcollection: m.Section = m.Section.query.filter_by(
-        collection_id=sub_collection.id,
-        version_id=book.active_version.id,
-    ).first()
+    collection, _ = create_collection(client, book.id)
+    sub_collection, _ = create_sub_collection(client, book.id, collection.id)
+    section_in_subcollection, _ = create_section(client, book.id, sub_collection.id)
 
     text_1 = "Test Interpretation #1 Text"
 
@@ -967,36 +943,18 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
     # add dummmy data
     runner.invoke(args=["db-populate"])
 
-    book: m.Book = db.session.get(m.Book, 1)
+    book: m.Book = create_book(client)
     book.user_id = user.id
     book.save()
 
-    leaf_collection: m.Collection = m.Collection(
-        label="Test Leaf Collection #1 Label",
-        version_id=book.active_version.id,
-        is_leaf=True,
-        parent_id=book.active_version.root_collection.id,
-    ).save()
-    m.Section(
-        label="Test Section in Collection #1 Label",
-        collection_id=leaf_collection.id,
-        version_id=book.active_version.id,
-    ).save()
+    collection, _ = create_collection(client, book.id)
+    leaf_collection, _ = create_sub_collection(client, book.id, collection.id)
+    create_section(client, book.id, leaf_collection.id)
 
-    collection: m.Collection = m.Collection(
-        label="Test Collection #1 Label", version_id=book.active_version.id
-    ).save()
-    sub_collection: m.Collection = m.Collection(
-        label="Test SubCollection #1 Label",
-        version_id=book.active_version.id,
-        parent_id=collection.id,
-        is_leaf=True,
-    ).save()
-    section_in_subcollection: m.Section = m.Section(
-        label="Test Section in Subcollection #1 Label",
-        collection_id=sub_collection.id,
-        version_id=book.active_version.id,
-    ).save()
+    collection, _ = create_collection(client, book.id)
+    sub_collection, _ = create_sub_collection(client, book.id, collection.id)
+    section_in_subcollection, _ = create_section(client, book.id, sub_collection.id)
+
     group = create_moderator_group(book.id)
     m.SectionAccessGroups(
         section_id=section_in_subcollection.id, access_group_id=group.id
@@ -1077,11 +1035,9 @@ def test_crud_comment(client: FlaskClient, runner: FlaskCliRunner):
 def test_access_to_settings_page(client: FlaskClient):
     _, user = login(client)
 
-    book_1 = m.Book(label="test", about="test", user_id=user.id).save()
-    m.BookVersion(semver="1.0.0", book_id=book_1.id).save()
+    book_1 = create_book(client)
 
-    book_2 = m.Book(label="test", about="test", user_id=user.id).save()
-    m.BookVersion(semver="1.0.0", book_id=book_2.id).save()
+    book_2 = create_book(client)
 
     response: Response = client.get(
         f"/book/{book_1.id}/settings",
@@ -1111,42 +1067,17 @@ def test_access_to_settings_page(client: FlaskClient):
 def test_interpretation_in_home_last_inter_section(
     client: FlaskClient, runner: FlaskCliRunner
 ):
-    _, user = login(client)
-    user: m.User
+    login(client)
 
-    # add dummmy data
-    runner.invoke(args=["db-populate"])
+    book: m.Book = create_book(client)
 
-    book: m.Book = db.session.get(m.Book, 1)
-    book.user_id = user.id
-    book.save()
+    collection, _ = create_collection(client, book.id)
+    section_in_collection, _ = create_section(client, book.id, collection.id)
 
-    leaf_collection: m.Collection = m.Collection(
-        label="Test Leaf Collection #1 Label",
-        version_id=book.active_version.id,
-        is_leaf=True,
-        parent_id=book.active_version.root_collection.id,
-    ).save()
-    section_in_collection: m.Section = m.Section(
-        label="Test Section in Collection #1 Label",
-        collection_id=leaf_collection.id,
-        version_id=book.active_version.id,
-    ).save()
+    collection, _ = create_collection(client, book.id)
+    sub_collection, _ = create_sub_collection(client, book.id, collection.id)
+    section_in_subcollection, _ = create_section(client, book.id, sub_collection.id)
 
-    collection: m.Collection = m.Collection(
-        label="Test Collection #1 Label", version_id=book.active_version.id
-    ).save()
-    sub_collection: m.Collection = m.Collection(
-        label="Test SubCollection #1 Label",
-        version_id=book.active_version.id,
-        parent_id=collection.id,
-        is_leaf=True,
-    ).save()
-    section_in_subcollection: m.Section = m.Section(
-        label="Test Section in Subcollection #1 Label",
-        collection_id=sub_collection.id,
-        version_id=book.active_version.id,
-    ).save()
     group = create_moderator_group(book.id)
     m.SectionAccessGroups(
         section_id=section_in_subcollection.id, access_group_id=group.id
