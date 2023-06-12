@@ -103,7 +103,6 @@ def create_app(environment="development"):
         BookContributorView,
     )
 
-    app.config["FLASK_ADMIN_SWATCH"] = "Flatly"
     admin = Admin(
         app,
         name="Open Law Admin",
