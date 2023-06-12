@@ -1,9 +1,8 @@
 from flask import flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
 
-from app.controllers import (
-    register_book_verify_route,
-)
+from app.controllers import register_book_verify_route
+from app.controllers.notification_producer import comment_notification
 from app.controllers.delete_nested_book_entities import (
     delete_nested_comment_entities,
 )
@@ -60,22 +59,26 @@ def create_comment(
         comment.save()
 
         # notifications
-        if current_user.id != book.owner.id:
-            notification_text = "New comment to your interpretation"
-            m.Notification(
-                link=redirect_url,
-                text=notification_text,
-                user_id=interpretation.user_id,
-            ).save()
-            log(
-                log.INFO,
-                "Create notification for user with id [%s]",
-                interpretation.user_id,
+        if current_user.id != interpretation.user_id:
+            comment_notification(
+                m.Notification.Actions.CREATE, comment.id, interpretation.user_id
             )
         # -------------
 
         tags = current_app.config["TAG_REGEX"].findall(text)
         set_comment_tags(comment, tags)
+
+        users_mentions = current_app.config["USER_MENTION_REGEX"].findall(text)
+        for mention in users_mentions:
+            mention = mention.replace("@", "")
+            user = m.User.query.filter(m.User.username.ilike(mention.lower())).first()
+            if user:
+                # notifications
+                comment_notification(
+                    m.Notification.Actions.MENTION, comment.id, user.id
+                )
+            # -------------
+
         # TODO Send notifications
         # users_mentions = current_app.config["USER_MENTION_REGEX"].findall(text)
 
@@ -113,14 +116,8 @@ def comment_delete(book_id: int, interpretation_id: int):
 
         # notifications
         if current_user.id != interpretation.user_id:
-            notification_text = "A moderator has removed your comment"
-            m.Notification(
-                link=redirect_url, text=notification_text, user_id=comment.user_id
-            ).save()
-            log(
-                log.INFO,
-                "Create notification for user with id [%s]",
-                comment.user_id,
+            comment_notification(
+                m.Notification.Actions.DELETE, comment.id, comment.user_id
             )
         # -------------
 

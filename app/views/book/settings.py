@@ -7,9 +7,8 @@ from flask import (
 )
 from flask_login import login_required
 
-from app.controllers import (
-    register_book_verify_route,
-)
+from app.controllers import register_book_verify_route
+from app.controllers.notification_producer import contributor_notification
 from app import models as m, db, forms as f
 from app.controllers.require_permission import require_permission
 from app.logger import log
@@ -66,19 +65,7 @@ def add_contributor(book_id: int):
         contributor.save()
 
         # notifications
-        redirect_url = url_for(
-            "book.collection_view",
-            book_id=book_id,
-        )
-        notification_text = f"You've been added to {book.label} as an Editor/Moderator"
-        m.Notification(
-            link=redirect_url, text=notification_text, user_id=user_id
-        ).save()
-        log(
-            log.INFO,
-            "Create notification for user with id [%s]",
-            user_id,
-        )
+        contributor_notification(m.Notification.Actions.CONTRIBUTING, book.id, user_id)
         # -------------
 
         groups = (
@@ -159,21 +146,7 @@ def delete_contributor(book_id: int):
         db.session.commit()
 
         # notifications
-        redirect_url = url_for(
-            "book.collection_view",
-            book_id=book_id,
-        )
-        notification_text = (
-            f"You've been removed from {book.label} as an Editor/Moderator"
-        )
-        m.Notification(
-            link=redirect_url, text=notification_text, user_id=user_id
-        ).save()
-        log(
-            log.INFO,
-            "Create notification for user with id [%s]",
-            user_id,
-        )
+        contributor_notification(m.Notification.Actions.DELETE, book.id, user_id)
         # -------------
 
         flash("Success!", "success")
