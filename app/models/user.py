@@ -31,6 +31,7 @@ class User(BaseModel, UserMixin):
     )
     stars = db.relationship("Book", secondary="books_stars", back_populates="stars")
     books = db.relationship("Book")
+    notifications = db.relationship("Notification")
 
     @hybrid_property
     def password(self):
@@ -69,6 +70,16 @@ class User(BaseModel, UserMixin):
             else:
                 contributions.append(comment.interpretation)
         return contributions
+
+    @property
+    def active_notifications(self):
+        items = [
+            notification
+            for notification in self.notifications
+            if not notification.is_read
+        ]
+        items.sort(key=lambda x: x.created_at)
+        return items
 
 
 class AnonymousUser(AnonymousUserMixin):

@@ -1,9 +1,8 @@
 from flask import flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
 
-from app.controllers import (
-    register_book_verify_route,
-)
+from app.controllers import register_book_verify_route
+from app.controllers.notification_producer import comment_notification
 from app.controllers.delete_nested_book_entities import (
     delete_nested_comment_entities,
 )
@@ -59,8 +58,27 @@ def create_comment(
         )
         comment.save()
 
+        # notifications
+        if current_user.id != interpretation.user_id:
+            comment_notification(
+                m.Notification.Actions.CREATE, comment.id, interpretation.user_id
+            )
+        # -------------
+
         tags = current_app.config["TAG_REGEX"].findall(text)
         set_comment_tags(comment, tags)
+
+        users_mentions = current_app.config["USER_MENTION_REGEX"].findall(text)
+        for mention in users_mentions:
+            mention = mention.replace("@", "")
+            user = m.User.query.filter(m.User.username.ilike(mention.lower())).first()
+            if user:
+                # notifications
+                comment_notification(
+                    m.Notification.Actions.MENTION, comment.id, user.id
+                )
+            # -------------
+
         # TODO Send notifications
         # users_mentions = current_app.config["USER_MENTION_REGEX"].findall(text)
 
@@ -86,12 +104,22 @@ def comment_delete(book_id: int, interpretation_id: int):
     form = f.DeleteCommentForm()
     comment_id = form.comment_id.data
     comment: m.Comment = db.session.get(m.Comment, comment_id)
+    interpretation: m.Interpretation = db.session.get(
+        m.Interpretation, interpretation_id
+    )
 
     if form.validate_on_submit():
         comment.is_deleted = True
         delete_nested_comment_entities(comment)
         log(log.INFO, "Delete comment [%s]", comment)
         comment.save()
+
+        # notifications
+        if current_user.id != interpretation.user_id:
+            comment_notification(
+                m.Notification.Actions.DELETE, comment.id, comment.user_id
+            )
+        # -------------
 
         flash("Success!", "success")
         return redirect(redirect_url)
