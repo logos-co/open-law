@@ -1,4 +1,5 @@
 import os
+import warnings
 
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -109,8 +110,6 @@ def create_app(environment="development"):
         template_mode="bootstrap3",
         index_view=CustomAdminIndexView(),
     )
-
-    import warnings
 
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", "Fields missing from ruleset", UserWarning)

@@ -2,7 +2,7 @@
 <div id="delete_version_modal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-[150] hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
   <div class="relative w-full max-w-2xl max-h-full">
     <!-- Modal content -->
-    <form action="{{ url_for('book.delete_contributor', book_id=book.id) }}" id="delete_version_modal_form" method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+    <form action="{{ url_for('book.delete_version', book_id=book.id) }}" id="delete_version_modal_form" method="post" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
       {{ form_hidden_tag() }}
       <!-- Modal header -->
       <input type="hidden" name="version_id" id="version_id" value="0" class="delete-version-id-input"/>

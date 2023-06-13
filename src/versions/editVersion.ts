@@ -8,11 +8,13 @@ export function initEditVersion() {
   if (versionIdInput && versionSemverInput) {
     const editBtns = document.querySelectorAll('.edit-version-label-btns');
     editBtns.forEach(el => {
-      const versionId = el.getAttribute('data-version-id');
-      const versionSemver = el.getAttribute('data-version-semver');
+      el.addEventListener('click', () => {
+        const versionId = el.getAttribute('data-version-id');
+        const versionSemver = el.getAttribute('data-version-semver');
 
-      versionIdInput.value = versionId;
-      versionSemverInput.value = versionSemver;
+        versionIdInput.value = versionId;
+        versionSemverInput.value = versionSemver;
+      });
     });
   }
 }

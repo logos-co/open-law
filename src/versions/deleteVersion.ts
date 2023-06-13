@@ -6,9 +6,10 @@ export function initDeleteVersion() {
   if (versionIdInput) {
     const deleteBtns = document.querySelectorAll('.delete-version-btn');
     deleteBtns.forEach(el => {
-      const versionId = el.getAttribute('data-version-id');
-
-      versionIdInput.value = versionId;
+      el.addEventListener('click', () => {
+        const versionId = el.getAttribute('data-version-id');
+        versionIdInput.value = versionId;
+      });
     });
   }
 }

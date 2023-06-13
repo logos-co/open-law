@@ -2,8 +2,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField, ValidationError
 from wtforms.validators import DataRequired
 
-from app.controllers import clean_html
-from app.logger import log
 from app import models as m, db
 
 
@@ -30,4 +28,9 @@ class EditVersionForm(BaseVersionForm):
 
 
 class DeleteVersionForm(BaseVersionForm):
+    submit = SubmitField("Delete")
+
+
+class CreateVersionForm(FlaskForm):
+    semver = StringField("Semver", validators=[DataRequired()])
     submit = SubmitField("Delete")

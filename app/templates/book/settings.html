@@ -12,6 +12,7 @@
 {% include 'book/modals/delete_contributor_modal.html' %}
 {% include 'book/modals/edit_version_label_modal.html' %}
 {% include 'book/modals/delete_version_modal.html' %}
+{% include 'book/modals/edit_version_label_modal.html' %}
 
 <!-- Hide right_sidebar -->
 <!-- prettier-ignore -->
@@ -188,7 +189,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for version in book.versions %}
+              {% for version in book.versions if not version.is_deleted and not version.is_active %}
                 <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
                   <td class="px-6 truncate max-w-[280]">{{ version.semver }}</td>
                   <td class="px-6"> {{ version.created_at }} </td>
@@ -198,7 +199,7 @@
                     </button>
                   </td>
                   <td class="px-4 py-4">
-                    <button type="button" data-modal-target="delete_version_modal" data-modal-toggle="delete_version_modal" class="delete-version-btn text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-sm rounded-lg text-sm px-5 py-1.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
+                    <button type="button" data-version-id="{{ version.id }}" data-modal-target="delete_version_modal" data-modal-toggle="delete_version_modal" class="delete-version-btn text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-sm rounded-lg text-sm px-5 py-1.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
                       Delete
                     </button>
                   </td>
@@ -207,7 +208,7 @@
             </tbody>
           </table>
         </div>
-        <button type="button" data-modal-target="add-version-modal" data-modal-toggle="add-versions-modal" class="add-versions-btn text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        <button type="button" data-modal-target="add-version-modal" data-modal-toggle="add-version-modal" class="add-versions-btn text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /> </svg>
           New Version
         </button>
