@@ -12,7 +12,7 @@
 
 
 <div
-  class="md:mr-64 pt-1 relative overflow-x-auto shadow-md sm:rounded-lg mt-1 h-box w-box flex">
+  class="pt-1 relative pr-5 shadow-md sm:rounded-lg mt-1 h-box flex">
   {% if not current_user.is_authenticated %}
   <!-- prettier-ignore -->
   <div class="mx-auto my-auto h-full w-full p-2">
@@ -26,11 +26,15 @@
   <!-- prettier-ignore -->
   {% endif %}
   <!-- prettier-ignore -->
-  <div class="flex flex-col w-4/5">
+  <div class="flex flex-col w-full">
+  <div class="flex justify-between mt-1">
+  <h1 class=" text-lg font-extrabold dark:text-white ml-4">My library</h1>
+  {% if current_user.is_authenticated %}
+  {% include 'book/components/header_buttons.html' %}
+  {% endif %}
+  </div>
   {% for book in books if not book.is_deleted%}
-    {% if loop.index==1 %}
-      <h1 class=" text-lg font-extrabold dark:text-white ml-4">My library</h1>
-    {% endif %}
+   
     <!-- prettier-ignore -->
     <dl class="bg-white dark:bg-gray-900 h-max w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
       <dt class="mb-2">

@@ -22,25 +22,6 @@ from app.logger import log
 from .bp import bp
 
 
-@bp.route("/all", methods=["GET"])
-def get_all():
-    log(log.INFO, "Create query for books")
-    books: m.Book = m.Book.query.filter(m.Book.is_deleted is not False).order_by(
-        m.Book.id
-    )
-    log(log.INFO, "Create pagination for books")
-
-    pagination = create_pagination(total=books.count())
-    log(log.INFO, "Returning data for front end")
-
-    return render_template(
-        "book/all.html",
-        books=books.paginate(page=pagination.page, per_page=pagination.per_page),
-        page=pagination,
-        all_books=True,
-    )
-
-
 @bp.route("/my_library", methods=["GET"])
 def my_library():
     if current_user.is_authenticated:
