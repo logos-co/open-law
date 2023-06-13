@@ -3,6 +3,10 @@ from flask_login import login_required, current_user
 
 from app import models as m, db
 from app.logger import log
+from app.controllers.notification_producer import (
+    interpretation_notification,
+    comment_notification,
+)
 
 bp = Blueprint("vote", __name__, url_prefix="/vote")
 
@@ -53,22 +57,10 @@ def vote_interpretation(interpretation_id: int):
     db.session.commit()
     # TODO:Add notification if we deal with batching tem to "12 users voted your..."
     # notifications
-    # if current_user.id != book.owner.id:
-    #     redirect_url = url_for(
-    #         "book.interpretation_view",
-    #         book_id=book.id,
-    #         section_id=interpretation.section_id,
-    #     )
-    #     notification_text = f"{current_user.username} voted your interpretation"
-    #     m.Notification(
-    #         link=redirect_url, text=notification_text, user_id=book.owner.id
-    #     ).save()
-    #     log(
-    #         log.INFO,
-    #         "Create notification for user with id [%s]",
-    #         book.owner.id,
-    #     )
-    # -------------
+    if current_user.id != interpretation.user_id:
+        interpretation_notification(
+            m.Notification.Actions.VOTE, interpretation_id, interpretation.user_id
+        )
 
     return jsonify(
         {
@@ -120,7 +112,9 @@ def vote_comment(comment_id: int):
             comment,
         )
     db.session.commit()
-
+    # notifications
+    if current_user.id != comment.user_id:
+        comment_notification(m.Notification.Actions.VOTE, comment_id, comment.user_id)
     return jsonify(
         {
             "vote_count": comment.vote_count,
