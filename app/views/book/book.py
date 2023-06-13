@@ -247,6 +247,7 @@ def my_contributions():
                     ),
                 ),
                 m.Interpretation.is_deleted == False,  # noqa: E712
+                m.Interpretation.copy_of == None,  # noqa: E711
             )
             .group_by(m.Interpretation.id)
             .order_by(m.Interpretation.created_at.desc())
