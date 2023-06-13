@@ -43,7 +43,7 @@ class Book(BaseModel):
         raise ValueError("No active version found")
 
     @property
-    def actual_version(self):
+    def actual_versions(self):
         versions = (
             m.BookVersion.query.filter_by(is_deleted=False, book_id=self.id)
             .order_by(m.BookVersion.created_at.asc())

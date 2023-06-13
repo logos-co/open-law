@@ -179,6 +179,9 @@
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
                 <th scope="col" class="px-6 py-3">
+                  #
+                </th>
+                <th scope="col" class="px-6 py-3">
                   Name
                 </th>
                 <th scope="col" class="px-6 py-3">
@@ -189,10 +192,11 @@
               </tr>
             </thead>
             <tbody>
-              {% for version in book.versions if not version.is_deleted and not version.is_active %}
+              {% for version in book.actual_versions if not version.is_active %}
                 <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+                  <td class="px-6 truncate max-w-[280]">{{ loop.index }}</td>
                   <td class="px-6 truncate max-w-[280]">{{ version.semver }}</td>
-                  <td class="px-6"> {{ version.created_at }} </td>
+                  <td class="px-6"> {{ version.created_at.strftime('%B %d, %Y') }} </td>
                   <td class="px-4 py-4">
                     <button type="button" data-version-id="{{ version.id }}" data-version-semver="{{ version.semver }}" data-modal-target="edit-version-label-modal" data-modal-toggle="edit-version-label-modal" class="edit-version-label-btns text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
                       Edit

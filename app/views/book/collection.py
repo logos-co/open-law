@@ -21,10 +21,10 @@ def collection_view(book_id: int, version_index: int = None):
     breadcrumbs = create_breadcrumbs(book_id=book_id)
     version = None
     if version_index is not None:
-        actual_version = book.actual_version
-        if version_index == 0 or len(actual_version) < version_index:
+        actual_versions = book.actual_versions
+        if version_index == 0 or len(actual_versions) < version_index:
             return redirect(url_for("book.collection_view", book_id=book_id))
-        version = actual_version[version_index]
+        version = actual_versions[version_index]
     if not book or book.is_deleted:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
