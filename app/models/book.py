@@ -43,6 +43,15 @@ class Book(BaseModel):
         raise ValueError("No active version found")
 
     @property
+    def actual_version(self):
+        versions = (
+            m.BookVersion.query.filter_by(is_deleted=False, book_id=self.id)
+            .order_by(m.BookVersion.created_at.asc())
+            .all()
+        )
+        return versions
+
+    @property
     def current_user_has_star(self):
         if current_user.is_authenticated:
             book_star: m.BookStar = m.BookStar.query.filter_by(

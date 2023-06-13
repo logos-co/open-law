@@ -1256,6 +1256,11 @@ input:checked + .toggle-bg {
   margin-bottom: auto;
 }
 
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .-mb-px {
   margin-bottom: -1px;
 }
@@ -3047,6 +3052,16 @@ input:checked + .toggle-bg {
 :is(.dark .dark\:bg-teal-300) {
   --tw-bg-opacity: 1;
   background-color: rgb(126 220 226 / var(--tw-bg-opacity));
+}
+
+:is(.dark .dark\:bg-cyan-600) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(8 145 178 / var(--tw-bg-opacity));
+}
+
+:is(.dark .dark\:bg-sky-600) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(2 132 199 / var(--tw-bg-opacity));
 }
 
 :is(.dark .dark\:bg-opacity-80) {
