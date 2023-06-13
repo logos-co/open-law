@@ -104,6 +104,20 @@ def interpretation_notification(
                 book_id=book.id,
                 section_id=section.id,
             )
+            # if have such notification stat to batch them
+            user: m.User = db.session.get(m.User, user_id)
+            for notification in user.active_notifications:
+                if (
+                    f"new interpretations to {section.label} on {book.label}".lower()
+                    in notification.text.lower()
+                ):
+                    splitted_text = notification.text.split()
+                    counter = 2
+                    if splitted_text[0].isnumeric():
+                        counter = int(splitted_text[0]) + 1
+                    notification.text = f"{counter} new interpretations to {section.label} on {book.label}"
+                    notification.save()
+                    return
 
         case m.Notification.Actions.DELETE:
             text = "A moderator has removed your interpretation"
@@ -134,6 +148,30 @@ def interpretation_notification(
                 )
             else:
                 return
+
+        case m.Notification.Actions.VOTE:
+            text = f"{current_user.username} voted your interpretation"
+            link = url_for(
+                "book.interpretation_view",
+                book_id=book.id,
+                section_id=interpretation.section_id,
+            )
+            # if user already have such notification
+            user: m.User = db.session.get(m.User, user_id)
+            for notification in user.active_notifications:
+                if (
+                    "voted your interpretation".lower() in notification.text.lower()
+                    and notification.entity_id == entity_id
+                ):
+                    if current_user.id == notification.user_id:
+                        return
+                    splitted_text = notification.text.split()
+                    counter = 2
+                    if splitted_text[0].isnumeric():
+                        counter = int(splitted_text[0]) + 1
+                    notification.text = f"{counter} users voted your interpretation"
+                    notification.save()
+                    return
 
     create_notification(
         m.Notification.Entities.INTERPRETATION, action, entity_id, user_id, text, link
@@ -191,6 +229,30 @@ def comment_notification(action: m.Notification.Actions, entity_id: int, user_id
                 book_id=book.id,
                 interpretation_id=comment.interpretation_id,
             )
+
+        case m.Notification.Actions.VOTE:
+            text = f"{current_user.username} voted your comment"
+            link = url_for(
+                "book.qa_view",
+                book_id=book.id,
+                interpretation_id=comment.interpretation_id,
+            )
+            # if user already have such notification
+            user: m.User = db.session.get(m.User, user_id)
+            for notification in user.active_notifications:
+                if (
+                    "voted your comment".lower() in notification.text.lower()
+                    and notification.entity_id == entity_id
+                ):
+                    if current_user.id == notification.user_id:
+                        return
+                    splitted_text = notification.text.split()
+                    counter = 2
+                    if splitted_text[0].isnumeric():
+                        counter = int(splitted_text[0]) + 1
+                    notification.text = f"{counter} users voted your comment"
+                    notification.save()
+                    return
 
     create_notification(
         m.Notification.Entities.COMMENT, action, entity_id, user_id, text, link
