@@ -1,3 +1,5 @@
+from flask_login import current_user
+
 from app import models as m
 from app.logger import log
 
@@ -70,7 +72,10 @@ def create_new_version(book: m.Book, semver: str):
     book_root_collection: m.Collection = book_active_version.root_collection
 
     version: m.BookVersion = m.BookVersion(
-        semver=semver, derivative_id=book.active_version.id, book_id=book.id
+        semver=semver,
+        derivative_id=book.active_version.id,
+        book_id=book.id,
+        user_id=current_user.id,
     )
     log(log.INFO, "Create new version for book [%s]", book)
     version.save()

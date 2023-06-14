@@ -16,8 +16,10 @@ class BookVersion(BaseModel):
     # Foreign keys
     derivative_id = db.Column(db.Integer, db.ForeignKey("book_versions.id"))
     book_id = db.Column(db.Integer, db.ForeignKey("books.id"))
+    user_id = db.Column(db.ForeignKey("users.id"))
 
     # Relationships
+    user = db.relationship("User", viewonly=True)
     book = db.relationship("Book", viewonly=True)
     derivative = db.relationship("BookVersion", remote_side=[id])
     sections = db.relationship("Section", viewonly=True, order_by="desc(Section.id)")
