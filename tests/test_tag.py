@@ -1,7 +1,7 @@
 from flask import current_app as Response
 from flask.testing import FlaskClient
 
-from app import models as m, db
+from app import models as m
 from tests.utils import (
     create_book,
     create_collection,
@@ -9,7 +9,6 @@ from tests.utils import (
     create_interpretation,
     create_section,
     login,
-    create_test_book,
 )
 
 
