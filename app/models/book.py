@@ -52,7 +52,9 @@ class Book(BaseModel):
     @property
     def actual_versions(self):
         versions = (
-            m.BookVersion.query.filter_by(is_deleted=False, book_id=self.id)
+            m.BookVersion.query.filter_by(
+                is_deleted=False, book_id=self.id, is_active=False
+            )
             .order_by(m.BookVersion.created_at.asc())
             .all()
         )

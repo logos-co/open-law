@@ -221,7 +221,6 @@ def test_create_version(client):
     login(client)
 
     book: m.Book = create_book(client)
-    book_2: m.Book = create_book(client)
 
     logout(client)
     login(client, "test_2")
