@@ -3,10 +3,10 @@ from flask import (
     render_template,
     request,
 )
-from sqlalchemy import and_, func, text
+from sqlalchemy import and_, func
 from app import models as m, db
 from app.logger import log
-from app.controllers import create_pagination
+from app.controllers.sorting import sort_by
 
 
 bp = Blueprint("home", __name__, url_prefix="/home")
@@ -18,48 +18,25 @@ def get_all():
     interpretations = (
         db.session.query(
             m.Interpretation,
+            m.Interpretation.score.label("score"),
+            m.Interpretation.created_at.label("created_at"),
             func.count(m.Comment.interpretation_id).label("comments_count"),
         )
-        .join(m.Comment, isouter=True)
-        .filter(
+        .join(
+            m.Comment,
             and_(
-                m.Section.id == m.Interpretation.section_id,
-                m.Collection.id == m.Section.collection_id,
-                m.BookVersion.id == m.Section.version_id,
-                m.Book.id == m.BookVersion.book_id,
-                m.Book.is_deleted == False,  # noqa: E712
-                m.BookVersion.is_deleted == False,  # noqa: E712
-                m.Interpretation.is_deleted == False,  # noqa: E712
-                m.Section.is_deleted == False,  # noqa: E712
-                m.Collection.is_deleted == False,  # noqa: E712
-            )
+                m.Comment.interpretation_id == m.Interpretation.id,
+                m.Comment.is_deleted == False,  # noqa: E712
+            ),
+            isouter=True,
+        )
+        .filter(
+            m.Interpretation.is_deleted == False,  # noqa: E712
         )
         .group_by(m.Interpretation.id)
     )
-    match sort:
-        case "upvoted":
-            interpretations = interpretations.order_by(m.Interpretation.score.desc())
-        case "recent":
-            interpretations = interpretations.order_by(
-                m.Interpretation.created_at.desc()
-            )
-        case "commented":
-            interpretations = interpretations.order_by(text("comments_count DESC"))
-        case _:
-            interpretations = interpretations.order_by(
-                m.Interpretation.created_at.desc()
-            )
+    pagination, interpretations = sort_by(interpretations, sort)
 
-    log(log.INFO, "Creating pagination for interpretations")
-
-    pagination = create_pagination(total=interpretations.count())
-    log(log.INFO, "Returns data for front end")
-
-    log(log.INFO, "Returning data to front end")
-    interpretations = interpretations.paginate(
-        page=pagination.page, per_page=pagination.per_page
-    )
-    interpretations.items = [item[0] for item in interpretations.items]
     return render_template(
         "home/index.html",
         interpretations=interpretations,
@@ -70,15 +47,32 @@ def get_all():
 @bp.route("/explore_books", methods=["GET"])
 def explore_books():
     log(log.INFO, "Create query for home page for books")
+    sort = request.args.get("sort")
 
-    books: m.Book = m.Book.query.filter_by(is_deleted=False).order_by(m.Book.id)
+    books: m.Book = (
+        db.session.query(
+            m.Book,
+            m.Book.created_at.label("created_at"),
+            func.count(m.Interpretation.id).label("interpretations_count"),
+            func.count(m.BookStar.id).label("stars_count"),
+        )
+        .join(m.BookStar, m.BookStar.book_id == m.Book.id, full=True)
+        .join(m.BookVersion, m.BookVersion.book_id == m.Book.id)
+        .join(m.Section, m.BookVersion.id == m.Section.version_id, full=True)
+        .join(m.Interpretation, m.Interpretation.section_id == m.Section.id, full=True)
+        .filter(
+            m.Book.is_deleted == False,  # noqa: E712
+            m.BookStar.is_deleted == False,  # noqa: E712
+            m.BookVersion.is_deleted == False,  # noqa: E712
+            m.Section.is_deleted == False,  # noqa: E712
+            m.Interpretation.is_deleted == False,  # noqa: E712
+        )
+        .group_by(m.Book.id)
+    )
     log(log.INFO, "Creating pagination for books")
-
-    pagination = create_pagination(total=books.count())
-    log(log.INFO, "Returns data for front end")
-
+    pagination, books = sort_by(books, sort)
     return render_template(
         "home/explore_books.html",
-        books=books.paginate(page=pagination.page, per_page=pagination.per_page),
+        books=books,
         page=pagination,
     )

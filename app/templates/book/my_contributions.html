@@ -13,20 +13,22 @@
   <button type="button" id="connectWalletBtn" class="w-full h-full text-black dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-100 font-medium rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center border border-gray-200 dark:border-gray-700"><div class="my-auto"></div> Connect you wallet to see your contributions! </div></button></div>
   <!-- prettier-ignore -->
   {% endif %}
-  {% if current_user.is_authenticated and not interpretations %}
+  {% if current_user.is_authenticated and not interpretations.total %}
   <!-- prettier-ignore -->
   <div class="mx-auto my-auto h-full w-full p-2">
-  <a href="{{url_for('home.get_all')}}" type="button" class="w-full h-full text-black dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-100 font-medium rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center border border-gray-200 dark:border-gray-700"><div class="my-auto"></div><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /> </svg> You don't have contributions! Start review books to create one!</div></button></div>
+  <a href="{{url_for('home.get_all')}}" type="button" class="w-full h-full text-black dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-100 font-medium rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center border border-gray-200 dark:border-gray-700"><div class="my-auto"></div><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /> </svg> You don't have contributions! Start review books to create one!</div></a></div>
   <!-- prettier-ignore -->
   {% endif %}
   <!-- prettier-ignore -->
   <div class="flex flex-col w-full">
+  {% if current_user.is_authenticated and interpretations.total %}
     <div class="flex justify-between mt-1">
     <h1 class=" text-lg font-extrabold dark:text-white ml-4">My contributions</h1>
     {% if current_user.is_authenticated %}
     {% include 'book/components/header_buttons.html' %}
     {% endif %}
     </div>
+  {% endif %}
   {% for interpretation in interpretations %}
   <!-- prettier-ignore -->
 <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
