@@ -28,11 +28,13 @@
   <!-- prettier-ignore -->
   <div class="flex flex-col w-full">
   <div class="flex justify-between mt-1">
+  {% if current_user.is_authenticated and books.total>0 %}
   <h1 class=" text-lg font-extrabold dark:text-white ml-4">My library</h1>
   {% if current_user.is_authenticated %}
   {% include 'book/components/header_buttons.html' %}
   {% endif %}
   </div>
+  {% endif %}
   {% for book in books if not book.is_deleted%}
    
     <!-- prettier-ignore -->

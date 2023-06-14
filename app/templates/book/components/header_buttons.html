@@ -8,6 +8,7 @@
       <!-- prettier-ignore -->
       <button id="dropdownDelayButton" data-dropdown-toggle="dropdownDelay" data-dropdown-delay="500" data-dropdown-trigger="hover" class="text-white ml-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
           Sort by
+          {{request.args.get('sort',"")}}
           <!-- prettier-ignore -->
           <svg class="w-4 h-4 ml-auto" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path> </svg>
         </button>
@@ -20,14 +21,14 @@
             <li> <a href="?sort=upvoted" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most upvoted</a > </li>
             {% endif %}
             {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books'%}
-            <li> <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most favored</a > </li>
+            <li> <a href="?sort=favored" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most favored</a > </li>
             {% endif %}
             <li> <a href="?sort=recent" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most recent</a > </li>
             {% if selected_tab=='latest_interpretations' or selected_tab=='my_contributions' %}
             <li> <a href="?sort=commented" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most comments</a > </li>
             {% endif %}
             {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books'%}
-            <li> <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most interpretations</a > </li>
+            <li> <a href="?sort=interpretations" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most interpretations</a > </li>
             {% endif %}
           </ul>
         </div>
