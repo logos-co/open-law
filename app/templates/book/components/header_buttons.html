@@ -22,9 +22,9 @@
             {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books'%}
             <li> <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most favored</a > </li>
             {% endif %}
-            <li> <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most recent</a > </li>
+            <li> <a href="?sort=recent" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most recent</a > </li>
             {% if selected_tab=='latest_interpretations' or selected_tab=='my_contributions' %}
-            <li> <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most comments</a > </li>
+            <li> <a href="?sort=commented" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most comments</a > </li>
             {% endif %}
             {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books'%}
             <li> <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >Most interpretations</a > </li>
