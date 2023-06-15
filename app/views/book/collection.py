@@ -15,17 +15,27 @@ from app.logger import log
 from .bp import bp
 
 
+@bp.route("/<int:book_id>/version/<int:version_index>", methods=["GET"])
 @bp.route("/<int:book_id>/collections", methods=["GET"])
-def collection_view(book_id: int):
+def collection_view(book_id: int, version_index: int = None):
     book = db.session.get(m.Book, book_id)
     breadcrumbs = create_breadcrumbs(book_id=book_id)
+    version = None
+    if version_index is not None:
+        actual_versions = book.actual_versions
+        if version_index == 0 or len(actual_versions) < version_index:
+            return redirect(url_for("book.collection_view", book_id=book_id))
+        version = actual_versions[version_index - 1]
     if not book or book.is_deleted:
         log(log.WARNING, "Book with id [%s] not found", book_id)
         flash("Book not found", "danger")
         return redirect(url_for("book.my_library"))
     else:
         return render_template(
-            "book/collection_view.html", book=book, breadcrumbs=breadcrumbs
+            "book/collection_view.html",
+            book=book,
+            breadcrumbs=breadcrumbs,
+            version=version,
         )
 
 
@@ -91,7 +101,7 @@ def collection_create(book_id: int, collection_id: int | None = None):
             label=label,
             about=form.about.data,
             parent_id=book.versions[-1].root_collection.id,
-            version_id=book.last_version.id,
+            version_id=book.active_version.id,
             position=position,
         )
         if collection_id:

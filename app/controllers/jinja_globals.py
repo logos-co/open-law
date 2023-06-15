@@ -72,18 +72,16 @@ def build_qa_url_using_interpretation(interpretation: m.Interpretation):
     url = url_for(
         "book.qa_view",
         book_id=book.id,
-        interpretation_id=interpretation.id,
+        interpretation_id=interpretation.copy_of or interpretation.id,
     )
     return url
 
 
 # Using: {{ recursive_render("template.html", collection=collection, book=book) }}
-def recursive_render(template: str, collection: m.Collection, book: m.Book):
-    return render_template(
-        template,
-        collection=collection,
-        book=book,
-    )
+def recursive_render(
+    template: str, collection: m.Collection, book: m.Book, version: m.BookVersion = None
+):
+    return render_template(template, collection=collection, book=book, version=version)
 
 
 # Using: {{ has_permission(entity=book, required_permissions=[Access.create]) }}

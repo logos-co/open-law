@@ -1,15 +1,30 @@
 from flask.testing import FlaskClient
 
 from app import models as m
-from tests.utils import login, create_test_book
+from tests.utils import (
+    login,
+    logout,
+    create_book,
+    create_collection,
+    create_section,
+    create_interpretation,
+    create_comment,
+)
 
 
 def test_approved_interpretations(client: FlaskClient):
-    _, user = login(client)
-    create_test_book(user.id)
+    login(client)
+    book = create_book(client)
+    collection, _ = create_collection(client, book.id)
+    section, _ = create_section(client, book.id, collection.id)
+    interpretation, _ = create_interpretation(client, book.id, section.id)
 
-    dummy_user = m.User(username="Bob").save()
-    create_test_book(dummy_user.id)
+    logout(client)
+    login(client, "test", "test")
+    book = create_book(client)
+    collection, _ = create_collection(client, book.id)
+    section, _ = create_section(client, book.id, collection.id)
+    interpretation, _ = create_interpretation(client, book.id, section.id)
 
     book: m.Book = m.Book.query.first()
 
@@ -40,7 +55,7 @@ def test_approved_interpretations(client: FlaskClient):
         label="123",
     ).save()
     section: m.Section = m.Section(
-        label="123", collection_id=sub_collection.id, version_id=book.last_version.id
+        label="123", collection_id=sub_collection.id, version_id=book.active_version.id
     ).save()
     interpretation: m.Interpretation = m.Interpretation(
         section_id=section.id, text="123", approved=True
@@ -63,10 +78,19 @@ def test_approved_interpretations(client: FlaskClient):
 
 def test_approved_comments(client: FlaskClient):
     _, user = login(client)
-    create_test_book(user.id)
+    book = create_book(client)
+    collection, _ = create_collection(client, book.id)
+    section, _ = create_section(client, book.id, collection.id)
+    interpretation, _ = create_interpretation(client, book.id, section.id)
+    comment, _ = create_comment(client, book.id, interpretation.id)
 
-    dummy_user = m.User(username="Bob").save()
-    create_test_book(dummy_user.id)
+    logout(client)
+    login(client, "test", "test")
+    book = create_book(client)
+    collection, _ = create_collection(client, book.id)
+    section, _ = create_section(client, book.id, collection.id)
+    interpretation, _ = create_interpretation(client, book.id, section.id)
+    comment, _ = create_comment(client, book.id, interpretation.id)
 
     book: m.Book = m.Book.query.first()
 

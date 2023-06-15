@@ -34,7 +34,7 @@ def section_create(book_id: int, collection_id: int):
         section: m.Section = m.Section(
             label=form.label.data,
             collection_id=collection_id,
-            version_id=book.last_version.id,
+            version_id=book.active_version.id,
             position=position,
         )
         collection.is_leaf = True

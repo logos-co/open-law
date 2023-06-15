@@ -13,12 +13,13 @@ class Section(BaseModel):
     __tablename__ = "sections"
 
     label = db.Column(db.String(256), unique=False, nullable=False)
+    position = db.Column(db.Integer, default=-1, nullable=True)
+    copy_of = db.Column(db.Integer, default=0, nullable=True)
 
     # Foreign keys
     collection_id = db.Column(db.ForeignKey("collections.id"))
     user_id = db.Column(db.ForeignKey("users.id"))
     version_id = db.Column(db.ForeignKey("book_versions.id"))
-    position = db.Column(db.Integer, default=-1, nullable=True)
 
     # Relationships
     collection = db.relationship("Collection", viewonly=True)

@@ -61,7 +61,7 @@ def access_tree():
 
     collections = (
         db.session.query(m.Collection).filter(
-            m.Collection.version_id == book.last_version.id,
+            m.Collection.version_id == book.active_version.id,
             m.Collection.is_root == False,  # noqa: E712
             m.Collection.is_deleted == False,  # noqa: E712
         )
@@ -73,7 +73,7 @@ def access_tree():
 
     sections = (
         db.session.query(m.Section).filter(
-            m.Section.version_id == book.last_version.id,
+            m.Section.version_id == book.active_version.id,
             m.Section.is_deleted == False,  # noqa: E712
         )
     ).all()

@@ -44,6 +44,14 @@ def interpretation_view(
                 book_id=book_id,
             )
         )
+
+    if section.copy_of:
+        return redirect(
+            url_for(
+                "book.interpretation_view", book_id=book_id, section_id=section.copy_of
+            )
+        )
+
     breadcrumbs = create_breadcrumbs(
         book_id=book_id, section_id=section_id, collection_id=section.collection.id
     )
@@ -246,6 +254,14 @@ def qa_view(book_id: int, interpretation_id: int):
         log(log.WARNING, "Interpretation with id [%s] not found", interpretation_id)
         flash("Interpretation not found", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
+    if interpretation.copy_of:
+        return redirect(
+            url_for(
+                "book.qa_view",
+                book_id=book_id,
+                interpretation_id=interpretation.copy_of,
+            )
+        )
 
     breadcrumbs = create_breadcrumbs(
         book_id=book_id,

@@ -54,7 +54,7 @@
 
                 <span class="text-center dark:text-gray-300">{{ book.label }}</span>
               </div>
-              {%- for collection in book.last_version.children_collections recursive %}
+              {%- for collection in book.active_version.children_collections recursive %}
                 <div class="flex">
                 <ul class="ml-4">
                   <li>

@@ -15,7 +15,7 @@ def test_login_and_logout(client):
     response, _ = login(client)
     assert b"Login successful." in response.data
     # Incorrect login credentials should fail.
-    response, _ = login(client, "sam", "wrongpassword")
+    response, _ = login(client, "sam", "wrongpassword", create_user_if_not_exists=False)
     assert b"Wrong user ID or password." in response.data
     # Correct credentials should login
     response, _ = login(client)

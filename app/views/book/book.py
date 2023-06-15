@@ -104,7 +104,7 @@ def create():
         )
         log(log.INFO, "Form submitted. Book: [%s]", book)
         book.save()
-        version = m.BookVersion(semver="1.0.0", book_id=book.id).save()
+        version = m.BookVersion(semver="Active", book_id=book.id, is_active=True).save()
         root_collection = m.Collection(
             label="Root Collection", version_id=version.id, is_root=True
         ).save()
@@ -301,6 +301,7 @@ def my_contributions():
                     ),
                 ),
                 m.Interpretation.is_deleted == False,  # noqa: E712
+                m.Interpretation.copy_of == None,  # noqa: E711
             )
             .group_by(m.Interpretation.id)
         )

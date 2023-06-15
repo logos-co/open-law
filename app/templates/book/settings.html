@@ -10,6 +10,9 @@
 {% include 'book/modals/add_contributor_modal.html' %}
 {% include 'book/modals/delete_book_modal.html' %}
 {% include 'book/modals/delete_contributor_modal.html' %}
+{% include 'book/modals/edit_version_label_modal.html' %}
+{% include 'book/modals/delete_version_modal.html' %}
+{% include 'book/modals/edit_version_label_modal.html' %}
 
 <!-- Hide right_sidebar -->
 <!-- prettier-ignore -->
@@ -36,6 +39,13 @@
           <button class="flex items-center space-x-2 p-4 rounded-t-lg hover:text-gray-600 dark:hover:text-gray-300" id="permissions-tab" data-tabs-target="#permissions" type="button" role="tab" aria-controls="permissions" {% if selected_tab == 'user_permissions' %} aria-selected="true" {% endif %}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5" /> </svg>
             <span>User permissions</span>
+          </button>
+        </li>
+        <li class="mr-2" role="presentation">
+          <!-- prettier-ignore -->
+          <button class="flex items-center space-x-2 p-4 rounded-t-lg hover:text-gray-600 dark:hover:text-gray-300" id="versions-tab" data-tabs-target="#versions" type="button" role="tab" aria-controls="versions" {% if selected_tab == 'versions' %} aria-selected="true" {% endif %}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /> </svg>
+            <span>Versions</span>
           </button>
         </li>
       {% endif %}
@@ -146,9 +156,9 @@
                 <td class="px-6 py-4">
                   <!-- prettier-ignore -->
                   {% if current_user.id != contributor.user_id %}
-                      <button type="button" id="callDeleteContributorModal" data-user-id="{{contributor.user.id}}" data-modal-target="delete_contributor_modal" data-modal-toggle="delete_contributor_modal" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-sm rounded-lg text-sm px-5 py-1.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
-                        Delete
-                      </button>
+                    <button type="button" id="callDeleteContributorModal" data-user-id="{{contributor.user.id}}" data-modal-target="delete_contributor_modal" data-modal-toggle="delete_contributor_modal" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-sm rounded-lg text-sm px-5 py-1.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
+                      Delete
+                    </button>
                   {% endif %}
                 </td>
               </tr>
@@ -159,6 +169,52 @@
         <button type="button" data-modal-target="add-contributor-modal" data-modal-toggle="add-contributor-modal" class="add-contributor-btn text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /> </svg>
           New Contributor
+        </button>
+      </div>
+    </div>
+    <div class="hidden px-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="versions" role="tabpanel" aria-labelledby="versions-tab">
+      <div class="px-5">
+        <div class="mb-3 relative overflow-x-auto shadow-md sm:rounded-lg">
+          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" class="px-6 py-3">
+                  #
+                </th>
+                <th scope="col" class="px-6 py-3">
+                  Name
+                </th>
+                <th scope="col" class="px-6 py-3">
+                  Created At
+                </th>
+                <th scope="col" class="px-6 py-3"> </th>
+                <th scope="col" class="px-6 py-3"> </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for version in book.actual_versions if not version.is_active %}
+                <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+                  <td class="px-6 truncate max-w-[280]">{{ loop.index }}</td>
+                  <td class="px-6 truncate max-w-[280]">{{ version.semver }}</td>
+                  <td class="px-6"> {{ version.created_at.strftime('%B %d, %Y') }} </td>
+                  <td class="px-4 py-4">
+                    <button type="button" data-version-id="{{ version.id }}" data-version-semver="{{ version.semver }}" data-modal-target="edit-version-label-modal" data-modal-toggle="edit-version-label-modal" class="edit-version-label-btns text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                      Edit
+                    </button>
+                  </td>
+                  <td class="px-4 py-4">
+                    <button type="button" data-version-id="{{ version.id }}" data-modal-target="delete_version_modal" data-modal-toggle="delete_version_modal" class="delete-version-btn text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-sm rounded-lg text-sm px-5 py-1.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <button type="button" data-modal-target="add-version-modal" data-modal-toggle="add-version-modal" class="add-versions-btn text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /> </svg>
+          New Version
         </button>
       </div>
     </div>

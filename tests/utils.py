@@ -1,13 +1,8 @@
-from random import randint
 from uuid import uuid4
 
 from flask import current_app as Response
 
 from app import models as m
-from app.controllers.create_access_groups import (
-    create_editor_group,
-    create_moderator_group,
-)
 
 TEST_ADMIN_NAME = "bob"
 TEST_ADMIN_EMAIL = "bob@test.com"
@@ -18,11 +13,19 @@ def create(username=TEST_ADMIN_NAME, password=TEST_ADMIN_PASSWORD):
     user = m.User(username=username)
     user.password = password
     user.save()
-    return user.id
+    return user
 
 
-def login(client, username=TEST_ADMIN_NAME, password=TEST_ADMIN_PASSWORD):
+def login(
+    client,
+    username=TEST_ADMIN_NAME,
+    password=TEST_ADMIN_PASSWORD,
+    create_user_if_not_exists=True,
+):
     user = m.User.query.filter_by(username=username).first()
+    if create_user_if_not_exists and not user:
+        user = create(username, password)
+
     response = client.post(
         "/login", data=dict(user_id=username, password=password), follow_redirects=True
     )
@@ -33,103 +36,12 @@ def logout(client):
     return client.get("/logout", follow_redirects=True)
 
 
-def create_test_book(owner_id: int, entity_id: int = 0):
-    if not entity_id:
-        entity_id = randint(1, 500)
-    book: m.Book = m.Book(
-        label=f"Book {entity_id}", about=f"About {entity_id}", user_id=owner_id
-    ).save()
-
-    version: m.BookVersion = m.BookVersion(semver="1.0.0", book_id=book.id).save()
-
-    root_collection: m.Collection = m.Collection(
-        label="Root", version_id=version.id, is_root=True
-    ).save()
-
-    collection: m.Collection = m.Collection(
-        label=f"Collection {entity_id}",
-        version_id=version.id,
-        is_leaf=True,
-        parent_id=root_collection.id,
-    ).save()
-
-    section: m.Section = m.Section(
-        label=f"Section {entity_id}",
-        user_id=owner_id,
-        collection_id=collection.id,
-        version_id=version.id,
-    ).save()
-
-    interpretation: m.Interpretation = m.Interpretation(
-        section_id=section.id,
-        text=f"Interpretation Text {entity_id}",
-        user_id=owner_id,
-    ).save()
-
-    m.Comment(
-        text=f"Comment {entity_id}",
-        user_id=owner_id,
-        interpretation_id=interpretation.id,
-    ).save()
-
-    # subcollection
-    collection_2: m.Collection = m.Collection(
-        label=f"Collection {entity_id}",
-        version_id=version.id,
-        parent_id=root_collection.id,
-    ).save()
-
-    subcollection: m.Collection = m.Collection(
-        label=f"subCollection {entity_id}",
-        version_id=version.id,
-        parent_id=collection_2.id,
-        is_leaf=True,
-    ).save()
-
-    section_in_subcollection: m.Section = m.Section(
-        label=f"Section in sub {entity_id}",
-        user_id=owner_id,
-        collection_id=subcollection.id,
-        version_id=version.id,
-    ).save()
-
-    # access groups
-    editor_access_group = create_editor_group(book_id=book.id)
-    moderator_access_group = create_moderator_group(book_id=book.id)
-    access_groups = [editor_access_group, moderator_access_group]
-
-    for access_group in access_groups:
-        m.BookAccessGroups(book_id=book.id, access_group_id=access_group.id).save()
-        # root
-        m.CollectionAccessGroups(
-            collection_id=root_collection.id, access_group_id=access_group.id
-        ).save()
-        # leaf
-        m.CollectionAccessGroups(
-            collection_id=collection.id, access_group_id=access_group.id
-        ).save()
-
-        m.CollectionAccessGroups(
-            collection_id=collection_2.id, access_group_id=access_group.id
-        ).save()
-        # subcollection
-        m.CollectionAccessGroups(
-            collection_id=subcollection.id, access_group_id=access_group.id
-        ).save()
-
-        m.SectionAccessGroups(
-            section_id=section.id, access_group_id=access_group.id
-        ).save()
-        m.SectionAccessGroups(
-            section_id=section_in_subcollection.id, access_group_id=access_group.id
-        ).save()
-        m.InterpretationAccessGroups(
-            interpretation_id=section.id, access_group_id=access_group.id
-        ).save()
-
-    # Contributors
-    u = m.User(username=f"Bob {entity_id}").save()
-    m.BookContributor(book_id=book.id, user_id=u.id).save()
+def create_test_book(client):
+    book = create_book(client)
+    collection, _ = create_collection(client, book.id)
+    section, _ = create_section(client, book.id, collection.id)
+    interpretation, _ = create_interpretation(client, book.id, section.id)
+    create_comment(client, book.id, interpretation.id)
 
     return book
 
@@ -212,12 +124,23 @@ def create_book(client):
     assert book.access_groups
     assert len(book.access_groups) == 2
 
-    root_collection: m.Collection = book.last_version.collections[0]
+    root_collection: m.Collection = book.active_version.collections[0]
     assert root_collection
     assert root_collection.access_groups
     assert len(root_collection.access_groups) == 2
 
     return book
+
+
+def add_contributor(client, book_id, user_id, role):
+    response: Response = client.post(
+        f"/book/{book_id}/add_contributor",
+        data=dict(user_id=user_id, role=role),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Contributor was added!" in response.data
 
 
 def create_collection(client, book_id):

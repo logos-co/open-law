@@ -17,7 +17,8 @@ def search_interpretations():
     q = request.args.get("q", type=str, default="").lower()
     log(log.INFO, "Starting to build query for interpretations")
     interpretations = m.Interpretation.query.order_by(m.Interpretation.id).filter(
-        (func.lower(m.Interpretation.plain_text).like(f"%{q}%"))
+        (func.lower(m.Interpretation.plain_text).like(f"%{q}%")),
+        m.Interpretation.copy_of == None,  # noqa: E711
     )
     log(log.INFO, "Get count of interpretations")
     count = interpretations.count()
@@ -54,15 +55,18 @@ def search_books():
                 and_(
                     func.lower(m.Collection.label).like(f"%{q}%"),
                     m.Collection.is_deleted == False,  # noqa: E712
+                    m.Collection.copy_of == None,  # noqa: E711
                     m.Collection.is_root == False,  # noqa: E712
                 ),
                 and_(
                     func.lower(m.Section.label).like(f"%{q}%"),
+                    m.Section.copy_of == None,  # noqa: E711
                     m.Section.is_deleted == False,  # noqa: E712
                 ),
                 and_(
                     func.lower(m.Interpretation.plain_text).like(f"%{q}%"),
                     m.Interpretation.is_deleted == False,  # noqa: E712
+                    m.Interpretation.copy_of == None,  # noqa: E711
                     m.Section.is_deleted == False,  # noqa: E712
                 ),
             ),
@@ -153,6 +157,7 @@ def tag_search_interpretations():
                 func.lower(m.Tag.name) == (tag_name),
                 m.InterpretationTag.tag_id == m.Tag.id,
                 m.Interpretation.id == m.InterpretationTag.interpretation_id,
+                m.Interpretation.copy_of == None,  # noqa: E711
                 m.Interpretation.is_deleted == False,  # noqa: E712
             )
         )
@@ -216,6 +221,7 @@ def quick_search():
         m.Interpretation.query.order_by(m.Interpretation.id)
         .filter(
             (func.lower(m.Interpretation.plain_text).like(f"%{search_query}%")),
+            m.Interpretation.copy_of == None,  # noqa: E711
             m.Interpretation.is_deleted == False,  # noqa: E712,
         )
         .limit(2)

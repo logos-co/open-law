@@ -4,7 +4,7 @@ from click.testing import Result
 from werkzeug.datastructures import FileStorage
 
 from app import models as m, db
-from tests.utils import login
+from tests.utils import login, create_book
 
 
 def test_create_admin(runner: FlaskCliRunner):
@@ -83,6 +83,8 @@ def test_search_user(populate: FlaskClient, runner: FlaskCliRunner):
 
 
 def test_profile(client):
+    login(client)
+    book = create_book(client)
     user: m.User = m.User(
         wallet_id="nsagqklfhqwef84r23hr34r35jfn", password="password"
     ).save()
@@ -114,13 +116,6 @@ def test_profile(client):
     assert user.username == new_name
     assert user.is_activated
     assert user.avatar_img
-    book = m.Book(
-        label="Book label",
-        about="Book about",
-        user_id=user.id,
-    )
-    book.save()
-    m.BookVersion(semver="1.0.0", book_id=book.id).save()
     assert book
 
     # profile page

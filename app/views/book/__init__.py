@@ -8,3 +8,4 @@ from . import settings
 from . import section
 from . import interpretation
 from . import comment
+from . import version

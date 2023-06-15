@@ -1,4 +1,5 @@
 import os
+import warnings
 
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -112,28 +113,31 @@ def create_app(environment="development"):
         index_view=CustomAdminIndexView(),
     )
 
-    for view in [
-        UsersView(m.User, db.session, name="User", endpoint="/user_"),
-        BooksView(m.Book, db.session, name="Book", endpoint="/book_"),
-        CollectionsView(
-            m.Collection, db.session, name="Collection", endpoint="/collection_"
-        ),
-        SectionsView(m.Section, db.session, name="Section", endpoint="/section_"),
-        InterpretationView(
-            m.Interpretation,
-            db.session,
-            name="Interpretation",
-            endpoint="/interpretation_",
-        ),
-        CommentView(m.Comment, db.session, name="Comment", endpoint="/comment_"),
-        TagView(m.Tag, db.session, name="Tag", endpoint="/tag_"),
-        BookContributorView(
-            m.BookContributor,
-            db.session,
-            name="BookContributor",
-            endpoint="/book_contributor_",
-        ),
-    ]:
-        admin.add_view(view)
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", "Fields missing from ruleset", UserWarning)
+
+        for view in [
+            UsersView(m.User, db.session, name="User", endpoint="/user_"),
+            BooksView(m.Book, db.session, name="Book", endpoint="/book_"),
+            CollectionsView(
+                m.Collection, db.session, name="Collection", endpoint="/collection_"
+            ),
+            SectionsView(m.Section, db.session, name="Section", endpoint="/section_"),
+            InterpretationView(
+                m.Interpretation,
+                db.session,
+                name="Interpretation",
+                endpoint="/interpretation_",
+            ),
+            CommentView(m.Comment, db.session, name="Comment", endpoint="/comment_"),
+            TagView(m.Tag, db.session, name="Tag", endpoint="/tag_"),
+            BookContributorView(
+                m.BookContributor,
+                db.session,
+                name="BookContributor",
+                endpoint="/book_contributor_",
+            ),
+        ]:
+            admin.add_view(view)
 
     return app

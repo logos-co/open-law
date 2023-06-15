@@ -36,8 +36,22 @@ class Book(BaseModel):
         return f"<{self.id}: {self.label}>"
 
     @property
-    def last_version(self):
-        return self.versions[-1]
+    def active_version(self):
+        for version in self.versions:
+            if version.is_active:
+                return version
+        raise ValueError("No active version found")
+
+    @property
+    def actual_versions(self):
+        versions = (
+            m.BookVersion.query.filter_by(
+                is_deleted=False, book_id=self.id, is_active=False
+            )
+            .order_by(m.BookVersion.created_at.asc())
+            .all()
+        )
+        return versions
 
     @property
     def current_user_has_star(self):
@@ -56,7 +70,7 @@ class Book(BaseModel):
             )
             .filter(
                 and_(
-                    m.BookVersion.id == self.last_version.id,
+                    m.BookVersion.id == self.active_version.id,
                     m.Section.version_id == m.BookVersion.id,
                     m.Collection.id == m.Section.collection_id,
                     m.Interpretation.section_id == m.Section.id,
@@ -83,7 +97,7 @@ class Book(BaseModel):
             )
             .filter(
                 and_(
-                    m.BookVersion.id == self.last_version.id,
+                    m.BookVersion.id == self.active_version.id,
                     m.Section.version_id == m.BookVersion.id,
                     m.Collection.id == m.Section.collection_id,
                     m.Interpretation.section_id == m.Section.id,
@@ -108,7 +122,7 @@ class Book(BaseModel):
             )
             .filter(
                 and_(
-                    m.BookVersion.id == self.last_version.id,
+                    m.BookVersion.id == self.active_version.id,
                     m.Section.version_id == m.BookVersion.id,
                     m.Collection.id == m.Section.collection_id,
                     m.Interpretation.section_id == m.Section.id,
