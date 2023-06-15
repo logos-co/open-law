@@ -10,7 +10,7 @@
 <!-- prettier-ignore -->
 {% endif %}
 <!-- prettier-ignore -->
-{% for notification in current_user.active_notifications[:5]%}
+{% for notification in current_user.active_notifications[:3]%}
 <a
   href="{{url_for('notifications.mark_as_read',notification_id=notification.id)}}"
   class="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700">
