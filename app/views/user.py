@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user, logout_user
 from app.controllers import create_pagination
+from app.controllers.error_flashes import create_error_flash
 from sqlalchemy import func, not_, or_
 
 from app import models as m, db
@@ -46,10 +47,7 @@ def edit_profile():
         return redirect(url_for("main.index"))
     elif form.is_submitted():
         log(log.ERROR, "Update user errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
 
     if current_user.is_activated:
         form.username.data = current_user.username

@@ -3,6 +3,7 @@ from flask_login import login_required
 
 from app import models as m, db, forms as f
 from app.controllers.fork import fork_book
+from app.controllers.error_flashes import create_error_flash
 from app.logger import log
 from .bp import bp
 
@@ -20,8 +21,5 @@ def fork(book_id):
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Fork book errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(redirect_url)

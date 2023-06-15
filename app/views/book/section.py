@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 from app.controllers import register_book_verify_route
 from app.controllers.notification_producer import section_notification
 from app.controllers.delete_nested_book_entities import delete_nested_section_entities
+from app.controllers.error_flashes import create_error_flash
 from app import models as m, db, forms as f
 from app.controllers.require_permission import require_permission
 from app.logger import log
@@ -58,10 +59,7 @@ def section_create(book_id: int, collection_id: int):
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Section create errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(redirect_url)
 
 
@@ -97,10 +95,7 @@ def section_edit(book_id: int, section_id: int):
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Section edit errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(redirect_url)
 
 

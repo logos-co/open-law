@@ -17,6 +17,7 @@ from app.controllers.create_access_groups import (
 )
 from app.controllers.require_permission import require_permission
 from app.controllers.sorting import sort_by
+from app.controllers.error_flashes import create_error_flash
 from app import models as m, db, forms as f
 from app.logger import log
 from .bp import bp
@@ -130,10 +131,7 @@ def create():
         return redirect(url_for("book.my_library"))
     else:
         log(log.ERROR, "Book create errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(url_for("book.my_library"))
 
 
@@ -162,10 +160,7 @@ def edit(book_id: int):
         return redirect(url_for("book.collection_view", book_id=book_id))
     else:
         log(log.ERROR, "Book create errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(url_for("book.settings", book_id=book_id))
 
 
