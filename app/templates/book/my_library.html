@@ -11,7 +11,7 @@
 {% endif %}
 
 
-<div class="pt-1 relative pr-5 shadow-md sm:rounded-lg mt-1 h-box flex">
+<div class="pt-1 relative shadow-md sm:rounded-lg mt-1 h-box flex flex-col">
   {% if not current_user.is_authenticated %}
     <div class="mx-auto my-auto h-full w-full p-2">
       <button type="button" id="connectWalletBtn" class="w-full h-full text-black dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-100 font-medium rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center border border-gray-200 dark:border-gray-700">
@@ -25,28 +25,29 @@
   {% if current_user.is_authenticated and not books.total %}
     <div class="mx-auto my-auto h-full w-full p-2">
       <button type="button" data-modal-target="add-book-modal" data-modal-toggle="add-book-modal" class="w-full h-full text-black dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-100 font-medium rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center border border-gray-200 dark:border-gray-700">
-        <div class="my-auto">
+        <div class="my-auto flex items-center space-x-2">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /> </svg>
-          New book
+          <span>New book</span>
         </div>
       </button>
     </div>
   {% endif %}
 
   <!-- prettier-ignore -->
-  <div class="flex flex-col w-full">
-    {% if current_user.is_authenticated and books.total %}
-    <div class="flex justify-between mt-1">
-      <h1 class=" text-lg font-extrabold dark:text-white ml-4">My library</h1>
-      {% if current_user.is_authenticated %}
-        {% include 'book/components/header_buttons.html' %}
-      {% endif %}
+  {% if current_user.is_authenticated and books.total %}
+    <div class="flex flex-col w-full">
+      <div class="flex justify-between mt-1">
+        <h1 class=" text-lg font-extrabold dark:text-white ml-4">My library</h1>
+        {% if current_user.is_authenticated %}
+          {% include 'book/components/header_buttons.html' %}
+        {% endif %}
+      </div>
     </div>
-    {% endif %}
+  {% endif %}
 
   {% for book in books if not book.is_deleted %}
     <!-- prettier-ignore -->
-    <dl class="bg-white dark:bg-gray-900 h-max w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+    <dl class="bg-white dark:bg-gray-900 h-max p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
       <dt class="mb-2 flex">
         {% if book.original_book %}
           <a href="{{ url_for('book.collection_view', book_id=book.original_book.id ) }}" target="_blank" class="flex pb-4">

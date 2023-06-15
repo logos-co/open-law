@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
-from sqlalchemy import and_, or_, func
+from sqlalchemy import and_, or_, func, distinct
 
 from app.controllers import (
     register_book_verify_route,
@@ -32,8 +32,10 @@ def my_library():
             db.session.query(
                 m.Book,
                 m.Book.created_at.label("created_at"),
-                func.count(m.Interpretation.id).label("interpretations_count"),
-                func.count(m.BookStar.id).label("stars_count"),
+                func.count(distinct(m.Interpretation.id)).label(
+                    "interpretations_count"
+                ),
+                func.count(distinct(m.BookStar.id)).label("stars_count"),
             )
             .join(
                 m.BookStar,
@@ -49,6 +51,7 @@ def my_library():
                     m.BookVersion.book_id == m.Book.id,
                     m.BookVersion.is_deleted == False,  # noqa: E712
                 ),
+                full=True,
             )
             .join(
                 m.Section,
@@ -210,8 +213,10 @@ def favorite_books():
             db.session.query(
                 m.Book,
                 m.Book.created_at.label("created_at"),
-                func.count(m.Interpretation.id).label("interpretations_count"),
-                func.count(m.BookStar.id).label("stars_count"),
+                func.count(distinct(m.Interpretation.id)).label(
+                    "interpretations_count"
+                ),
+                func.count(distinct(m.BookStar.id)).label("stars_count"),
             )
             .join(
                 m.BookStar,
@@ -275,14 +280,24 @@ def my_contributions():
                 m.Interpretation,
                 m.Interpretation.score.label("score"),
                 m.Interpretation.created_at.label("created_at"),
-                func.count(m.Comment.interpretation_id).label("comments_count"),
+                func.count(distinct(m.Comment.interpretation_id)).label(
+                    "comments_count"
+                ),
             )
             .join(
-                m.Comment, m.Comment.interpretation_id == m.Interpretation.id, full=True
+                m.Comment,
+                and_(
+                    m.Comment.interpretation_id == m.Interpretation.id,
+                    m.Comment.is_deleted == False,  # noqa: E712
+                ),
+                full=True,
             )
             .join(
                 m.InterpretationVote,
-                m.InterpretationVote.interpretation_id == m.Interpretation.id,
+                and_(
+                    m.InterpretationVote.interpretation_id == m.Interpretation.id,
+                    m.Interpretation.is_deleted == False,  # noqa: E712
+                ),
                 full=True,
             )
             .filter(
@@ -301,7 +316,7 @@ def my_contributions():
                     ),
                 ),
                 m.Interpretation.is_deleted == False,  # noqa: E712
-                m.Interpretation.copy_of == None,  # noqa: E711
+                m.Interpretation.copy_of == 0,
             )
             .group_by(m.Interpretation.id)
         )

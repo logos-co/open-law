@@ -6,7 +6,7 @@
 
 {% block content %}
 <div
-  class="pt-1 relative pr-5 shadow-md sm:rounded-lg mt-1 h-box flex">
+  class="pt-1 relative shadow-md sm:rounded-lg mt-1 h-box flex">
   {% if not current_user.is_authenticated %}
   <!-- prettier-ignore -->
   <div class="mx-auto my-auto h-full w-full p-2">
@@ -31,7 +31,7 @@
   {% endif %}
   {% for book in books %}
   <!-- prettier-ignore -->
-  <dl class="bg-white dark:bg-gray-900 h-max w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+  <dl class="bg-white dark:bg-gray-900 h-max  p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
       <dt class="mb-2"><a class="flex flex-col pb-4" href="{{url_for('book.collection_view',book_id=book.id)}}">{{book.label}}</a></dt>
       <dd class="flex flex-col md:flex-row text-lg font-semibold text-gray-500 md:text-lg dark:text-gray-400">
         {% if book.versions %}
