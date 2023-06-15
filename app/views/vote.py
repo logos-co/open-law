@@ -55,7 +55,8 @@ def vote_interpretation(interpretation_id: int):
             interpretation,
         )
     db.session.commit()
-    # TODO:Add notification if we deal with batching tem to "12 users voted your..."
+    interpretation.score = interpretation.vote_count
+    interpretation.save()
     # notifications
     if current_user.id != interpretation.user_id:
         interpretation_notification(
