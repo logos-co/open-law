@@ -39,7 +39,15 @@
    
     <!-- prettier-ignore -->
     <dl class="bg-white dark:bg-gray-900 h-max w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-      <dt class="mb-2">
+      <dt class="mb-2 flex">
+        {% if book.original_book %}
+          <a href="{{ url_for('book.collection_view', book_id=book.original_book.id ) }}" target="_blank" class="flex pb-4">
+            <span class="flex items-center space-x-1 mr-2 bg-fuchsia-400 border border-fuchsia-900 dark:!text-black rounded text-center px-1">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /> </svg>
+              <p>Fork</p>
+            </span>
+          </a>
+        {% endif %}
         <a class="flex pb-4" href="{{url_for('book.collection_view',book_id=book.id)}}">
           {% if book.user_id != current_user.id %}
             <span class="mr-2 bg-blue-400 border border-sky-900 dark:!text-black rounded text-center px-1">Contributing</span>

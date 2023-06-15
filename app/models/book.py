@@ -13,6 +13,7 @@ class Book(BaseModel):
 
     # Foreign keys
     user_id = db.Column(db.ForeignKey("users.id"))
+    original_book_id = db.Column(db.ForeignKey("books.id"))
 
     # Relationships
     owner = db.relationship("User", viewonly=True)
@@ -30,6 +31,12 @@ class Book(BaseModel):
         "Tag",
         secondary="book_tags",
         back_populates="books",
+    )
+    forks = db.relationship(
+        "Book",
+        backref=db.backref("original_book", remote_side="Book.id"),
+        viewonly=True,
+        order_by="asc(Book.id)",
     )
 
     def __repr__(self):
@@ -52,6 +59,10 @@ class Book(BaseModel):
             .all()
         )
         return versions
+
+    @property
+    def active_forks(self):
+        return [fork for fork in self.forks if not fork.is_deleted]
 
     @property
     def current_user_has_star(self):
