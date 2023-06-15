@@ -5,6 +5,7 @@ from app.controllers import (
     create_breadcrumbs,
     register_book_verify_route,
 )
+from app.controllers.copy_access_groups import recursive_copy_access_groups
 from app.controllers.notification_producer import collection_notification
 from app.controllers.delete_nested_book_entities import (
     delete_nested_collection_entities,
@@ -268,6 +269,15 @@ def change_collection_position(book_id: int, collection_id: int):
             collection_id,
         )
         collection.parent_id = collection_id
+
+        # current_access_group = m.CollectionAccessGroups.query.filter_by(
+        #     collection_id=collection.id
+        # ).all()
+        # for access_group in current_access_group:
+        #     db.session.delete(access_group)
+        # db.session.commit()
+
+        recursive_copy_access_groups(new_parent, collection)
 
     if new_parent.active_children:
         collections_to_edit = (

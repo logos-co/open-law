@@ -74,7 +74,7 @@ def test_change_collection_ordering(client):
 
     collection: m.Collection = db.session.get(m.Collection, 3)
     assert collection.parent_id == collection_1.id
-    assert collection.position == 1
+    assert collection.position == 0
 
     response: Response = client.post(
         f"/book/{book.id}/{collection.id}/collection/change_position",
@@ -156,7 +156,7 @@ def test_change_section_ordering(client):
     collection: m.Collection = section.collection
     assert len(collection.active_sections) == 1
     assert section.position != new_position
-    assert section.position == 1
+    assert section.position == 0
 
     response: Response = client.post(
         f"/book/{book.id}/{section.id}/section/change_position",
