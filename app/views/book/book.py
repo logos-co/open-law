@@ -35,11 +35,36 @@ def my_library():
                 func.count(m.Interpretation.id).label("interpretations_count"),
                 func.count(m.BookStar.id).label("stars_count"),
             )
-            .join(m.BookStar, m.BookStar.book_id == m.Book.id, full=True)
-            .join(m.BookVersion, m.BookVersion.book_id == m.Book.id)
-            .join(m.Section, m.BookVersion.id == m.Section.version_id, full=True)
             .join(
-                m.Interpretation, m.Interpretation.section_id == m.Section.id, full=True
+                m.BookStar,
+                and_(
+                    m.BookStar.book_id == m.Book.id,
+                    m.BookStar.is_deleted == False,  # noqa: E712
+                ),
+                full=True,
+            )
+            .join(
+                m.BookVersion,
+                and_(
+                    m.BookVersion.book_id == m.Book.id,
+                    m.BookVersion.is_deleted == False,  # noqa: E712
+                ),
+            )
+            .join(
+                m.Section,
+                and_(
+                    m.BookVersion.id == m.Section.version_id,
+                    m.Section.is_deleted == False,  # noqa: E712
+                ),
+                full=True,
+            )
+            .join(
+                m.Interpretation,
+                and_(
+                    m.Interpretation.section_id == m.Section.id,
+                    m.Interpretation.is_deleted == False,  # noqa: E712
+                ),
+                full=True,
             )
             .join(m.BookContributor, m.BookContributor.book_id == m.Book.id, full=True)
             .filter(
@@ -48,10 +73,6 @@ def my_library():
                     m.BookContributor.user_id == current_user.id,
                 ),
                 m.Book.is_deleted == False,  # noqa: E712
-                m.BookStar.is_deleted == False,  # noqa: E712
-                m.BookVersion.is_deleted == False,  # noqa: E712
-                m.Section.is_deleted == False,  # noqa: E712
-                m.Interpretation.is_deleted == False,  # noqa: E712
             )
             .group_by(m.Book.id)
         )
@@ -192,20 +213,41 @@ def favorite_books():
                 func.count(m.Interpretation.id).label("interpretations_count"),
                 func.count(m.BookStar.id).label("stars_count"),
             )
-            .join(m.BookStar, m.BookStar.book_id == m.Book.id, full=True)
-            .join(m.BookVersion, m.BookVersion.book_id == m.Book.id)
-            .join(m.Section, m.BookVersion.id == m.Section.version_id, full=True)
             .join(
-                m.Interpretation, m.Interpretation.section_id == m.Section.id, full=True
+                m.BookStar,
+                and_(
+                    m.BookStar.book_id == m.Book.id,
+                    m.BookStar.is_deleted == False,  # noqa: E712
+                ),
+                full=True,
+            )
+            .join(
+                m.BookVersion,
+                and_(
+                    m.BookVersion.book_id == m.Book.id,
+                    m.BookVersion.is_deleted == False,  # noqa: E712
+                ),
+            )
+            .join(
+                m.Section,
+                and_(
+                    m.BookVersion.id == m.Section.version_id,
+                    m.Section.is_deleted == False,  # noqa: E712
+                ),
+                full=True,
+            )
+            .join(
+                m.Interpretation,
+                and_(
+                    m.Interpretation.section_id == m.Section.id,
+                    m.Interpretation.is_deleted == False,  # noqa: E712
+                ),
+                full=True,
             )
             .filter(
                 m.Book.id == m.BookStar.book_id,
                 m.BookStar.user_id == current_user.id,
                 m.Book.is_deleted == False,  # noqa: E712
-                m.BookStar.is_deleted == False,  # noqa: E712
-                m.BookVersion.is_deleted == False,  # noqa: E712
-                m.Section.is_deleted == False,  # noqa: E712
-                m.Interpretation.is_deleted == False,  # noqa: E712
             )
             .group_by(m.Book.id)
         )
