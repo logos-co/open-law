@@ -25,7 +25,7 @@ def test_notifications(client: FlaskClient):
     section, _ = create_section(client, book.id, collection.id)
     interpretation, _ = create_interpretation(client, book.id, section.id)
     user_2_id = create(username="user_2")
-    user_2: m.User = db.session.get(m.User, user_2_id)
+    user_2: m.User = db.session.get(m.User, user_2_id.id)
     assert user_2
 
     response: Response = client.post(
@@ -39,7 +39,7 @@ def test_notifications(client: FlaskClient):
     login(client, user_2.username)
     comment, _ = create_comment(client, book.id, interpretation.id)
     assert comment
-    assert comment.user_id == user_2_id
+    assert comment.user_id == user_2_id.id
     assert len(user.active_notifications) == 1
 
     logout(client)
@@ -52,7 +52,7 @@ def test_notifications(client: FlaskClient):
 
     response: Response = client.post(
         f"/book/{book.id}/delete_contributor",
-        data=dict(user_id=user_2_id),
+        data=dict(user_id=user_2_id.id),
         follow_redirects=True,
     )
     assert response.status_code == 200
