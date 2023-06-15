@@ -270,13 +270,6 @@ def change_collection_position(book_id: int, collection_id: int):
         )
         collection.parent_id = collection_id
 
-        # current_access_group = m.CollectionAccessGroups.query.filter_by(
-        #     collection_id=collection.id
-        # ).all()
-        # for access_group in current_access_group:
-        #     db.session.delete(access_group)
-        # db.session.commit()
-
         recursive_copy_access_groups(new_parent, collection)
 
     if new_parent.active_children:
