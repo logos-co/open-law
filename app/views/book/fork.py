@@ -1,5 +1,5 @@
 from flask import flash, redirect, url_for
-from flask_login import login_required, current_user
+from flask_login import login_required
 
 from app import models as m, db, forms as f
 from app.controllers.fork import fork_book
@@ -15,9 +15,6 @@ def fork(book_id):
     book = db.session.get(m.Book, book_id)
     redirect_url = url_for("book.statistic_view", book_id=book.id, active_tab="forks")
     if form.validate_on_submit():
-        if book.user_id == current_user.id:
-            flash("You are owner of this book", "warning")
-            return redirect(redirect_url)
         fork_book(book, form.label.data, form.about.data)
         flash("Success!", "success")
         return redirect(redirect_url)

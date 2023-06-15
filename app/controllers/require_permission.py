@@ -43,6 +43,16 @@ def check_permissions(
     if type(entity) == m.Comment:
         log(log.INFO, "Entity is Comment. Replace it by entity.interpretation")
         entity = entity.interpretation
+
+        if entity.section.version.book.owner == current_user:
+            # user has access because he is book owner
+            log(
+                log.INFO,
+                "User [%s] is book owner [%s]",
+                current_user,
+                entity.section.version.book,
+            )
+            return None
     elif (
         type(entity) == m.Interpretation
         and entity.user_id == current_user.id

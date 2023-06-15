@@ -14,7 +14,7 @@ def test_fork_book(client: FlaskClient):
 
     book: m.Book = create_book(client)
     assert book
-    assert len(book.forks) == 0
+    assert len(book.active_forks) == 0
 
     logout(client)
     _, user = login(client, "Test_U")
@@ -30,7 +30,7 @@ def test_fork_book(client: FlaskClient):
 
     assert response.status_code == 200
     assert b"Success" in response.data
-    assert len(book.forks) == 1
+    assert len(book.active_forks) == 1
 
     assert user.books
     fork = user.books[0]

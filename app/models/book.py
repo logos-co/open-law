@@ -61,6 +61,10 @@ class Book(BaseModel):
         return versions
 
     @property
+    def active_forks(self):
+        return [fork for fork in self.forks if not fork.is_deleted]
+
+    @property
     def current_user_has_star(self):
         if current_user.is_authenticated:
             book_star: m.BookStar = m.BookStar.query.filter_by(
