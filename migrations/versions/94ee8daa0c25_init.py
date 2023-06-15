@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 79e8c7bff9c9
+Revision ID: 94ee8daa0c25
 Revises:
-Create Date: 2023-06-01 15:31:33.635236
+Create Date: 2023-06-15 11:12:23.898629
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "79e8c7bff9c9"
+revision = "94ee8daa0c25"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -55,6 +55,7 @@ def upgrade():
         sa.Column("is_activated", sa.Boolean(), nullable=True),
         sa.Column("wallet_id", sa.String(length=64), nullable=True),
         sa.Column("avatar_img", sa.Text(), nullable=True),
+        sa.Column("is_super_user", sa.Boolean(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.Column("is_deleted", sa.Boolean(), nullable=True),
@@ -65,6 +66,53 @@ def upgrade():
         "books",
         sa.Column("label", sa.String(length=256), nullable=False),
         sa.Column("about", sa.Text(), nullable=True),
+        sa.Column("user_id", sa.Integer(), nullable=True),
+        sa.Column("original_book_id", sa.Integer(), nullable=True),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=True),
+        sa.Column("is_deleted", sa.Boolean(), nullable=True),
+        sa.ForeignKeyConstraint(
+            ["original_book_id"],
+            ["books.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_table(
+        "notifications",
+        sa.Column(
+            "action",
+            sa.Enum(
+                "CREATE",
+                "EDIT",
+                "DELETE",
+                "VOTE",
+                "APPROVE",
+                "CONTRIBUTING",
+                "MENTION",
+                name="actions",
+            ),
+            nullable=True,
+        ),
+        sa.Column(
+            "entity",
+            sa.Enum(
+                "SECTION",
+                "COLLECTION",
+                "INTERPRETATION",
+                "COMMENT",
+                "BOOK",
+                name="entities",
+            ),
+            nullable=True,
+        ),
+        sa.Column("entity_id", sa.Integer(), nullable=False),
+        sa.Column("link", sa.String(length=256), nullable=False),
+        sa.Column("text", sa.String(length=256), nullable=False),
+        sa.Column("is_read", sa.Boolean(), nullable=True),
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=True),
@@ -131,10 +179,11 @@ def upgrade():
         "book_versions",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("semver", sa.String(length=16), nullable=False),
-        sa.Column("exported", sa.Boolean(), nullable=True),
+        sa.Column("is_active", sa.Boolean(), nullable=True),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.Column("derivative_id", sa.Integer(), nullable=True),
         sa.Column("book_id", sa.Integer(), nullable=True),
+        sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.Column("is_deleted", sa.Boolean(), nullable=True),
         sa.ForeignKeyConstraint(
@@ -144,6 +193,10 @@ def upgrade():
         sa.ForeignKeyConstraint(
             ["derivative_id"],
             ["book_versions.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -188,6 +241,8 @@ def upgrade():
         sa.Column("about", sa.Text(), nullable=True),
         sa.Column("is_root", sa.Boolean(), nullable=True),
         sa.Column("is_leaf", sa.Boolean(), nullable=True),
+        sa.Column("position", sa.Integer(), nullable=True),
+        sa.Column("copy_of", sa.Integer(), nullable=True),
         sa.Column("version_id", sa.Integer(), nullable=True),
         sa.Column("parent_id", sa.Integer(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=True),
@@ -256,10 +311,11 @@ def upgrade():
     op.create_table(
         "sections",
         sa.Column("label", sa.String(length=256), nullable=False),
+        sa.Column("position", sa.Integer(), nullable=True),
+        sa.Column("copy_of", sa.Integer(), nullable=True),
         sa.Column("collection_id", sa.Integer(), nullable=True),
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("version_id", sa.Integer(), nullable=True),
-        sa.Column("selected_interpretation_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.Column("is_deleted", sa.Boolean(), nullable=True),
@@ -282,9 +338,10 @@ def upgrade():
         sa.Column("text", sa.Text(), nullable=False),
         sa.Column("plain_text", sa.Text(), nullable=True),
         sa.Column("approved", sa.Boolean(), nullable=True),
-        sa.Column("marked", sa.Boolean(), nullable=True),
+        sa.Column("copy_of", sa.Integer(), nullable=True),
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("section_id", sa.Integer(), nullable=True),
+        sa.Column("score", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.Column("is_deleted", sa.Boolean(), nullable=True),
@@ -337,8 +394,8 @@ def upgrade():
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("text", sa.Text(), nullable=False),
         sa.Column("approved", sa.Boolean(), nullable=True),
-        sa.Column("marked", sa.Boolean(), nullable=True),
         sa.Column("edited", sa.Boolean(), nullable=True),
+        sa.Column("copy_of", sa.Integer(), nullable=True),
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("parent_id", sa.Integer(), nullable=True),
         sa.Column("interpretation_id", sa.Integer(), nullable=True),
@@ -470,11 +527,9 @@ def downgrade():
     op.drop_table("book_tags")
     op.drop_table("book_contributors")
     op.drop_table("access_groups")
+    op.drop_table("notifications")
     op.drop_table("books")
     op.drop_table("users")
     op.drop_table("tags")
     op.drop_table("permissions")
     # ### end Alembic commands ###
-
-
-""
