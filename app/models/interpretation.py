@@ -14,6 +14,7 @@ class Interpretation(BaseModel):
     # Foreign keys
     user_id = db.Column(db.ForeignKey("users.id"))
     section_id = db.Column(db.ForeignKey("sections.id"))
+    score = db.Column(db.Integer(), default=0)
 
     # Relationships
     user = db.relationship("User")

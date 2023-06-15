@@ -28,6 +28,7 @@ def create_app(environment="development"):
         star_blueprint,
         permissions_blueprint,
         search_blueprint,
+        notifications_blueprint,
     )
     from app import models as m
 
@@ -57,6 +58,7 @@ def create_app(environment="development"):
     app.register_blueprint(star_blueprint)
     app.register_blueprint(permissions_blueprint)
     app.register_blueprint(search_blueprint)
+    app.register_blueprint(notifications_blueprint)
 
     # Set up flask login.
     @login_manager.user_loader
