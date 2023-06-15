@@ -7,9 +7,8 @@ from flask import (
 )
 from flask_login import login_required
 
-from app.controllers import (
-    register_book_verify_route,
-)
+from app.controllers import register_book_verify_route
+from app.controllers.notification_producer import contributor_notification
 from app import models as m, db, forms as f
 from app.controllers.require_permission import require_permission
 from app.controllers.contributor import (
@@ -52,6 +51,10 @@ def add_contributor(book_id: int):
     form = f.AddContributorForm()
     selected_tab = "user_permissions"
     if form.validate_on_submit():
+        user_id = form.user_id.data
+        # notifications
+        contributor_notification(m.Notification.Actions.CONTRIBUTING, book_id, user_id)
+        # -------------
         response = add_contributor_to_book(form, book_id, selected_tab)
         return response
     else:
@@ -78,6 +81,10 @@ def delete_contributor(book_id: int):
     selected_tab = "user_permissions"
 
     if form.validate_on_submit():
+        user_id = form.user_id.data
+        # notifications
+        contributor_notification(m.Notification.Actions.DELETE, book_id, user_id)
+        # -------------
         response = delete_contributor_from_book(form, book_id, selected_tab)
         return response
     else:

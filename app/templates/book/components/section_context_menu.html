@@ -24,16 +24,19 @@
   {% endif %}
 </ul>
 {% endif %}
-
+<!-- prettier-ignore -->
+{% if not access_to_create_sections and not access_to_update_sections and not access_to_delete_sections %}
 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
   <li>
     <button
       type="button"
       class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-      Export Section
+      You have no permissions for this section
     </button>
   </li>
 </ul>
+{% endif %}
+<!-- prettier-ignore -->
 {% else %}
 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
   <li>

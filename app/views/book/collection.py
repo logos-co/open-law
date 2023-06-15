@@ -1,10 +1,11 @@
 from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from app.controllers import (
     create_breadcrumbs,
     register_book_verify_route,
 )
+from app.controllers.notification_producer import collection_notification
 from app.controllers.delete_nested_book_entities import (
     delete_nested_collection_entities,
 )
@@ -107,8 +108,14 @@ def collection_create(book_id: int, collection_id: int | None = None):
             collection.parent_id = collection_id
 
         log(log.INFO, "Create collection [%s]. Book: [%s]", collection, book.id)
-        collection.save()
 
+        collection.save()
+        # notifications
+        if current_user.id != book.owner.id:
+            collection_notification(
+                m.Notification.Actions.CREATE, collection.id, book.owner.id
+            )
+        # -------------
         for access_group in collection.parent.access_groups:
             m.CollectionAccessGroups(
                 collection_id=collection.id, access_group_id=access_group.id
@@ -176,6 +183,13 @@ def collection_edit(book_id: int, collection_id: int):
         log(log.INFO, "Edit collection [%s]", collection.id)
         collection.save()
 
+        # notifications
+        if current_user.id != book.owner.id:
+            collection_notification(
+                m.Notification.Actions.EDIT, collection.id, book.owner.id
+            )
+        # -------------
+
         flash("Success!", "success")
         return redirect(redirect_url)
     else:
@@ -197,6 +211,11 @@ def collection_edit(book_id: int, collection_id: int):
 @login_required
 def collection_delete(book_id: int, collection_id: int):
     collection: m.Collection = db.session.get(m.Collection, collection_id)
+    book: m.Book = db.session.get(m.Book, book_id)
+    redirect_url = url_for(
+        "book.collection_view",
+        book_id=book_id,
+    )
 
     collection.is_deleted = True
     if collection.active_children:
@@ -208,21 +227,23 @@ def collection_delete(book_id: int, collection_id: int):
     delete_nested_collection_entities(collection)
     collection.save()
 
-    flash("Success!", "success")
-    return redirect(
-        url_for(
-            "book.collection_view",
-            book_id=book_id,
+    # notifications
+    if current_user.id != book.owner.id:
+        collection_notification(
+            m.Notification.Actions.DELETE, collection.id, book.owner.id
         )
-    )
+    # -------------
+
+    flash("Success!", "success")
+    return redirect(redirect_url)
 
 
 # TODO permission check
-# @require_permission(
-#     entity_type=m.Permission.Entity.COLLECTION,
-#     access=[m.Permission.Access.C],
-#     entities=[m.Collection, m.Book],
-# )
+@require_permission(
+    entity_type=m.Permission.Entity.COLLECTION,
+    access=[m.Permission.Access.U],
+    entities=[m.Collection, m.Book],
+)
 @bp.route(
     "/<int:book_id>/<int:collection_id>/collection/change_position", methods=["POST"]
 )

@@ -6,120 +6,118 @@
   {% set access_to_create_section = has_permission(sub_collection, Access.C,EntityType.SECTION) %}
 
   {% if access_to_create_collections or access_to_update_collections or access_to_create_section %}
-    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-      <!-- prettier-ignore -->
-      {% if access_to_create_section and sub_collection.active_sections and not sub_collection.active_children %}
-        <li>
-          <button
-            type="button"
-            id="callAddSectionModal"
-            data-modal-target="add-section-modal"
-            data-modal-toggle="add-section-modal"
-            data-collection-id="{{collection.id}}"
-            data-sub-collection-id="{{sub_collection.id}}"
-            class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            New Section
-          </button>
-        </li>
-      <!-- prettier-ignore -->
-      {% elif not sub_collection.active_sections and not sub_collection.active_children %}
+<ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+  <!-- prettier-ignore -->
+  {% if access_to_create_section and sub_collection.active_sections and not sub_collection.active_children %}
+  <li>
+    <button
+      type="button"
+      id="callAddSectionModal"
+      data-modal-target="add-section-modal"
+      data-modal-toggle="add-section-modal"
+      data-collection-id="{{collection.id}}"
+      data-sub-collection-id="{{sub_collection.id}}"
+      class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+      New Section
+    </button>
+  </li>
+  <!-- prettier-ignore -->
+  {% elif not sub_collection.active_sections and not sub_collection.active_children %}
         {% if access_to_create_section %}
-          <li>
-            <button
-              type="button"
-              id="callAddSectionModal"
-              data-modal-target="add-section-modal"
-              data-modal-toggle="add-section-modal"
-              data-collection-id="{{collection.id}}"
-              data-sub-collection-id="{{sub_collection.id}}"
-              class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >
-              New Section
-            </button>
-          </li>
-        {% endif %}
-        <!-- prettier-ignore -->
-        {% if access_to_create_collections %}
-          <li>
-            <button
-              type="button"
-              id="callAddSubCollectionModal"
-              data-modal-target="add-sub-collection-modal"
-              data-modal-toggle="add-sub-collection-modal"
-              data-collection-id="{{sub_collection.id}}"
-              class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >
-              New Subcollection
-            </button>
-          </li>
-        {% endif %}
-      {% else %}
-      <!-- prettier-ignore -->
-        {% if access_to_create_collections %}
-          <li>
-            <button
-              type="button"
-              id="callAddSubCollectionModal"
-              data-modal-target="add-sub-collection-modal"
-              data-modal-toggle="add-sub-collection-modal"
-              data-collection-id="{{sub_collection.id}}"
-              class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-              New Subcollection
-            </button>
-          </li>
-        {% endif %}
-      {% endif %}
-    </ul>
+  <li>
+    <button
+      type="button"
+      id="callAddSectionModal"
+      data-modal-target="add-section-modal"
+      data-modal-toggle="add-section-modal"
+      data-collection-id="{{collection.id}}"
+      data-sub-collection-id="{{sub_collection.id}}"
+      class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+      New Section
+    </button>
+  </li>
   {% endif %}
   <!-- prettier-ignore -->
-  {% if access_to_update_collections or access_to_delete_collections%}
-    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-      {% if access_to_update_collections %}
-        <li>
-          <button
-            type="button"
-            id="rename-sub-collection-button-{{sub_collection.id}}"
-            class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-            Rename Sub Collection
-          </button>
-        </li>
-      {% endif %}
-      <!-- prettier-ignore -->
-      {% if access_to_delete_collections %}
-      <li>
-        <button
-          type="button"
-          id="callDeleteSubCollectionModal"
-          data-modal-target="delete-sub-collection-modal"
-          data-modal-toggle="delete-sub-collection-modal"
-          data-collection-id="{{collection.id}}"
-          data-sub-collection-id="{{sub_collection.id}}"
-          class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-        >
-          Delete Sub Collection
-        </button>
-      </li>
-      {% endif %}
-    </ul>
+  {% if access_to_create_collections %}
+  <li>
+    <button
+      type="button"
+      id="callAddSubCollectionModal"
+      data-modal-target="add-sub-collection-modal"
+      data-modal-toggle="add-sub-collection-modal"
+      data-collection-id="{{sub_collection.id}}"
+      class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+      New Subcollection
+    </button>
+  </li>
+  {% endif %} {% else %}
+  <!-- prettier-ignore -->
+  {% if access_to_create_collections %}
+  <li>
+    <button
+      type="button"
+      id="callAddSubCollectionModal"
+      data-modal-target="add-sub-collection-modal"
+      data-modal-toggle="add-sub-collection-modal"
+      data-collection-id="{{sub_collection.id}}"
+      class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+      New Subcollection
+    </button>
+  </li>
+  {% endif %} {% endif %}
+</ul>
+{% endif %}
+<!-- prettier-ignore -->
+{% if access_to_update_collections or access_to_delete_collections%}
+<ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+  {% if access_to_update_collections %}
+  <li>
+    <button
+      type="button"
+      id="rename-sub-collection-button-{{sub_collection.id}}"
+      class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+      Rename Sub Collection
+    </button>
+  </li>
   {% endif %}
-  <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-    <li>
-      <button
-        type="button"
-        class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-        Export Sub Collection
-      </button>
-    </li>
-  </ul>
+  <!-- prettier-ignore -->
+  {% if access_to_delete_collections %}
+  <li>
+    <button
+      type="button"
+      id="callDeleteSubCollectionModal"
+      data-modal-target="delete-sub-collection-modal"
+      data-modal-toggle="delete-sub-collection-modal"
+      data-collection-id="{{collection.id}}"
+      data-sub-collection-id="{{sub_collection.id}}"
+      class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+      Delete Sub Collection
+    </button>
+  </li>
+  {% endif %}
+</ul>
+{% endif %}
+<!-- prettier-ignore -->
+{% if not access_to_create_collections and not access_to_update_collections and not access_to_delete_collections and not access_to_create_section%}
+<ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+  <li>
+    <button
+      type="button"
+      class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+      You have no permissions for this sub collection
+    </button>
+  </li>
+</ul>
+{% endif %}
+<!-- prettier-ignore -->
 {% else %}
-  <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-    <li>
-      <button
-        type="button"
-        class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-        Connect your wallet to do this
-      </button>
-    </li>
-  </ul>
+<ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+  <li>
+    <button
+      type="button"
+      class="w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+      Connect your wallet to do this
+    </button>
+  </li>
+</ul>
 {% endif %}

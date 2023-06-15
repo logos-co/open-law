@@ -25,3 +25,4 @@ from .permission import (
 )
 from .book_tag import BookTags
 from .section_tag import SectionTag
+from .notification import Notification

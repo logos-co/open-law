@@ -1,7 +1,8 @@
 from flask import flash, redirect, url_for, request
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from app.controllers import register_book_verify_route
+from app.controllers.notification_producer import section_notification
 from app.controllers.delete_nested_book_entities import delete_nested_section_entities
 from app import models as m, db, forms as f
 from app.controllers.require_permission import require_permission
@@ -22,11 +23,6 @@ def section_create(book_id: int, collection_id: int):
     collection: m.Collection = db.session.get(m.Collection, collection_id)
 
     redirect_url = url_for("book.collection_view", book_id=book_id)
-    if collection_id:
-        redirect_url = url_for(
-            "book.collection_view",
-            book_id=book_id,
-        )
 
     form = f.CreateSectionForm()
 
@@ -52,6 +48,12 @@ def section_create(book_id: int, collection_id: int):
             ).save()
         # -------------
 
+        if current_user.id != book.owner.id:
+            # notifications
+            section_notification(
+                m.Notification.Actions.CREATE, section.id, book.owner.id
+            )
+        # -------------
         flash("Success!", "success")
         return redirect(redirect_url)
     else:
@@ -73,6 +75,7 @@ def section_create(book_id: int, collection_id: int):
 @login_required
 def section_edit(book_id: int, section_id: int):
     section: m.Section = db.session.get(m.Section, section_id)
+    book: m.Book = db.session.get(m.Book, book_id)
 
     form = f.EditSectionForm()
     redirect_url = url_for("book.collection_view", book_id=book_id)
@@ -84,6 +87,11 @@ def section_edit(book_id: int, section_id: int):
 
         log(log.INFO, "Edit section [%s]", section.id)
         section.save()
+
+        if current_user.id != book.owner.id:
+            # notifications
+            section_notification(m.Notification.Actions.EDIT, section.id, book.owner.id)
+            # -------------
 
         flash("Success!", "success")
         return redirect(redirect_url)
@@ -109,6 +117,8 @@ def section_delete(
     section_id: int,
 ):
     section: m.Section = db.session.get(m.Section, section_id)
+    book: m.Book = db.session.get(m.Book, book_id)
+    redirect_url = url_for("book.collection_view", book_id=book_id)
 
     section.is_deleted = True
     delete_nested_section_entities(section)
@@ -123,8 +133,13 @@ def section_delete(
     log(log.INFO, "Delete section [%s]", section.id)
     section.save()
 
+    if current_user.id != book.owner.id:
+        # notifications
+        section_notification(m.Notification.Actions.DELETE, section.id, book.owner.id)
+        # -------------
+
     flash("Success!", "success")
-    return redirect(url_for("book.collection_view", book_id=book_id))
+    return redirect(redirect_url)
 
 
 @bp.route("/<int:book_id>/<int:section_id>/section/change_position", methods=["POST"])

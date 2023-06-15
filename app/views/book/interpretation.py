@@ -7,7 +7,12 @@ from flask import (
 )
 from flask_login import login_required, current_user
 
-from app.controllers import register_book_verify_route, create_breadcrumbs, clean_html
+from app.controllers import (
+    register_book_verify_route,
+    create_breadcrumbs,
+    clean_html,
+)
+from app.controllers.notification_producer import interpretation_notification
 from app.controllers.delete_nested_book_entities import (
     delete_nested_interpretation_entities,
 )
@@ -66,6 +71,7 @@ def interpretation_create(
     section_id: int,
 ):
     section: m.Section = db.session.get(m.Section, section_id)
+    book: m.Book = db.session.get(m.Book, book_id)
     form = f.CreateInterpretationForm()
     redirect_url = url_for(
         "book.interpretation_view",
@@ -102,6 +108,13 @@ def interpretation_create(
             ).save()
         # -------------
 
+        # notifications
+        if current_user.id != book.owner.id:
+            interpretation_notification(
+                m.Notification.Actions.CREATE, interpretation.id, book.owner.id
+            )
+        # -------------
+
         tags = current_app.config["TAG_REGEX"].findall(text)
         set_interpretation_tags(interpretation, tags)
 
@@ -128,7 +141,6 @@ def interpretation_edit(
     interpretation: m.Interpretation = db.session.get(
         m.Interpretation, interpretation_id
     )
-
     if interpretation and interpretation.user_id != current_user.id:
         flash("You dont have permission to edit this interpretation", "danger")
         return redirect(url_for("book.collection_view", book_id=book_id))
@@ -205,15 +217,20 @@ def interpretation_delete(
         delete_nested_interpretation_entities(interpretation)
         log(log.INFO, "Delete interpretation [%s]", interpretation)
         interpretation.save()
+        redirect_url = url_for(
+            "book.interpretation_view",
+            book_id=book_id,
+            section_id=interpretation.section_id,
+        )
+        # notifications
+        if current_user.id != interpretation.user_id:
+            interpretation_notification(
+                m.Notification.Actions.DELETE, interpretation.id, interpretation.user_id
+            )
+        # -------------
 
         flash("Success!", "success")
-        return redirect(
-            url_for(
-                "book.interpretation_view",
-                book_id=book_id,
-                section_id=interpretation.section_id,
-            )
-        )
+        return redirect(redirect_url)
     return redirect(
         url_for(
             "book.collection_view",

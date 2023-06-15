@@ -1,12 +1,12 @@
-from flask import (
-    Blueprint,
-    jsonify,
-    request,
-)
+from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
 
 from app import models as m, db
 from app.logger import log
+from app.controllers.notification_producer import (
+    interpretation_notification,
+    comment_notification,
+)
 
 bp = Blueprint("vote", __name__, url_prefix="/vote")
 
@@ -55,6 +55,13 @@ def vote_interpretation(interpretation_id: int):
             interpretation,
         )
     db.session.commit()
+    interpretation.score = interpretation.vote_count
+    interpretation.save()
+    # notifications
+    if current_user.id != interpretation.user_id:
+        interpretation_notification(
+            m.Notification.Actions.VOTE, interpretation_id, interpretation.user_id
+        )
 
     return jsonify(
         {
@@ -106,7 +113,9 @@ def vote_comment(comment_id: int):
             comment,
         )
     db.session.commit()
-
+    # notifications
+    if current_user.id != comment.user_id:
+        comment_notification(m.Notification.Actions.VOTE, comment_id, comment.user_id)
     return jsonify(
         {
             "vote_count": comment.vote_count,
