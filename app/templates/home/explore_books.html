@@ -43,7 +43,12 @@
     id="explore-books"
     role="tabpanel"
     aria-labelledby="explore-books-tab">
-    {% for book in books if not book.is_deleted %}
+    {% if not books.total %}
+    <p
+      class="hidden md:block text-l ml-4 w-1/2 mt-2 text-gray-500 text-center md:text-left dark:text-gray-400">
+      Books not found!
+    </p>
+    {% endif %} {% for book in books if not book.is_deleted %}
     <!-- prettier-ignore -->
     <dl class=" bg-white dark:bg-gray-900 max-w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
         <dt class="mb-2"><a class="flex flex-col" href="{{url_for('book.collection_view',book_id=book.id)}}">{{book.label}}</a></dt>
