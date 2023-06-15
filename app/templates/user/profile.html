@@ -81,7 +81,6 @@
           <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
             <div class="flex flex-row pb-3 p-3 w-2/3 md:w-10/12">
               <div class="vote-block flex flex-col m-5 justify-center items-center">
-                {% if interpretation.user_id != current_user.id %}
                   <div class="vote-button cursor-pointer" data-vote-for="interpretation" data-entity-id="{{ interpretation.id }}" data-positive="true">
                     <svg class="w-6 h-6 select-none
                     {% if interpretation.current_user_vote %}
@@ -89,7 +88,6 @@
                     {% endif %}
                     " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" > <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /> </svg>
                   </div>
-                {% endif %}
 
                 <span
                   class="vote-count text-3xl select-none
@@ -103,7 +101,6 @@
                   {{ interpretation.vote_count }}
                 </span>
 
-                {% if interpretation.user_id != current_user.id %}
                   <div class="vote-button cursor-pointer" data-vote-for="interpretation" data-entity-id="{{ interpretation.id }}" data-positive="false">
                     <svg class="w-6 h-6 select-none
                     {% if interpretation.current_user_vote == False %}
@@ -111,7 +108,6 @@
                     {% endif %}
                     " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /> </svg>
                   </div>
-                {% endif %}
               </div>
               <!-- prettier-ignore -->
               <dt class="flex w-full mb-1 text-gray-500 md:text-lg dark:text-gray-400 flex-col">
