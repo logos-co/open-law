@@ -3,7 +3,7 @@ from flask import (
     render_template,
     request,
 )
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, distinct
 from app import models as m, db
 from app.logger import log
 from app.controllers.sorting import sort_by
@@ -20,7 +20,7 @@ def get_all():
             m.Interpretation,
             m.Interpretation.score.label("score"),
             m.Interpretation.created_at.label("created_at"),
-            func.count(m.Comment.interpretation_id).label("comments_count"),
+            func.count(distinct(m.Comment.interpretation_id)).label("comments_count"),
         )
         .join(
             m.Comment,
@@ -53,8 +53,8 @@ def explore_books():
         db.session.query(
             m.Book,
             m.Book.created_at.label("created_at"),
-            func.count(m.Interpretation.id).label("interpretations_count"),
-            func.count(m.BookStar.id).label("stars_count"),
+            func.count(distinct(m.Interpretation.id)).label("interpretations_count"),
+            func.count(distinct(m.BookStar.id)).label("stars_count"),
         )
         .join(
             m.BookStar,
