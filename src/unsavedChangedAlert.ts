@@ -1,13 +1,15 @@
+const alertEvent = (e: any) => {
+  var confirmationMessage =
+    'It looks like you have been editing something. ' +
+    'If you leave before saving, your changes will be lost.';
+
+  (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+  return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+};
+
 const initAlertOnClick = (element: HTMLElement) => {
   element.addEventListener('click', () => {
-    window.addEventListener('beforeunload', function (e) {
-      var confirmationMessage =
-        'It looks like you have been editing something. ' +
-        'If you leave before saving, your changes will be lost.';
-
-      (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-      return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-    });
+    window.addEventListener('beforeunload', alertEvent);
   });
 };
 
@@ -18,8 +20,9 @@ export const initUnsavedChangedAlerts = () => {
     '.book-tags-input',
     '.multiple-input-word',
     '.contributor-role-select',
-    '.edit-permissions-btn',
+    // '.edit-permissions-btn',
     '.add-contributor-btn',
+    'input[type=checkbox]',
   ];
 
   elementsSelectors.forEach(selector => {
@@ -27,6 +30,16 @@ export const initUnsavedChangedAlerts = () => {
       document.querySelectorAll(selector);
     elements.forEach(element => {
       initAlertOnClick(element);
+    });
+  });
+
+  const elementsOnClickPrevent = document.querySelectorAll(
+    '.prevent-unsaved-changes-event',
+  );
+  elementsOnClickPrevent.forEach(element => {
+    element.addEventListener('click', () => {
+      document.removeEventListener('beforeunload', alertEvent);
+      window.removeEventListener('beforeunload', alertEvent);
     });
   });
 };
