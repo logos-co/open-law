@@ -19,4 +19,4 @@ from .vote import VoteForm
 from .comment import CreateCommentForm, DeleteCommentForm, EditCommentForm
 from .permission import EditPermissionForm
 from .version import EditVersionForm, DeleteVersionForm, CreateVersionForm
-from .fork import ForkBookForm
+from .fork import ForkBookForm, ForkVersionForm

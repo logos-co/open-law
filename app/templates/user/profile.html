@@ -53,7 +53,7 @@
       <dd class="flex flex-col md:flex-row text-lg font-semibold text-gray-500 md:text-lg dark:text-gray-400">
         {% if book.versions %}
         <p>
-          Last updated on {{book.versions[-1].updated_at.strftime('%B %d, %Y')}}
+          Last updated on {{book.active_version.updated_at.strftime('%B %d, %Y')}}
         </p>
         {% endif %}
         <div class="flex ml-auto align-center justify-center space-x-3">

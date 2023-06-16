@@ -54,7 +54,7 @@
         <dt class="mb-2"><a class="flex flex-col" href="{{url_for('book.collection_view',book_id=book.id)}}">{{book.label}}</a></dt>
         <dd class="flex flex-col md:flex-row text-lg font-semibold text-gray-500 md:text-lg dark:text-gray-400">
             {% if book.versions %}
-            <p> Last updated by  <a href="{{url_for('user.profile',user_id=book.owner.id)}}" class=" text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">{{book.owner.username}}</a> on {{book.versions[-1].updated_at.strftime('%B %d, %Y')}} </p>
+            <p> Last updated by  <a href="{{url_for('user.profile',user_id=book.owner.id)}}" class=" text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">{{book.owner.username}}</a> on {{book.active_version.updated_at.strftime('%B %d, %Y')}} </p>
             {% endif %}
             <div class="flex ml-auto align-center justify-center space-x-3">
             <span class="book-star-block space-x-0.5 flex items-center">

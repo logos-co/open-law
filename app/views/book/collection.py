@@ -80,7 +80,7 @@ def collection_create(book_id: int, collection_id: int | None = None):
             collection = collection.filter_by(parent_id=collection_id)
         else:
             collection = collection.filter_by(
-                parent_id=book.versions[-1].root_collection.id
+                parent_id=book.active_version.root_collection.id
             )
         collection = collection.first()
 
@@ -102,7 +102,7 @@ def collection_create(book_id: int, collection_id: int | None = None):
         collection: m.Collection = m.Collection(
             label=label,
             about=form.about.data,
-            parent_id=book.versions[-1].root_collection.id,
+            parent_id=book.active_version.root_collection.id,
             version_id=book.active_version.id,
             position=position,
         )
