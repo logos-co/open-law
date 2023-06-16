@@ -65,6 +65,7 @@
         <div class="ql-snow">
             {% set local_breadcrumbs = interpretation.section.breadcrumbs_path %}
             {% include 'book/local_breadcrumbs_navigation.html'%}
+            <a href="{{url_for('book.interpretation_view', book_id=interpretation.book.id, section_id=interpretation.section.id)}}">
             <p>{{ interpretation.section.label }}</p>
             </a>
             <div class="dark:text-white h-30 ql-editor-readonly">

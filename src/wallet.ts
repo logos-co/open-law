@@ -13,26 +13,25 @@ export function initWallet() {
   // protocol, hostname and port number of the URL
   const origin = window.location.origin;
   // connect to ethereum network and sign transactions with Metamask
-  const showExtensionAlert = localStorage.getItem('showExtensionAlert');
-  if (!window.hasOwnProperty('ethereum') && showExtensionAlert != 'false') {
-    let result = confirm(
-      "You don't have needed extension! Do you want to install it?",
-    );
-    localStorage.setItem('showExtensionAlert', 'false');
-    if (result) {
-      window.open('https://metamask.io/', '_blank');
-    }
-    return;
-  }
-  if (showExtensionAlert == 'false' && !window.hasOwnProperty('ethereum')) {
-    console.error('Required extension not found');
-    return;
-  }
-  const eOwner: IEthereumOwner = window as any;
-  const provider = new ethers.providers.Web3Provider(eOwner.ethereum);
-  const signer = provider.getSigner();
 
   async function signInWithEthereum() {
+    if (!window.hasOwnProperty('ethereum')) {
+      let result = confirm(
+        "You don't have needed extension! Do you want to install it?",
+      );
+      localStorage.setItem('showExtensionAlert', 'false');
+      if (result) {
+        window.open('https://metamask.io/', '_blank');
+      }
+      return;
+    }
+    if (!window.hasOwnProperty('ethereum')) {
+      console.error('Required extension not found');
+      return;
+    }
+    const eOwner: IEthereumOwner = window as any;
+    const provider = new ethers.providers.Web3Provider(eOwner.ethereum);
+    const signer = provider.getSigner();
     // create siwe message and call backend to get a nonce
     const res1 = await fetch('/nonce', {
       credentials: 'include',

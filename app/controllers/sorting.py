@@ -5,7 +5,7 @@ from app.controllers import create_pagination
 
 def sort_by(query, sort: str):
     match sort:
-        case "favored":
+        case "favorited":
             query = query.order_by(text("stars_count DESC"))
         case "upvoted":
             query = query.order_by(text("score DESC"))

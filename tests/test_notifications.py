@@ -57,7 +57,7 @@ def test_notifications(client: FlaskClient):
     )
     assert response.status_code == 200
 
-    # check that user_2 have notification about he was added, deleted as Editor/Moderator and his comment was approved
+    # check that user_2 have notification about he was added, deleted as Contributor and his comment was approved
     assert len(user_2.active_notifications) == 3
 
     response: Response = client.post(
