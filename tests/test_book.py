@@ -29,13 +29,13 @@ def test_create_edit_delete_book(client: FlaskClient):
     response: Response = client.post(
         "/book/create",
         data=dict(
-            label="12345",
+            label="123",
         ),
         follow_redirects=True,
     )
 
     assert response.status_code == 200
-    assert b"Label must be between 6 and 256 characters long." in response.data
+    assert b"Label must be between 4 and 256 characters long." in response.data
 
     book: m.Book = m.Book.query.filter_by(label=BOOK_NAME).first()
 
@@ -52,7 +52,7 @@ def test_create_edit_delete_book(client: FlaskClient):
     )
 
     assert response.status_code == 200
-    assert b"Label must be between 6 and 256 characters long." in response.data
+    assert b"Label must be between 4 and 256 characters long." in response.data
 
     book: m.Book = m.Book.query.filter_by(label=BOOK_NAME).first()
 
