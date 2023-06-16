@@ -267,14 +267,14 @@ def contributor_notification(
     book: m.Book = db.session.get(m.Book, entity_id)
     match action:
         case m.Notification.Actions.CONTRIBUTING:
-            text = f"You've been added to {book.label} as an Editor/Moderator"
+            text = f"You've been added to {book.label} as an Contributor"
             link = url_for(
                 "book.collection_view",
                 book_id=book.id,
             )
 
         case m.Notification.Actions.DELETE:
-            text = f"You've been removed from {book.label} as an Editor/Moderator"
+            text = f"You've been removed from {book.label} as an Contributor"
             link = url_for(
                 "book.collection_view",
                 book_id=book.id,

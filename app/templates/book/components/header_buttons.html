@@ -1,10 +1,12 @@
 <div class="bg-white dark:bg-gray-800 mr-5">
   <ul class="flex font-medium">
     <li>
+      {% if not selected_tab=='my_contributions' %}
       <!-- prettier-ignore -->
       <button type="button" data-modal-target="add-book-modal" data-modal-toggle="add-book-modal" class="text-white ml-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /> </svg>
         New book
       </button>
+      {% endif %}
     </li>
     <li>
       <!-- prettier-ignore -->
@@ -30,8 +32,8 @@
 
           {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books'%}
             <li>
-              <a href="?sort=favored" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
-                Most favored
+              <a href="?sort=favorited" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
+                Most favorited
               </a>
             </li>
           {% endif %}
