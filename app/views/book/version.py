@@ -8,6 +8,7 @@ from app.controllers import (
 from app import models as m, db, forms as f
 from app.controllers.version import create_new_version
 from app.controllers.delete_nested_book_entities import delete_nested_version_entities
+from app.controllers.error_flashes import create_error_flash
 from app.logger import log
 from .bp import bp
 
@@ -28,10 +29,7 @@ def create_version(book_id):
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Create version errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(redirect_url)
 
 
@@ -64,10 +62,7 @@ def edit_version(book_id: int):
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Edit version errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(redirect_url)
 
 
@@ -102,8 +97,5 @@ def delete_version(book_id: int):
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Delete version errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(redirect_url)

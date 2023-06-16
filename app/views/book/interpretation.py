@@ -16,6 +16,7 @@ from app.controllers.notification_producer import interpretation_notification
 from app.controllers.delete_nested_book_entities import (
     delete_nested_interpretation_entities,
 )
+from app.controllers.error_flashes import create_error_flash
 from app import models as m, db, forms as f
 from app.controllers.require_permission import require_permission
 from app.controllers.tags import set_interpretation_tags
@@ -122,10 +123,7 @@ def interpretation_create(
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Interpretation create errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(redirect_url)
 
 
@@ -182,10 +180,7 @@ def interpretation_edit(
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Interpretation edit errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(redirect_url)
 
 

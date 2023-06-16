@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
 
@@ -17,9 +19,13 @@ bp = Blueprint("notifications", __name__, url_prefix="/notifications")
 @login_required
 def get_all():
     log(log.INFO, "Create query for notifications")
-    notifications: m.Notification = m.Notification.query.filter_by(
-        user_id=current_user.id
-    ).order_by(m.Notification.created_at.desc())
+    notifications: m.Notification = (
+        m.Notification.query.filter(
+            m.Notification.created_at <= datetime.now() + timedelta(days=30)
+        )
+        .filter_by(user_id=current_user.id)
+        .order_by(m.Notification.created_at.desc())
+    )
     log(log.INFO, "Create pagination for books")
 
     pagination = create_pagination(total=notifications.count())

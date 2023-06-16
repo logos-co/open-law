@@ -15,6 +15,7 @@ from app.controllers.contributor import (
     add_contributor_to_book,
     delete_contributor_from_book,
 )
+from app.controllers.error_flashes import create_error_flash
 from app.logger import log
 from .bp import bp
 
@@ -59,10 +60,7 @@ def add_contributor(book_id: int):
         return response
     else:
         log(log.ERROR, "Book create errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(
             url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
         )
@@ -89,10 +87,7 @@ def delete_contributor(book_id: int):
         return response
     else:
         log(log.ERROR, "Delete contributor errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(
             url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
         )
@@ -161,10 +156,7 @@ def edit_contributor_role(book_id: int):
         )
     else:
         log(log.ERROR, "Edit contributor errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(
             url_for("book.settings", selected_tab=selected_tab, book_id=book_id)
         )

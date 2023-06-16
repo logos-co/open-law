@@ -10,6 +10,7 @@ from app.controllers.notification_producer import collection_notification
 from app.controllers.delete_nested_book_entities import (
     delete_nested_collection_entities,
 )
+from app.controllers.error_flashes import create_error_flash
 from app import models as m, db, forms as f
 from app.controllers.require_permission import require_permission
 from app.logger import log
@@ -128,10 +129,7 @@ def collection_create(book_id: int, collection_id: int | None = None):
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Collection/Subcollection create errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(redirect_url)
 
 
@@ -195,10 +193,7 @@ def collection_edit(book_id: int, collection_id: int):
         return redirect(redirect_url)
     else:
         log(log.ERROR, "Collection edit errors: [%s]", form.errors)
-        for field, errors in form.errors.items():
-            field_label = form._fields[field].label.text
-            for error in errors:
-                flash(error.replace("Field", field_label), "danger")
+        create_error_flash(form)
         return redirect(redirect_url)
 
 
