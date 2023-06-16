@@ -7,7 +7,7 @@ from app.logger import log
 
 
 class BaseBookForm(FlaskForm):
-    label = StringField("Label", [DataRequired(), Length(6, 256)])
+    label = StringField("Label", [DataRequired(), Length(4, 256)])
     about = StringField("About")
     tags = StringField("Tags")
 

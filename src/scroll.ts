@@ -1,3 +1,14 @@
+const scrollToElement = (element: Element) => {
+  var headerOffset = 160;
+  var elementPosition = element.getBoundingClientRect().top;
+  var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+  window.scrollTo({
+    top: offsetPosition,
+    behavior: 'smooth',
+  });
+};
+
 export function scroll() {
   const btns = document.querySelectorAll('[href^="#section-"]');
   if (btns) {
@@ -7,7 +18,7 @@ export function scroll() {
         link = link.replace('#', '');
         const neededSection = document.querySelector(`[id^="${link}"]`);
         if (neededSection) {
-          neededSection.scrollIntoView(true);
+          scrollToElement(neededSection);
         }
       });
     });
@@ -20,7 +31,7 @@ export function scroll() {
         link = link.replace('#', '');
         const neededSection = document.querySelector(`[id^="${link}"]`);
         if (neededSection) {
-          neededSection.scrollIntoView(true);
+          scrollToElement(neededSection);
         }
       });
     });
