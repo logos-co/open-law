@@ -2,6 +2,7 @@ from flask import flash, redirect, url_for, request
 from flask_login import login_required, current_user
 
 from app.controllers import register_book_verify_route
+from app.controllers.copy_access_groups import recursive_copy_access_groups
 from app.controllers.notification_producer import section_notification
 from app.controllers.delete_nested_book_entities import delete_nested_section_entities
 from app.controllers.error_flashes import create_error_flash
@@ -159,6 +160,8 @@ def change_section_position(book_id: int, section_id: int):
             collection_id,
         )
         section.collection_id = collection_id
+
+        recursive_copy_access_groups(collection, section)
 
     if collection.active_sections:
         sections_to_edit = (
