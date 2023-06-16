@@ -20,18 +20,19 @@ export const initUnsavedChangedAlerts = () => {
     '.book-tags-input',
     '.multiple-input-word',
     '.contributor-role-select',
-    // '.edit-permissions-btn',
     '.add-contributor-btn',
     'input[type=checkbox]',
   ];
 
-  elementsSelectors.forEach(selector => {
-    const elements: NodeListOf<HTMLElement> =
-      document.querySelectorAll(selector);
-    elements.forEach(element => {
-      initAlertOnClick(element);
+  if (window.location.href.includes('/settings')) {
+    elementsSelectors.forEach(selector => {
+      const elements: NodeListOf<HTMLElement> =
+        document.querySelectorAll(selector);
+      elements.forEach(element => {
+        initAlertOnClick(element);
+      });
     });
-  });
+  }
 
   const elementsOnClickPrevent = document.querySelectorAll(
     '.prevent-unsaved-changes-event',

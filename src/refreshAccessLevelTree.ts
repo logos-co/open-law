@@ -15,6 +15,8 @@ const refreshAccessLevelTree = async (userId: string, bookId: string) => {
       const id = parseInt(element.getAttribute('data-access-to-id'));
       if (ids.includes(id)) {
         element.checked = true;
+      } else {
+        element.checked = false;
       }
     });
   });
