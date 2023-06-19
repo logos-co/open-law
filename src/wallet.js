@@ -1,11 +1,8 @@
 import {ethers} from 'ethers';
 import {SiweMessage} from 'siwe';
-
-interface IEthereumOwner extends Window {
-  ethereum:
-    | ethers.providers.ExternalProvider
-    | ethers.providers.JsonRpcFetchFunc;
-}
+import MetaMaskSDK from '@metamask/sdk';
+import {hexlify} from '@ethersproject/bytes';
+import {toUtf8Bytes} from '@ethersproject/strings';
 
 export function initWallet() {
   // current page url
@@ -29,25 +26,49 @@ export function initWallet() {
       console.error('Required extension not found');
       return;
     }
-    const eOwner: IEthereumOwner = window as any;
-    const provider = new ethers.providers.Web3Provider(eOwner.ethereum);
-    const signer = provider.getSigner();
+    const options = {
+      injectProvider: false,
+      communicationLayerPreference: 'webrtc',
+    };
+    const MMSDK = new MetaMaskSDK(options);
+
+    const ethereum = MMSDK.getProvider();
     // create siwe message and call backend to get a nonce
     const res1 = await fetch('/nonce', {
       credentials: 'include',
     });
-    await provider.send('eth_requestAccounts', []); // <- this promps user to connect metamask
+    const text = await res1.text();
+    const response = await ethereum.send('eth_requestAccounts', []); // <- this promps user to connect metamask
+    const address = ethers.utils.getAddress(response.result[0]);
     const message = new SiweMessage({
       domain: domain,
-      address: await signer.getAddress(),
+      address: address,
       statement: 'Sign in with Ethereum to the app.',
       uri: origin,
       version: '1',
       chainId: '1',
-      nonce: await res1.text(),
+      nonce: text,
     });
-    const signature = await signer.signMessage(message.signMessage());
-    message.signature = signature;
+
+    const siweSign = async message => {
+      try {
+        const from = address;
+        const msg = message.signMessage();
+        const data = typeof msg === 'string' ? toUtf8Bytes(msg) : msg;
+        const hex = hexlify(data);
+        const sign = await ethereum.request({
+          method: 'personal_sign',
+          params: [hex, from],
+        });
+        debugger;
+        return sign;
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const sign = await siweSign(message);
+    message.signature = sign;
 
     // post message and signature to backend where it will be verified
     const res2 = await fetch(`/verify`, {
@@ -55,7 +76,7 @@ export function initWallet() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({message, signature}),
+      body: JSON.stringify({message, message}),
       credentials: 'include',
       redirect: 'follow',
     });
