@@ -13,7 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@metamask/sdk": "^0.3.2",
     "@types/lodash.debounce": "^4.0.7",
     "@types/sortablejs": "^1.15.1",
     "ethers": "5.5.3",
