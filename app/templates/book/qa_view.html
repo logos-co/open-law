@@ -15,7 +15,7 @@
 
 <div class="shadow-md mt-5 h-auto overflow-x-hidden">
   <div class="ql-snow mt-20">
-    <h1 class="text-l font-extrabold dark:text-white ml-4 truncate">
+    <h1 class="text-l font-extrabold dark:text-white p-4 break-words text-justify">
       {{ section.label }}
     </h1>
     <div class="ql-editor-readonly text-lg dark:text-white p-3">
@@ -23,8 +23,12 @@
     </div>
   </div>
 
+  <div class="text-sm dark:text-white p-3">
+    Comments
+  </div>
+
   {% if not interpretation.copy_of %}
-    <div class="p-1">
+    <div>
       <!-- prettier-ignore -->
       {% if not current_user.is_authenticated %}
         <div
@@ -43,16 +47,11 @@
         <form
           action="{{ url_for('book.create_comment', book_id=book.id, interpretation_id=interpretation.id) }}"
           method="post"
-          class="prevent-submit-on-enter flex flex-col bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700"
+          class="prevent-submit-on-enter flex flex-col bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 my-3 md:m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700"
         >
           {{ form_hidden_tag() }}
           <div class="relative z-0 w-full group">
             <div class="mb-2">
-              <label
-                for="tags-input"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Comment
-              </label>
               <input type="hidden" name="text" id="comment-text-input" />
               <div
                 class="w-full max-w-6xl mx-auto rounded-xl bg-gray-50 dark:bg-gray-600 shadow-lg text-white-900">
@@ -77,14 +76,11 @@
       {% set access_to_approve_comment = has_permission(section, Access.A, EntityType.COMMENT) %}
 
       <!-- prettier-ignore -->
-      <div class="text-sm dark:text-white p-3">
-        Comments:
-      </div>
       {% for comment in interpretation.comments if not comment.is_deleted and not comment.parent_id %}
         <!-- prettier-ignore -->
-        <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-          <div class="flex flex-row pb-3 p-3 w-2/3 md:w-full">
-            <div class="vote-block flex flex-col m-5 mr-8 justify-center items-center">
+        <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 my-3 md:m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+          <div class="flex flex-row pb-3 md:p-3 md:w-full">
+            <div class="vote-block flex flex-col mt-5 ml-1 mr-2 md:m-5 md:mr-8 md:justify-center items-center">
 
               <div class="vote-button cursor-pointer" data-vote-for="comment" data-entity-id="{{ comment.id }}" data-positive="true">
                 <svg class="w-6 h-6 select-none {% if comment.current_user_vote %} stroke-green-500 {% endif %} " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" > <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /> </svg>
@@ -164,7 +160,7 @@
 
                   <div class="relative">
                     <button type="button" data-popover-target="popover-comment" data-accordion-target="#accordion-collapse-body-{{loop.index}}" aria-expanded="false" aria-controls="accordion-collapse-body-1" class="relative space-x-0.5 flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6  shrink-0"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /> </svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /> </svg>
                     </button>
                     <div data-popover id="popover-comment" role="tooltip" class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800">
                       <div class="px-3 py-2">
@@ -176,14 +172,14 @@
               </div>
             </dt>
           </div>
-          <div class="p-5 m-3">
+          <div class="md:p-5 md:m-3 border-none">
             {% for child in comment.children if not child.is_deleted %}
-              <div class="p-5 mb-2 flex justify-between items-end bg-slate-100 dark:bg-slate-600 rounded-lg">
+              <div class="p-2 md:p-5 mb-2 flex justify-between items-end bg-slate-100 dark:bg-slate-600 rounded-lg">
                 <div class="ql-snow">
                   <div class="inline-block mb-4 ql-editor-readonly !p-0">
                     {{display_inline_elements(child.text)|safe}}
                   </div>
-                  <span>
+                  <span class="flex justify-between w-full border-t-2 border-white pt-2">
                     <div>
                       by
                       <span class="text-blue-500">
@@ -191,36 +187,36 @@
                       </span>
                       {{child.created_at.strftime('%B %d, %Y')}}
                     </div>
+                    {% if child.user_id == current_user.id %}
+                      <div class="relative ml-2">
+                        <button id="delete_comment_btn" data-popover-target="popover-delete" data-comment-id="{{child.id}}" type="button" data-modal-target="delete_comment_modal" data-modal-toggle="delete_comment_modal" class="space-x-0.5 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /> </svg>
+                        </button>
+                        <div data-popover id="popover-delete" role="tooltip" class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800">
+                          <div class="px-3 py-2">
+                            <p>Delete this comment</p>
+                          </div>
+                          <div data-popper-arrow></div>
+                        </div>
+                      </div>
+                    {% endif %}
                   </span>
                 </div>
-                {% if child.user_id == current_user.id %}
-                  <div class="relative ml-2">
-                    <button id="delete_comment_btn" data-popover-target="popover-delete" data-comment-id="{{child.id}}" type="button" data-modal-target="delete_comment_modal" data-modal-toggle="delete_comment_modal" class="space-x-0.5 flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /> </svg>
-                    </button>
-                    <div data-popover id="popover-delete" role="tooltip" class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800">
-                      <div class="px-3 py-2">
-                        <p>Delete this comment</p>
-                      </div>
-                      <div data-popper-arrow></div>
-                    </div>
-                  </div>
-                {% endif %}
               </div>
             {% endfor %}
           </div>
           <div id="accordion-collapse-body-{{loop.index}}" class="hidden" aria-labelledby="accordion-collapse-heading-1">
-            <div class="p-5 border-t border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+            <div class="p-1 md:p-5 border-t border-gray-200 dark:border-gray-700 dark:bg-gray-900">
               <form
                 action="{{ url_for('book.create_comment', book_id=book.id, interpretation_id=interpretation.id) }}"
                 method="post"
-                class="prevent-submit-on-enter flex flex-col bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700"
+                class="prevent-submit-on-enter flex flex-col bg-white dark:bg-gray-900 max-w-full p-1 md:p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 md:m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700"
               >
                 {{ form_hidden_tag() }}
                 <input type="hidden" name="parent_id" id="parent_id" value="{{comment.id}}" />
-                <div class="relative z-0 w-full group">
+                <div class="relative z-0 w-full group border-none">
                   <div class="mb-2">
-                    <label for="tags-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    <label for="tags-input" class="p-2 block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                       Comment
                     </label>
                     <input type="hidden" name="text" id="sub-comment-{{loop.index}}-text-input"/>
