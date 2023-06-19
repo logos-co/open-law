@@ -85,7 +85,7 @@ def verify():
 
     try:
         siwe_message.verify(
-            body["message"]["signature"],
+            body["signature"],
             provider=HTTPProvider(current_app.config["HTTP_PROVIDER_URL"]),
         )
 
