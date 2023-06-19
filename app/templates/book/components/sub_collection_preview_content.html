@@ -57,7 +57,7 @@
       </div>
       <!--Comments-->
       {% if not section.approved_comments %}
-      <p>No comments for current section</p>
+      <p class="italic text-sm">No comments for current section</p>
       {% else %}
       <div
         id="accordion-comments-collapse-{{loop.index}}"
@@ -188,7 +188,7 @@
 <!--Comments-->
 {% if not section.approved_comments %}
 <div class="mb-3">
-  <p>No comments for current section</p>
+  <p class="italic text-sm">No comments for current section</p>
 </div>
 {% else %}
 <!-- prettier-ignore -->
