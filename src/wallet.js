@@ -12,20 +12,20 @@ export function initWallet() {
   // connect to ethereum network and sign transactions with Metamask
 
   async function signInWithEthereum() {
-    if (!window.hasOwnProperty('ethereum')) {
-      let result = confirm(
-        "You don't have needed extension! Do you want to install it?",
-      );
-      localStorage.setItem('showExtensionAlert', 'false');
-      if (result) {
-        window.open('https://metamask.io/', '_blank');
-      }
-      return;
-    }
-    if (!window.hasOwnProperty('ethereum')) {
-      console.error('Required extension not found');
-      return;
-    }
+    // if (!window.hasOwnProperty('ethereum')) {
+    //   let result = confirm(
+    //     "You don't have needed extension! Do you want to install it?",
+    //   );
+    //   localStorage.setItem('showExtensionAlert', 'false');
+    //   if (result) {
+    //     window.open('https://metamask.io/', '_blank');
+    //   }
+    //   return;
+    // }
+    // if (!window.hasOwnProperty('ethereum')) {
+    //   console.error('Required extension not found');
+    //   return;
+    // }
     const options = {
       injectProvider: false,
       communicationLayerPreference: 'webrtc',
