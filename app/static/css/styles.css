@@ -2225,6 +2225,11 @@ input:checked + .toggle-bg {
   --tw-gradient-to-position:  ;
 }
 
+.to-yellow-500 {
+  --tw-gradient-to: #C27803 var(--tw-gradient-to-position);
+  --tw-gradient-to-position:  ;
+}
+
 .fill-yellow-300 {
   fill: #FACA15;
 }
