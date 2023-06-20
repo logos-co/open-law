@@ -1,7 +1,7 @@
 <dl class=" bg-white dark:bg-gray-900 max-w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
   <dt class="flex mb-4">
     {% if not hide_fork_label and book.original_book %}
-      <a href="{{ url_for('book.collection_view', book_id=book.original_book.id ) }}" target="_blank" class="flex pb-4">
+      <a href="{{ url_for('book.collection_view', book_id=book.original_book.id ) }}" target="_blank" class="flex">
         <span class="flex items-center space-x-1 mr-2 bg-fuchsia-400 dark:!text-black rounded text-center px-1">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /> </svg>
           <p>Fork</p>
@@ -12,17 +12,19 @@
       {% if not hide_contributing_label and book.user_id != current_user.id %}
         <span class="mr-2 bg-blue-400 dark:!text-black font-normal rounded text-center px-1">Contributing</span>
       {% endif %}
-      {{label or book.label}}
+      <span>
+        {{label or book.label}}
+      </span>
     </a>
   </dt>
   <dd
     class="flex flex-col md:flex-row text-gray-500 dark:text-gray-400"
   >
     {% if type(book) == m.BookVersion %}
-      {% set owner = book.book.owner %}
+      {% set updated_by = book.updated_by_user if book.updated_by else book.owner %}
       {% set updated_at = book.updated_at %}
     {% else %}
-      {% set owner = book.owner %}
+      {% set updated_by = book.active_version.updated_by_user if book.updated_by else book.owner %}
       {% set updated_at = book.active_version.updated_at %}
     {% endif %}
 
@@ -31,10 +33,10 @@
         <p class="text-sm">
           Last updated by
           <a
-            href="{{ url_for('user.profile',user_id=owner.id) }}"
-            class="text-blue-500 {% if owner.is_deleted %}line-through{% endif %}"
+            href="{{ url_for('user.profile',user_id=updated_by.id) }}"
+            class="text-blue-500 {% if updated_by.is_deleted %}line-through{% endif %}"
           >
-            {{owner.username}}
+            {{updated_by.username}}
           </a>
           on {{updated_at.strftime('%B %d, %Y')}}
         </p>

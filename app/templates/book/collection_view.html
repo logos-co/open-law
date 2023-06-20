@@ -15,7 +15,7 @@
   {% include 'book/modals/delete_sub_collection_modal.html' %}
   {% include 'book/modals/add_section_modal.html' %}
   {% include 'book/modals/delete_section_modal.html' %}
-{% else %}
+{% elif current_user.is_authenticated %}
   {% include 'book/modals/fork_version_modal.html' %}
 {% endif %}
 
