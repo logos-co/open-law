@@ -7,17 +7,19 @@
 {% block content %}
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-1">
   <!-- prettier-ignore -->
-  <div class="p-5 flex border-b-2 border-gray-200 border-solid dark:border-gray-700 text-gray-900 dark:text-white dark:divide-gray-700">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"> <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" /> </svg>
-      <h1 class="text-2xl font-extrabold dark:text-white ml-4">Notifications</h1>
-      <a href="{{url_for('notifications.mark_all_as_read')}}" type="button" class="{% if not current_user.active_notifications %}disabled{% endif %} ml-auto text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800">Mark all notifications as READ</a>
+  <div class=" items-center p-3 md:p-5 flex border-b-2 border-gray-200 border-solid dark:border-gray-700 text-gray-900 dark:text-white dark:divide-gray-700">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 md:w-8 md:h-8"> <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" /> </svg>
+      <h1 class="font-2 md:text-2xl font-extrabold dark:text-white ml-4">Notifications</h1>
+      <a href="{{url_for('notifications.mark_all_as_read')}}" type="button" class="{% if not current_user.active_notifications %}disabled{% endif %} ml-auto text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-xs md:text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800">Mark all <span class="hidden md:inline">notifications</span> as READ</a>
   </div>
-  {% if not current_user.notifications %}
+  {% if not notifications.total %}
   <p
-    class="hidden md:block text-l ml-4 w-1/2 mt-2 text-gray-500 text-center md:text-left dark:text-gray-400">
+    class="block text-l ml-4 md:w-1/2 mt-2 text-gray-500 text-center md:text-left dark:text-gray-400">
     You don't have notifications!
   </p>
-  {% endif %} {% for notification in notifications %}
+  {% endif %}
+  <!-- prettier-ignore -->
+  {% for notification in notifications %}
   <!-- prettier-ignore -->
   <dl class="bg-white dark:bg-gray-900 max-w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
       <dt class="mb-2"> <a class="flex flex-col pb-4 text-gray-500 {% if not notification.is_read %} text-blue-950 dark:text-white font-bold {% endif %}" href="{{url_for('notifications.mark_as_read',notification_id=notification.id)}}">{{notification.text}}</a> </dt>
