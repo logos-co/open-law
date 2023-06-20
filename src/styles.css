@@ -34,9 +34,6 @@
 .w-box {
   width: calc(100vw - 255px);
 }
-.mt-135 {
-  margin-top: 135px;
-}
 .disabled {
   pointer-events: none;
   cursor: default;
