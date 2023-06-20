@@ -29,6 +29,7 @@
     "siwe",
     "sortablejs",
     "sqlalchemy",
+    "subcollection",
     "tailwindcss",
     "upvoted",
     "viewonly",
@@ -37,18 +38,10 @@
     "wsgi",
     "wtforms"
   ],
-  "python.testing.unittestArgs": [
-    "-v",
-    "-s",
-    "./tests",
-    "-p",
-    "*test.py"
-  ],
+  "python.testing.unittestArgs": ["-v", "-s", "./tests", "-p", "*test.py"],
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
-  "python.testing.pytestArgs": [
-    "tests"
-  ],
+  "python.testing.pytestArgs": ["tests"],
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter"
   }

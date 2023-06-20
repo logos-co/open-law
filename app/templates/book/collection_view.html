@@ -121,22 +121,26 @@
   <!-- Here start book-preview on right side-->
   <div class="p-3 px-6 w-4/6 dark:text-white">
     <p class="text-xs mb-3">
-      {% if book.original_book %}
-        Forked by
-        <a href="{{url_for('user.profile',user_id=book.owner.id)}}" class="text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}" >
-          {{book.owner.username}}
-        </a>
-        from
-        <a href="{{ url_for('book.collection_view', book_id=book.original_book.id ) }}" target="_blank" class="text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}" >
-          {{book.original_book.owner.username}}/{{book.original_book.label}}
-        </a>
-      {% else %}
-        Created by
-        <a href="{{url_for('user.profile',user_id=book.owner.id)}}" class="text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}" >
-          {{book.owner.username}}
-        </a>
-      {% endif %}
-      on {{book.created_at.strftime('%B %d, %Y')}}. Last updated on
+      {% if book.original_book %} Forked by
+      <a
+        href="{{url_for('user.profile',user_id=book.owner.id)}}"
+        class="text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">
+        {{book.owner.username}}
+      </a>
+      from
+      <a
+        href="{{ url_for('book.collection_view', book_id=book.original_book.id ) }}"
+        target="_blank"
+        class="text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">
+        {{book.original_book.owner.username}}/{{book.original_book.label}}
+      </a>
+      {% else %} Created by
+      <a
+        href="{{url_for('user.profile',user_id=book.owner.id)}}"
+        class="text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">
+        {{book.owner.username}}
+      </a>
+      {% endif %} on {{book.created_at.strftime('%B %d, %Y')}}. Last updated on
       {{book.created_at.strftime('%B %d, %Y')}}
     </p>
 
@@ -147,7 +151,11 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /> </svg>
         Version: {{ version.semver.title() }}
       </p>
-      <button type="button" data-modal-target="fork-version-modal" data-modal-toggle="fork-version-modal" class="border-2 border-black focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2 dark:border-white dark:text-white  dark:focus:ring-white">
+      <button
+        type="button"
+        data-modal-target="fork-version-modal"
+        data-modal-toggle="fork-version-modal"
+        class="border-2 border-black focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2 dark:border-white dark:text-white dark:focus:ring-white">
         + Create a new fork
       </button>
     </div>
@@ -206,11 +214,11 @@
     {% else %}
     {% set children_collections = book.active_version.children_collections %}
     {% endif %} {% for collection in children_collections if not collection.is_root and not collection.is_deleted %}
-    <p class="my-3 underline break-words " id="collection-{{collection.label}}">
+    <p class="my-3 underline break-words" id="collection-{{collection.label}}">
       #{{collection.label}}
     </p>
     {% if not collection.active_sections and not collection.active_children %}
-    <p class="ml-3 my-3 italic text-sm">Collection is empty</p>
+    <p class="ml-3 my-3 italic text-sm">This collection is empty</p>
     {% endif %}
     {{recursive_render("book/components/sub_collection_preview_content.html",collection,book,version)|safe}}
     {% endfor %}
