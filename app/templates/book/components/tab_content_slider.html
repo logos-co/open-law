@@ -1,0 +1,86 @@
+<!-- prettier-ignore -->
+<div id="tab-content-slide" aria-label="Slider" class="w-full border-gray-200 dark:border-gray-700 h-screen md:hidden fixed top-16 left-0 z-40 transition-transform -translate-x-full bg-white border-r md:translate-x-0 dark:bg-gray-800 bg-opacity-0">
+    <div id="accordion-collapse" data-accordion="open" class="p-3 w-full border-r fixed inset-0 mt-16 overflow-y-scroll">
+      <!-- prettier-ignore -->
+        <div class="md:hidden w-full flex dark:text-white justify-between">
+        <!-- prettier-ignore -->
+        <svg data-drawer-target="tab-content-slide" data-drawer-toggle="tab-content-slide" aria-controls="Slider" class="w-6 h-6 rotate-90 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
+        <p>{{book.label}}</p>
+        <!-- prettier-ignore -->
+        <a href="{{ url_for('book.settings', book_id=book.id) }}" type="button" class="ml-2"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> </svg> </a>
+        </div>
+
+      {% if version %}
+        {% set children_collections = version.children_collections %}
+      {% else %}
+        {% set children_collections = book.active_version.children_collections %}
+      {% endif %}
+
+      {% for collection in children_collections if not collection.is_root and not collection.is_deleted %}
+        <div
+          {% if not collection.active_children and not collection.active_sections %}
+            id="empty-dnd-entity"
+          {% elif collection.active_children %}
+            {% if not version and has_permission(collection, Access.U) %}
+              data-dnd="dnd-sub-collection"
+            {% endif %}
+          {% elif collection.active_sections %}
+            {% if not version and has_permission(collection, Access.U) %}
+              id="draggableSectionItems"
+            {% endif %}
+          {% endif %}
+          data-entity-type="collection"
+          data-entity-id="{{collection.id}}"
+          class="filter {% if not version and not has_permission(collection, Access.U) %}denied{% endif %}"
+        >
+          <div
+            data-entity-type="collection"
+            data-entity-id="{{collection.id}}"
+            class="flex items-center justify-start font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400"
+          >
+            <button class="bg-inherit" type="button" data-accordion-target="#accordion-collapse-body-{{collection.id}}" aria-expanded="true" aria-controls="accordion-collapse-body-{{collection.id}}">
+            <!-- prettier-ignore -->
+            <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
+            </button>
+            <button href="#collection-{{collection.label}}" id="accordion-collapse-heading-{{collection.id}}" class="w-full text-black dark:text-white ">
+              <form id="rename-collection-label-form-{{collection.id}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" method="post" class="mb-0">
+                {{ form_hidden_tag() }}
+                <input class="w-full truncate bg-inherit border-none" value="{{collection.label}}" type="text" name="label" id="edit-collection-label-{{collection.id}}" placeholder="Collection label" required readonly/>
+                <button name="submit" type="submit"></button>
+              </form>
+            </button>
+          </div>
+          <svg id="dropdownCollectionContextButton{{collection.id}}" data-dropdown-toggle="dropdown" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 0 0" stroke-width="1.5" stroke="none" class="w-0 h-0"></svg>
+        </div>
+        <div data="collection-context-menu-{{collection.id}}" id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-800 border border-gray-800 dark:border-none dark:divide-gray-100 rounded-lg shadow dark:bg-gray-700">
+          {% if not version %}
+            {% include 'book/components/collection_context_menu.html' %}
+          {% endif %}
+        </div>
+        <!-- prettier-ignore -->
+        {% if collection.active_children %}
+        <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
+          {{recursive_render("book/components/sub_collection_tab_content.html",collection,book,version)|safe}}
+        </div>
+        {% elif collection.active_sections %}
+        <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
+          <div {% if not version and has_permission(collection, Access.U) %}id="draggableSectionItems"{% endif %} data-entity-id="{{collection.id}}" data-entity-type="collection" data-book-id="{{book.id}}" class="{% if not has_permission(collection, Access.U) %}filter{% endif %}">
+            {% for section in collection.active_sections %}
+              {% include 'book/components/section_tab_content.html' %}
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div
+          id="accordion-collapse-body-{{collection.id}}"
+          class="pl-6 pb-6 {% if not version and not has_permission(collection, Access.U) %}filter{% endif %}"
+          data-dnd="dnd-sub-collection"
+          data-book-id="{{book.id}}"
+          data-entity-type="collection"
+          data-entity-id="{{collection.id}}"
+          aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>

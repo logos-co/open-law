@@ -3,22 +3,70 @@
   <div>
   <div class="px-3 py-3 lg:px-5 lg:pl-3">
     <div class="flex items-center justify-between">
-      <div class="flex w-full items-center justify-between">
+      <div class="flex w-full items-center justify-start md:justify-between">
         <!-- prettier-ignore -->
-        <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+        <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="Sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
           <span class="sr-only">Open sidebar</span>
           <!-- prettier-ignore -->
           <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path> </svg>
         </button>
         <!-- prettier-ignore -->
-        <a href="/" class="flex ml-2 md:mr-24"> <img src="{{url_for('static',filename='img/logo.svg')}}" class="h-8 md:mr-3" alt="OpenLaw Logo" /> <span class="hidden md:inline-block self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white" >OpenLaw</span > </a>
-        <!-- prettier-ignore -->
-        <button data-drawer-target="logo-right-sidebar" data-drawer-toggle="logo-right-sidebar" aria-controls="logo-right-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-          <span class="sr-only">Open filters</span>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /> </svg>
-        </button>
+        <a href="/" class="flex ml-32 md:ml-2  md:mr-24"> <img src="{{url_for('static',filename='img/logo.svg')}}" class="h-8 md:mr-3" alt="OpenLaw Logo" /> <span class="hidden md:inline-block self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white" >OpenLaw</span > </a>
+          <!-- prettier-ignore -->
+          {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books' or selected_tab=='latest_interpretations' or selected_tab=='my_contributions' %}
+          <button id="dropdownDelayButton" data-dropdown-toggle="dropdownDelay" data-dropdown-delay="500" data-dropdown-trigger="hover" class="md:hidden text-white ml-auto bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+            Sort by
+            {{request.args.get('sort',"")}}
+            <!-- prettier-ignore -->
+            <svg class="w-4 h-4 ml-auto" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path> </svg>
+          </button>
 
-        {% include 'searchbar.html' %}
+          <!-- Dropdown menu -->
+          <!-- prettier-ignore -->
+          <div id="dropdownDelay" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDelayButton">
+              <!-- prettier-ignore -->
+              {% if selected_tab=='latest_interpretations' or selected_tab=='my_contributions' %}
+                <li>
+                  <a href="?sort=upvoted" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
+                    Most upvoted
+                  </a >
+                </li>
+              {% endif %}
+
+              {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books'%}
+                <li>
+                  <a href="?sort=favorited" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
+                    Most favorited
+                  </a>
+                </li>
+              {% endif %}
+
+              <li>
+                <a href="?sort=recent" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
+                  Most recent
+                </a >
+              </li>
+              {% if selected_tab=='latest_interpretations' or selected_tab=='my_contributions' %}
+                <li>
+                  <a href="?sort=commented" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
+                    Most comments
+                  </a >
+                </li>
+              {% endif %}
+
+              {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books'%}
+                <li>
+                  <a href="?sort=interpretations" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
+                    Most interpretations
+                  </a >
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+          {% endif %}
+          {% include 'sidebar.html' %}
+          {% include 'searchbar.html' %}
         <!-- prettier-ignore -->
         <button id="theme-toggle" type="button" class="md:block hidden md:ml-auto text-gray-500 dark:text-gray-400 hover:bg-gray-100 md:mr-2 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
           <!-- prettier-ignore -->
@@ -63,10 +111,7 @@
             <!-- prettier-ignore -->
             <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600" id="dropdown-user" >
                 <div class="px-4 py-3" role="none">
-                  <p class="text-center text-sm text-gray-900 dark:text-white" role="none"> {{current_user.username}} </p>
-                </div>
-                <div class="px-4 py-3" role="none">
-                  <a class="text-center text-sm text-gray-900 dark:text-white" role="none" href="{{ url_for('user.profile',user_id=current_user.id) }}"> View profile </a>
+                  <a href="{{ url_for('user.profile',user_id=current_user.id) }}" class="text-center text-sm text-gray-900 dark:text-white" role="none"> {{current_user.username}} </a>
                 </div>
                 <div class="px-4 py-3" role="none">
                   <a class="text-center text-sm text-gray-900 dark:text-white" role="none" href="{{ url_for('user.edit_profile') }}"> Edit profile </a>
@@ -88,7 +133,7 @@
   <!-- Dropdown menu -->
   <!--Those notification for now with dummy data-->
   <!-- prettier-ignore -->
-  <div id="dropdownNotification" class="shadow-md z-20 hidden w-screen bg-white divide-y divide-gray-100 rounded-lg dark:bg-gray-800 dark:divide-gray-700 border border-gray-600 dark:shadow-gray-600 md:w-1/2" aria-labelledby="dropdownNotificationButton">
+  <div id="dropdownNotification" class="shadow-md z-50 hidden w-screen bg-white divide-y divide-gray-100 rounded-lg dark:bg-gray-800 dark:divide-gray-700 border border-gray-600 dark:shadow-gray-600 md:w-1/2" aria-labelledby="dropdownNotificationButton">
       <div class="block px-4 py-2 font-medium text-center text-gray-700 rounded-t-lg bg-gray-50 dark:bg-gray-800 dark:text-white"> Notifications </div>
       <div class="divide-y divide-gray-100 dark:divide-gray-700">
         {% include 'notification.html' %}
@@ -103,7 +148,7 @@
 </div>
   <!-- Second top navbar -->
   <div
-    class="px-3 py-3 lg:px-5 lg:pl-3 border-t border-gray-200 dark:border-gray-700">
+    class="hidden md:block px-3 py-3 lg:px-5 lg:pl-3 border-t border-gray-200 dark:border-gray-700">
     <div class="flex items-center justify-between">
       <div class="flex w-full items-center justify-between">
         <ul class="flex font-medium items-center">
