@@ -209,12 +209,12 @@
     {% set children_collections = book.active_version.children_collections %}
     {% endif %} {% for collection in children_collections if not collection.is_root and not collection.is_deleted %}
     <p class="my-3 break-words border-b-2 pb-1 font-bold text-2xl text-justify" id="collection-{{collection.label}}">
-      #{{collection.label}}
+      # {{collection.label}}
     </p>
     {% if not collection.active_sections and not collection.active_children %}
     <p class="ml-3 my-3 italic text-sm">Collection is empty</p>
     {% endif %}
-    {{recursive_render("book/components/sub_collection_preview_content.html",collection,book,version)|safe}}
+    {{recursive_render("book/components/sub_collection_preview_content.html",collection,book,version,2)|safe}}
     {% endfor %}
   </div>
   <!-- prettier-ignore -->

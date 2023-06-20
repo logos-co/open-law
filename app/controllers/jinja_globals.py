@@ -79,9 +79,19 @@ def build_qa_url_using_interpretation(interpretation: m.Interpretation):
 
 # Using: {{ recursive_render("template.html", collection=collection, book=book) }}
 def recursive_render(
-    template: str, collection: m.Collection, book: m.Book, version: m.BookVersion = None
+    template: str,
+    collection: m.Collection,
+    book: m.Book,
+    version: m.BookVersion = None,
+    loop_index: int = 1,
 ):
-    return render_template(template, collection=collection, book=book, version=version)
+    return render_template(
+        template,
+        collection=collection,
+        book=book,
+        version=version,
+        loop_index=loop_index,
+    )
 
 
 # Using: {{ has_permission(entity=book, required_permissions=[Access.create]) }}
