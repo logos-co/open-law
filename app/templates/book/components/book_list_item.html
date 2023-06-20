@@ -21,7 +21,7 @@
     class="flex flex-col md:flex-row text-gray-500 dark:text-gray-400"
   >
     {% if type(book) == m.BookVersion %}
-      {% set updated_by = book.updated_by_user if book.updated_by else book.owner %}
+      {% set updated_by = book.updated_by_user if book.updated_by else book.book.owner %}
       {% set updated_at = book.updated_at %}
     {% else %}
       {% set updated_by = book.active_version.updated_by_user if book.updated_by else book.owner %}
