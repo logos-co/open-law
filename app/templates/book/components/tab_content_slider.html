@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
 <div id="tab-content-slide" aria-label="Slider" class="w-full border-gray-200 dark:border-gray-700 h-screen md:hidden fixed top-16 left-0 z-40 transition-transform -translate-x-full bg-white border-r md:translate-x-0 dark:bg-gray-800 bg-opacity-0">
-    <div id="accordion-collapse" data-accordion="open" class="p-3 w-full border-r fixed inset-0 mt-16 overflow-y-scroll">
+    <div id="accordion-collapse-mobile" data-accordion="open" class="p-3 w-full border-r fixed inset-0 mt-16 overflow-y-scroll">
       <!-- prettier-ignore -->
         <div class="md:hidden w-full flex dark:text-white justify-between">
         <!-- prettier-ignore -->
@@ -38,11 +38,11 @@
             data-entity-id="{{collection.id}}"
             class="flex items-center justify-start font-medium text-left text-gray-500 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:text-gray-400"
           >
-            <button class="bg-inherit" type="button" data-accordion-target="#accordion-collapse-body-{{collection.id}}" aria-expanded="true" aria-controls="accordion-collapse-body-{{collection.id}}">
+            <button class="bg-inherit" type="button" data-accordion-target="#accordion-collapse-mobile-body-{{collection.id}}" aria-expanded="true" aria-controls="accordion-collapse-mobile-body-{{collection.id}}">
             <!-- prettier-ignore -->
             <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
             </button>
-            <button href="#collection-{{collection.label}}" id="accordion-collapse-heading-{{collection.id}}" class="w-full text-black dark:text-white ">
+            <button href="#collection-{{collection.label}}" id="accordion-collapse-mobile-heading-{{collection.id}}" class="w-full text-black dark:text-white ">
               <form id="rename-collection-label-form-{{collection.id}}" data-book-id='{{book.id}}' data-collection-id="{{collection.id}}" method="post" class="mb-0">
                 {{ form_hidden_tag() }}
                 <input class="w-full truncate bg-inherit border-none" value="{{collection.label}}" type="text" name="label" id="edit-collection-label-{{collection.id}}" placeholder="Collection label" required readonly/>
@@ -59,11 +59,11 @@
         </div>
         <!-- prettier-ignore -->
         {% if collection.active_children %}
-        <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
+        <div id="accordion-collapse-mobile-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-mobile-heading-{{collection.id}}" >
           {{recursive_render("book/components/sub_collection_tab_content.html",collection,book,version)|safe}}
         </div>
         {% elif collection.active_sections %}
-        <div id="accordion-collapse-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
+        <div id="accordion-collapse-mobile-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-mobile-heading-{{collection.id}}" >
           <div {% if not version and has_permission(collection, Access.U) %}id="draggableSectionItems"{% endif %} data-entity-id="{{collection.id}}" data-entity-type="collection" data-book-id="{{book.id}}" class="{% if not has_permission(collection, Access.U) %}filter{% endif %}">
             {% for section in collection.active_sections %}
               {% include 'book/components/section_tab_content.html' %}
@@ -72,13 +72,13 @@
         </div>
         {% else %}
         <div
-          id="accordion-collapse-body-{{collection.id}}"
+          id="accordion-collapse-mobile-body-{{collection.id}}"
           class="pl-6 pb-6 {% if not version and not has_permission(collection, Access.U) %}filter{% endif %}"
           data-dnd="dnd-sub-collection"
           data-book-id="{{book.id}}"
           data-entity-type="collection"
           data-entity-id="{{collection.id}}"
-          aria-labelledby="accordion-collapse-heading-{{collection.id}}" >
+          aria-labelledby="accordion-collapse-mobile-heading-{{collection.id}}" >
         </div>
         {% endif %}
       {% endfor %}
