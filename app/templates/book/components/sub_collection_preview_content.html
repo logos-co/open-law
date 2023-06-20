@@ -3,12 +3,12 @@
 <!-- prettier-ignore -->
 {% for sub_collection in collection.active_children if not sub_collection.is_deleted%}
 
-<p class="my-3 font-bold  text-justify" id="collection-{{sub_collection.label}}">
+<p class="my-3 font-bold text-justify" id="collection-{{sub_collection.label}}">
   {{ "#" * loop_index }} {{sub_collection.label}}
 </p>
 <!-- prettier-ignore -->
 {% if not sub_collection.active_sections and not sub_collection.active_children%}
-  <p class="ml-3 my-3 italic text-sm">This sub collection is empty</p>
+<p class="ml-3 my-3 italic text-sm">This sub collection is empty</p>
 {% endif %}
 <!-- prettier-ignore -->
 {% if sub_collection.active_children %}
@@ -26,7 +26,7 @@
         </p>
       </a>
       {% if not section.active_interpretations %}
-        <p class="ml-3 my-3 italic text-sm">This section is empty</p>
+      <p class="ml-3 my-3 italic text-sm">This section is empty</p>
       {% else %}
       <div class="ql-snow">
         <div class="dark:text-white h-30 ql-editor-readonly !px-0">
