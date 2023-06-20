@@ -2,16 +2,17 @@
 <!-- if collection has sub_collection make for loop for it -->
 <!-- prettier-ignore -->
 {% for sub_collection in collection.active_children if not sub_collection.is_deleted%}
-<p class="my-3" id="collection-{{sub_collection.label}}">
-  ##{{sub_collection.label}}
+
+<p class="my-3 font-bold  text-justify" id="collection-{{sub_collection.label}}">
+  {{ "#" * loop_index }} {{sub_collection.label}}
 </p>
 <!-- prettier-ignore -->
 {% if not sub_collection.active_sections and not sub_collection.active_children%}
-<p class="ml-3 my-3 italic text-sm">This subcollection is empty</p>
+  <p class="ml-3 my-3 italic text-sm">This sub collection is empty</p>
 {% endif %}
 <!-- prettier-ignore -->
 {% if sub_collection.active_children %}
-{{recursive_render("book/components/sub_collection_preview_content.html",sub_collection,book)|safe}}
+{{recursive_render("book/components/sub_collection_preview_content.html",sub_collection,book, loop_index=loop_index + 1)|safe}}
 {% else %}
 <!-- prettier-ignore -->
 {% for section in sub_collection.active_sections %}
@@ -20,9 +21,12 @@
     <div class="flex w-full mb-1 dark:text-gray-100 flex-col">
       <!-- prettier-ignore -->
       <a href="{{url_for('book.interpretation_view', book_id=book.id, section_id=section.copy_of or section.id)}}">
-      <p id="section-{{section.label}}" class="my-3">{{ section.label }}</p></a>
+        <p id="section-{{section.label}}" class="my-3 underline break-words text-justify">
+          {{ section.label }}
+        </p>
+      </a>
       {% if not section.active_interpretations %}
-      <p class="ml-3 my-3 italic text-sm">This section is empty</p>
+        <p class="ml-3 my-3 italic text-sm">This section is empty</p>
       {% else %}
       <div class="ql-snow">
         <div class="dark:text-white h-30 ql-editor-readonly !px-0">
@@ -50,14 +54,14 @@
           class="hover:dark:text-white hover:text-black focus:ring-2 rounded-full font-medium text-sm p-2.5 text-center inline-flex items-center dark:hover:text-white"
           data-link="{{ build_qa_url(section.approved_interpretation) }}">
           <!-- prettier-ignore -->
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" > <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+          {% include 'icons/share_btn.html' %}
         </button>
         <!-- prettier-ignore -->
         <div id="tooltip-click" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"> Link copied! <div class="tooltip-arrow" data-popper-arrow></div> </div>
       </div>
       <!--Comments-->
       {% if not section.approved_comments %}
-      <p>No comments for current section</p>
+      <p class="italic text-sm">No comments for current section</p>
       {% else %}
       <div
         id="accordion-comments-collapse-{{loop.index}}"
@@ -113,7 +117,7 @@
                   class="hover:dark:text-white hover:text-black focus:ring-2 rounded-full font-medium text-sm p-2.5 text-center inline-flex items-center dark:hover:text-white"
                   data-link="{{ build_qa_url(section.approved_interpretation) }}">
                   <!-- prettier-ignore -->
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+                  {% include 'icons/share_btn.html' %}
                 </button>
                 <div
                   id="tooltip-click"
@@ -173,7 +177,7 @@
       class="hover:dark:text-white hover:text-black focus:ring-2 rounded-full font-medium text-sm p-2.5 text-center inline-flex items-center dark:hover:text-white"
       data-link="{{ build_qa_url(section.approved_interpretation) }}">
       <!-- prettier-ignore -->
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+      {% include 'icons/share_btn.html' %}
     </button>
     <div
       id="tooltip-click"
@@ -188,7 +192,7 @@
 <!--Comments-->
 {% if not section.approved_comments %}
 <div class="mb-3">
-  <p>No comments for current section</p>
+  <p class="italic text-sm">No comments for current section</p>
 </div>
 {% else %}
 <!-- prettier-ignore -->
@@ -237,7 +241,7 @@
               class="hover:dark:text-white hover:text-black focus:ring-2 rounded-full font-medium text-sm p-2.5 text-center inline-flex items-center dark:hover:text-white"
               data-link="{{ build_qa_url(section.approved_interpretation) }}">
               <!-- prettier-ignore -->
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" /> </svg>
+              {% include 'icons/share_btn.html' %}
             </button>
             <div id="tooltip-click" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"> Link copied! <div class="tooltip-arrow" data-popper-arrow></div> </div>
           </div>

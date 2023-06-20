@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
 from sqlalchemy import and_, or_, func, distinct
@@ -152,10 +154,16 @@ def edit(book_id: int):
         tags = form.tags.data or ""
         set_book_tags(book, tags)
 
+        active_version: m.BookVersion = book.active_version
+        active_version.updated_at = datetime.now()
+        active_version.updated_by = current_user.id
+
         book.label = label
         book.about = about
         log(log.INFO, "Update Book: [%s]", book)
         book.save()
+        log(log.INFO, "Update version updated at: [%s]", active_version)
+        active_version.save()
         flash("Success!", "success")
         return redirect(url_for("book.collection_view", book_id=book_id))
     else:

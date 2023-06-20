@@ -79,6 +79,9 @@ def create_app(environment="development"):
         has_permission,
     )
 
+    app.jinja_env.globals["type"] = type
+    app.jinja_env.globals["m"] = m
+
     app.jinja_env.globals["Access"] = m.Permission.Access
     app.jinja_env.globals["EntityType"] = m.Permission.Entity
 
