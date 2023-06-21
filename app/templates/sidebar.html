@@ -61,14 +61,16 @@
         </a>
       </li>
       {% endif %}
-       <li>
-        <a
-          href="https://join.status.im/b/https://{{config.SERVER_NAME}}{{request.path}}"
-          class="md:hidden flex justify-center text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5"
-        >
-          <span>Connect wallet</span>
-        </a>
-      </li>
+      {% if not current_user.is_authenticated %}
+        <li>
+          <a
+            href="https://join.status.im/b/https://{{config.SERVER_NAME}}{{request.path}}"
+            class="md:hidden flex justify-center text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5"
+          >
+            <span>Connect wallet</span>
+          </a>
+        </li>
+      {% endif %}
        <li>
         <a href="{{ url_for('search.search_interpretations',q='')}}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
           <!-- prettier-ignore -->
