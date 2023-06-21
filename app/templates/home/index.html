@@ -7,18 +7,17 @@
   <!-- prettier-ignore -->
   <h1 class="hidden md:inline font-extrabold text-lg dark:text-white ml-4 mt-5">Open Common Law</h1>
   <div class="flex justify-between">
-  <p
-    class="hidden md:block text-sm ml-4 w-1/2 text-gray-500 text-center md:text-left dark:text-gray-400">
-    An open-source law hosting platform that allows online communities to easily
-    create, collaborate, and publish their own body of law.
-  </p>
-  {% if current_user.is_authenticated %}
-  {% include 'book/components/header_buttons.html' %}
-  {% endif %}
+    <p
+      class="hidden md:block text-sm ml-4 w-1/2 text-gray-500 text-center md:text-left dark:text-gray-400">
+      An open-source law hosting platform that allows online communities to
+      easily create, collaborate, and publish their own body of law.
+    </p>
+    {% if current_user.is_authenticated %} {% include
+    'book/components/header_buttons.html' %} {% endif %}
   </div>
   <!-- prettier-ignore -->
   <ul class="flex md:flex-wrap -mb-px text-xs md:text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
-    <li class="mr-2 w-full text-xs md:w-auto" role="presentation">
+    <li class="mr-2 w-full md:w-auto" role="presentation">
       <!-- prettier-ignore -->
       <button class="inline-flex py-4 md:p-4 rounded-t-lg items-center" id="last-interpretations-tab" data-tabs-target="#last-interpretations" type="button" role="tab" aria-controls="last-interpretations" aria-selected="false"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /> </svg>
         Latest Interpretations
@@ -105,7 +104,7 @@
 {% endif %}
   </div>
   <!-- prettier-ignore -->
-<div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="explore-books" role="tabpanel" aria-labelledby="explore-books-tab">
+  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="explore-books" role="tabpanel" aria-labelledby="explore-books-tab">
   </div>
 </div>
 {% endblock %}

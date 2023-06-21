@@ -1,12 +1,12 @@
 <!-- prettier-ignore -->
-<ol class="inline-flex items-center overflow-x-scroll md:overflow-auto p-0">
+<ol class="flex items-center overflow-x-scroll md:overflow-auto p-0">
     {% for breadcrumb in local_breadcrumbs if breadcrumb.type != "MyBookList" and breadcrumb.type != "AuthorBookList" %}
         {% if breadcrumb.type != 'Splitter' %}
-            <li class="inline-flex items-center align-middle justify-center">
+            <li class="flex max-w-[50%] items-center align-middle justify-start ">
                 {% if not loop.index==local_breadcrumbs|length-1 %}
-                    <a href="{{ breadcrumb.url }}" class="inline-flex text-xs font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" data-tooltip-target="breadcrumb-{{loop.index}}-tooltip" data-tooltip-placement="bottom">
+                    <a href="{{ breadcrumb.url }}" class=" truncate text-xs font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" data-tooltip-target="breadcrumb-{{loop.index}}-tooltip" data-tooltip-placement="bottom">
                 {% else %}
-                    <span class="inline-flex items-center text-xs font-bold text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" data-tooltip-target="breadcrumb-{{loop.index}}-tooltip" data-tooltip-placement="bottom">
+                    <span class="truncate items-start text-xs font-bold text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" data-tooltip-target="breadcrumb-{{loop.index}}-tooltip" data-tooltip-placement="bottom">
                 {% endif %}
 
                 {#
