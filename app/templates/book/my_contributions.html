@@ -6,7 +6,8 @@
 
 {% block content %}
 <div
-  class="pt-1 relative sm:rounded-lg mt-1 h-box flex">
+  class="pt-1 relative sm:rounded-lg mt-1 h-box flex"
+>
   {% if not current_user.is_authenticated %}
   <!-- prettier-ignore -->
   <div class="mx-auto my-auto h-full w-full p-2">
@@ -27,8 +28,12 @@
         {% if current_user.is_authenticated %}
           {% include 'book/components/header_buttons.html' %}
         {% endif %}
-      </div>
+    </div>
   {% endif %}
+
+  <div class="md:hidden flex justify-end border-b py-3 px-4 border-gray-200 dark:border-gray-700">
+    {% include 'book/components/sort_by_btn.html' %}
+  </div>
 
 
   {% for interpretation in interpretations %}

@@ -30,6 +30,11 @@
     </div>
   {% endif %}
 
+  <div class="md:hidden flex justify-between border-b py-3 px-4 border-gray-200 dark:border-gray-700">
+    {% include 'book/components/new_book_btn.html'  %}
+    {% include 'book/components/sort_by_btn.html' %}
+  </div>
+
   {% for book in books %}
     {% include 'book/components/book_list_item.html' %}
   {% endfor %}

@@ -1,5 +1,6 @@
 import os
 import warnings
+from uuid import uuid4
 
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -81,6 +82,8 @@ def create_app(environment="development"):
 
     app.jinja_env.globals["type"] = type
     app.jinja_env.globals["m"] = m
+    app.jinja_env.globals["str"] = str
+    app.jinja_env.globals["uuid"] = uuid4
 
     app.jinja_env.globals["Access"] = m.Permission.Access
     app.jinja_env.globals["EntityType"] = m.Permission.Entity

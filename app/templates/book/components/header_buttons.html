@@ -2,64 +2,12 @@
   <ul class="flex font-medium">
     <li>
       {% if not selected_tab=='my_contributions' %}
-      <!-- prettier-ignore -->
-      <button type="button" data-modal-target="add-book-modal" data-modal-toggle="add-book-modal" class="text-white ml-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /> </svg>
-        New book
-      </button>
+        <!-- prettier-ignore -->
+        {% include 'book/components/new_book_btn.html'  %}
       {% endif %}
     </li>
     <li>
-      <!-- prettier-ignore -->
-      <button id="dropdownDelayButton" data-dropdown-toggle="dropdownDelay" data-dropdown-delay="500" data-dropdown-trigger="hover" class="text-white ml-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-        Sort by
-        {{request.args.get('sort',"")}}
-        <!-- prettier-ignore -->
-        <svg class="w-4 h-4 ml-auto" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path> </svg>
-      </button>
-
-      <!-- Dropdown menu -->
-      <!-- prettier-ignore -->
-      <div id="dropdownDelay" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDelayButton">
-          <!-- prettier-ignore -->
-          {% if selected_tab=='latest_interpretations' or selected_tab=='my_contributions' %}
-            <li>
-              <a href="?sort=upvoted" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
-                Most upvoted
-              </a >
-            </li>
-          {% endif %}
-
-          {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books'%}
-            <li>
-              <a href="?sort=favorited" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
-                Most favorited
-              </a>
-            </li>
-          {% endif %}
-
-          <li>
-            <a href="?sort=recent" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
-              Most recent
-            </a >
-          </li>
-          {% if selected_tab=='latest_interpretations' or selected_tab=='my_contributions' %}
-            <li>
-              <a href="?sort=commented" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
-                Most comments
-              </a >
-            </li>
-          {% endif %}
-
-          {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books'%}
-            <li>
-              <a href="?sort=interpretations" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
-                Most interpretations
-              </a >
-            </li>
-          {% endif %}
-        </ul>
-      </div>
+      {% include 'book/components/sort_by_btn.html'  %}
     </li>
   </ul>
 </div>

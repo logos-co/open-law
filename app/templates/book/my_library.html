@@ -22,27 +22,7 @@
   </div>
   {% endif %} {% if current_user.is_authenticated and not books.total %}
   <div class="mx-auto my-auto h-full w-full p-2">
-    <button
-      type="button"
-      data-modal-target="add-book-modal"
-      data-modal-toggle="add-book-modal"
-      class="w-full h-full text-black dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-100 font-medium rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center border border-gray-200 dark:border-gray-700">
-      <div class="my-auto flex items-center space-x-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="w-6 h-6">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 4.5v15m7.5-7.5h-15" />
-        </svg>
-        <span>New book</span>
-      </div>
-    </button>
+    {% include 'book/components/new_book_btn.html'  %}
   </div>
   {% endif %}
 
@@ -56,8 +36,17 @@
       {% endif %}
     </div>
   </div>
-  {% endif %} {% for book in books if not book.is_deleted %} {% include
-  'book/components/book_list_item.html' %} {% endfor %}
+  {% endif %}
+
+  <div class="md:hidden flex justify-between border-b py-3 px-4 border-gray-200 dark:border-gray-700">
+    {% include 'book/components/new_book_btn.html' %}
+    {% include 'book/components/sort_by_btn.html' %}
+  </div>
+
+  <!-- prettier-ignore -->
+  {% for book in books if not book.is_deleted %}
+    {% include 'book/components/book_list_item.html' %}
+  {% endfor %}
 
   <!-- prettier-ignore -->
   {% if current_user.is_authenticated and page.pages > 1 %}
