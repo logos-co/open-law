@@ -82,7 +82,9 @@
           <!-- prettier-ignore -->
           {% for interpretation in section.active_interpretations %}
             <!-- prettier-ignore -->
-            {% include 'book/components/interpretation_list_item.html' %}
+            {% with show_control_btns=True %}
+              {% include 'book/components/interpretation_list_item.html' %}
+            {% endwith %}
           {% endfor %}
 
           <span class="approved-interpretation-id hidden">
