@@ -6,7 +6,8 @@
 
 {% block content %}
 <div
-  class="pt-1 relative sm:rounded-lg mt-1 h-box flex">
+  class="pt-1 relative sm:rounded-lg mt-1 h-box flex"
+>
   {% if not current_user.is_authenticated %}
   <!-- prettier-ignore -->
   <div class="mx-auto my-auto h-full w-full p-2">
@@ -22,19 +23,21 @@
   <!-- prettier-ignore -->
   <div class="flex flex-col w-full">
   {% if current_user.is_authenticated and interpretations.total %}
-    <div class="flex justify-between mt-1">
-    <h1 class=" text-lg font-extrabold dark:text-white ml-4">My contributions</h1>
-    {% if current_user.is_authenticated %}
-    {% include 'book/components/header_buttons.html' %}
-    {% endif %}
+    <div class="flex justify-between items-center mt-1">
+      <h1 class="text-[2rem] font-extrabold dark:text-white ml-4">My contributions</h1>
+        {% if current_user.is_authenticated %}
+          {% include 'book/components/header_buttons.html' %}
+        {% endif %}
     </div>
   {% endif %}
 
+  <div class="md:hidden flex justify-end border-b py-3 px-4 border-gray-200 dark:border-gray-700">
+    {% include 'book/components/sort_by_btn.html' %}
+  </div>
+
 
   {% for interpretation in interpretations %}
-    {% with show_control_btns=True %}
-      {% include 'book/components/interpretation_list_item.html' %}
-    {% endwith %}
+    {% include 'book/components/interpretation_list_item.html' %}
   {% endfor %}
 
 

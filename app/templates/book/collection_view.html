@@ -128,28 +128,39 @@
     {% include 'book/components/tab_content_slider.html' %}
   </div>
   <!-- Here start book-preview on right side-->
-  <div class="w-full p-3 px-6 md:w-4/6 dark:text-white">
+  <div class="md:hidden w-full p-3 px-4 md:w-4/6 dark:text-white dark:bg-gray-500 bg-gray-400 {% if book.active_version.active_children %} hidden {% endif %}">
+    <div class="text-center text-xs ">
+      Editing a book is not available on mobile (yet). Please browse from your desktop to access all the features.
+    </div>
+  </div>
+
+  <div class="w-full p-3 px-6 md:w-4/6 dark:text-white {% if not book.active_version.active_children %} hidden {% endif %} md:inline">
     <p class="text-xs mb-3">
-      {% if book.original_book %} Forked by
+      {% if book.original_book %}
+        Forked by
+        <a
+          href="{{url_for('user.profile',user_id=book.owner.id)}}"
+          class="text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">
+          {{book.owner.username}}
+        </a>
+        from
+        <a
+          href="{{ url_for('book.collection_view', book_id=book.original_book.id ) }}"
+          target="_blank"
+          class="text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">
+          {{book.original_book.owner.username}}/{{book.original_book.label}}
+        </a>
+      {% else %}
+      Created by
       <a
         href="{{url_for('user.profile',user_id=book.owner.id)}}"
         class="text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">
         {{book.owner.username}}
       </a>
-      from
-      <a
-        href="{{ url_for('book.collection_view', book_id=book.original_book.id ) }}"
-        target="_blank"
-        class="text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">
-        {{book.original_book.owner.username}}/{{book.original_book.label}}
-      </a>
-      {% else %} Created by
-      <a
-        href="{{url_for('user.profile',user_id=book.owner.id)}}"
-        class="text-blue-500 {% if book.owner.is_deleted %}line-through{% endif %}">
-        {{book.owner.username}}
-      </a>
-      {% endif %} on {{book.created_at.strftime('%B %d, %Y')}}. Last updated on
+      {% endif %}
+      on
+      {{book.created_at.strftime('%B %d, %Y')}}
+      . Last updated on
       {{book.created_at.strftime('%B %d, %Y')}}
     </p>
 
@@ -170,8 +181,8 @@
     </div>
     {% endif %}
 
-    <div class="flex justify-between item-center mb-5">
-      <h1 class="text-20 hidden md:inline font-extrabold dark:text-white">
+    <div class="flex flex-row justify-between item-center mb-5">
+      <h1 class="text-[2rem] hidden md:inline font-extrabold dark:text-white">
         {{book.label}}
       </h1>
       <div class="ml-auto flex">
@@ -201,6 +212,7 @@
         </div>
       </div>
     </div>
+
 
     <div class="gap-1 flex flex-wrap mb-5">
       {% for tag in book.tags %}
@@ -234,10 +246,12 @@
     {{recursive_render("book/components/sub_collection_preview_content.html",collection,book,version,2)|safe}}
     {% endfor %}
   </div>
+
+
   <!-- prettier-ignore -->
   {% endblock %}
 
   <!-- prettier-ignore -->
   {% block scripts %}
-{% endblock %}
+  {% endblock %}
 </div>

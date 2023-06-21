@@ -11,60 +11,13 @@
           <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path> </svg>
         </button>
         <!-- prettier-ignore -->
-        <a href="/" class="flex ml-32 md:ml-2  md:mr-24"> <img src="{{url_for('static',filename='img/logo.svg')}}" class="h-8 md:mr-3" alt="OpenLaw Logo" /> <span class="hidden md:inline-block self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white" >OpenLaw</span > </a>
+        <a href="/" class="flex ml-32 md:ml-2  md:mr-24">
+          <img src="{{url_for('static',filename='img/logo.svg')}}" class="h-8 md:mr-3" alt="OpenLaw Logo" />
+          <span class="hidden md:inline-block self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white" >
+            OpenLaw
+          </span >
+        </a>
           <!-- prettier-ignore -->
-          {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books' or selected_tab=='latest_interpretations' or selected_tab=='my_contributions' %}
-          <button id="dropdownDelayButton" data-dropdown-toggle="dropdownDelay" data-dropdown-delay="500" data-dropdown-trigger="hover" class="md:hidden text-white ml-auto bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-            Sort by
-            {{request.args.get('sort',"")}}
-            <!-- prettier-ignore -->
-            <svg class="w-4 h-4 ml-auto" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path> </svg>
-          </button>
-
-          <!-- Dropdown menu -->
-          <!-- prettier-ignore -->
-          <div id="dropdownDelay" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDelayButton">
-              <!-- prettier-ignore -->
-              {% if selected_tab=='latest_interpretations' or selected_tab=='my_contributions' %}
-                <li>
-                  <a href="?sort=upvoted" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
-                    Most upvoted
-                  </a >
-                </li>
-              {% endif %}
-
-              {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books'%}
-                <li>
-                  <a href="?sort=favorited" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
-                    Most favorited
-                  </a>
-                </li>
-              {% endif %}
-
-              <li>
-                <a href="?sort=recent" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
-                  Most recent
-                </a >
-              </li>
-              {% if selected_tab=='latest_interpretations' or selected_tab=='my_contributions' %}
-                <li>
-                  <a href="?sort=commented" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
-                    Most comments
-                  </a >
-                </li>
-              {% endif %}
-
-              {% if selected_tab=='my_library' or selected_tab=='favorite_books' or selected_tab=='explore_books'%}
-                <li>
-                  <a href="?sort=interpretations" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" >
-                    Most interpretations
-                  </a >
-                </li>
-              {% endif %}
-            </ul>
-          </div>
-          {% endif %}
           {% include 'sidebar.html' %}
           {% include 'searchbar.html' %}
         <!-- prettier-ignore -->
@@ -76,19 +29,16 @@
 
         <!-- prettier-ignore -->
         {% if not current_user.is_authenticated %}
-        <button
-          id="connectWalletBtn"
-          type="button"
-          class="md:flex hidden text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-          Connect wallet
-        </button>
-        <a
-          href="https://join.status.im/b/{{request.base_url}}"
-          class="md:hidden flex text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-        >
-          Connect wallet
-        </a>
-        {% endif %} {% if current_user.is_authenticated %}
+          <button
+            id="connectWalletBtn"
+            type="button"
+            class="md:flex hidden text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+            Connect wallet
+          </button>
+        {% endif %}
+
+        <!-- prettier-ignore -->
+        {% if current_user.is_authenticated %}
         <div class="md:flex hidden">
           <div class="items-center md:ml-3 hidden md:flex">
             <!-- prettier-ignore -->

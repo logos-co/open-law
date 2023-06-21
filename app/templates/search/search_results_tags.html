@@ -5,11 +5,11 @@
 {% block right_sidebar %}
 {% endblock %}
 {% block content %}
-<div class="pt-10 md:pt-0 border-b border-gray-200 dark:border-gray-700">
+<div class="!pt-5  md:pt-0 border-b border-gray-200 dark:border-gray-700">
   <!-- prettier-ignore -->
-  <h1 class="hidden md:inline font-extrabold text-lg dark:text-white ml-4 mt-5">Search results</h1>
+  <h1 class="hidden md:inline font-extrabold text-[2rem] dark:text-white ml-4 mt-5">Search results</h1>
   <!-- prettier-ignore -->
-  <p class="hidden md:block text-sm ml-4 w-1/2 text-gray-500 text-center md:text-left dark:text-gray-400"> Search result for {{query}} </p>
+  <p class="hidden md:block text-sm mt-5 ml-4 w-1/2 text-gray-500 text-center md:text-left dark:text-gray-400"> Search result for <span class="font-bold dark:text-white">{{query}}</span> </p>
   <!-- prettier-ignore -->
   <p class="hidden md:block text-sm ml-4 w-1/2 text-gray-500 text-center md:text-left dark:text-gray-400"> Showing {{count}} results </p>
   <!-- prettier-ignore -->
@@ -48,8 +48,8 @@
 <h1 class="hidden md:inline font-extrabold text-lg dark:text-white ml-4 mt-5">No {{query}} in any tag, try another search query.</h1>
 {% else %}
 {% for tag in tags %}
- <dl class="bg-white dark:bg-gray-900 w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-      <dt><a class="flex flex-col" href="{{url_for('search.tag_search_interpretations',tag_name=tag.name)}}">{{tag.name}}</a></dt>
+ <dl class="bg-white dark:bg-gray-900 w-full p-5 text-gray-900 divide-y my-1 divide-gray-200 dark:text-white dark:divide-gray-700 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+    <dt><a class="flex flex-col" href="{{url_for('search.tag_search_interpretations',tag_name=tag.name)}}">{{tag.name}}</a></dt>
   </dl>
 {% endfor %}
 <!-- prettier-ignore -->
