@@ -32,7 +32,9 @@
 
 
   {% for interpretation in interpretations %}
-    {% include 'book/components/interpretation_list_item.html' %}
+    {% with show_control_btns=True %}
+      {% include 'book/components/interpretation_list_item.html' %}
+    {% endwith %}
   {% endfor %}
 
 

@@ -1,5 +1,5 @@
 <dl class=" bg-white dark:bg-gray-900 max-w-full p-5 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 my-3 md:m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
-  <dt class="flex mb-4">
+  <dt class="flex mb-4 overflow-x-scroll pb-1">
     {% if not hide_fork_label and book.original_book %}
       <a href="{{ url_for('book.collection_view', book_id=book.original_book.id ) }}" target="_blank" class="flex">
         <span class="flex items-center space-x-1 mr-2 bg-fuchsia-400 dark:!text-black rounded text-center px-1">
@@ -12,7 +12,7 @@
       {% if not hide_contributing_label and book.user_id != current_user.id %}
         <span class="mr-2 bg-blue-400 dark:!text-black font-normal rounded text-center px-1">Contributing</span>
       {% endif %}
-      <span>
+      <span class="truncate overflow-x-scroll">
         {{label or book.label}}
       </span>
     </a>

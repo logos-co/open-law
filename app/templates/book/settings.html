@@ -20,7 +20,7 @@
 
 <div class="p-3 pl-4">
   <div class="flex justify-between ml-4 mb-3">
-    <h1 class="text-2xl font-extrabold dark:text-white">{{book.label}}</h1>
+    <h1 class="text-2xl font-extrabold dark:text-white break-words">{{book.label}}</h1>
   </div>
   <div class="mb-1">
     <!-- prettier-ignore -->
@@ -54,8 +54,8 @@
 </div>
 <div id="myTabContent">
   <!-- prettier-ignore -->
-  <div class="hidden pl-4 rounded-lg bg-inherit" id="settings" role="tabpanel" aria-labelledby="settings-tab">
-    <form action="{{ url_for('book.edit', book_id=book.id) }}" method="post" class="prevent-submit-on-enter settings-form mb-0 flex flex-col space-y-2 w-1/2">
+  <div class="hidden p-4 rounded-lg bg-inherit" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+    <form action="{{ url_for('book.edit', book_id=book.id) }}" method="post" class="prevent-submit-on-enter settings-form mb-0 flex flex-col space-y-2 md:w-1/2">
       {{ form_hidden_tag() }}
       <input value="{{book.id}}" type="text" name="book_id" id="book_id" class="hidden" placeholder="Book id" required>
       <div>
@@ -136,7 +136,7 @@
                   <form action="{{ url_for('book.edit_contributor_role', book_id=book.id) }}" method="post" class="mb-0 flex">
                     {{ form_hidden_tag() }}
                     <input type="hidden" name="user_id" id="user_id" value="{{ contributor.user_id }}" />
-                    <select id="role" name="role" data-user-id="{{ contributor.user.id }}" class="mr-2 contributor-role-select block w-1/2 py-1.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
+                    <select id="role" name="role" data-user-id="{{ contributor.user.id }}" class="mr-2 contributor-role-select block md:w-1/2 py-1.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
                       {% for role in roles if role.value %}
                         <option
                           {% if contributor.role == role %} selected {% endif %}
