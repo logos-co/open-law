@@ -12,7 +12,7 @@
   <div class="w-full lg:w-4/12 px-4 mx-auto pt-6">
     <div>
       <!-- prettier-ignore -->
-      <div class="w-full lg:max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow-xl dark:bg-gray-800">
+      <div class="w-full lg:max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg dark:bg-gray-800">
         {% if current_user.is_activated %}
           <!-- prettier-ignore -->
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Edit your profile</h2>
@@ -52,11 +52,11 @@
             </div>
             <button type="submit" class="w-full px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save changes</button>
           </form>
-          <div class="flex">
+          <div class="flex md:flex-row flex-col md:space-x-2">
             <form action="{{ url_for('user.delete_avatar') }}" class="mb-0" method="POST">
-              <button type="submit" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Delete Avatar</button>
+              <button type="submit" class="w-full text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Delete Avatar</button>
             </form>
-            <button type="button" data-modal-target="delete_profile_modal" data-modal-toggle="delete_profile_modal" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Delete you profile</button>
+            <button type="button" data-modal-target="delete_profile_modal" data-modal-toggle="delete_profile_modal" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Delete you profile</button>
           </div>
         </div>
     </div>
