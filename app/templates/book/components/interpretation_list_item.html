@@ -1,7 +1,7 @@
 <dl class="bg-white dark:bg-gray-900 max-w-full p-3 text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 my-3 md:m-3 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
   <div class="flex flex-row pb-3 p-3 pt-0 w-full">
     <div class="vote-block flex flex-col m-5 mr-8 pt-2 md:pt-0 justify-start md:justify-center items-center">
-      {% if not hide_vote_btns %}
+      {% if not hide_vote_btns and current_user.is_authenticated %}
         <div class="vote-button cursor-pointer" data-vote-for="interpretation" data-entity-id="{{ interpretation.id }}" data-positive="true">
           <svg class="w-6 h-6 select-none
           {% if interpretation.current_user_vote %}
@@ -15,7 +15,7 @@
         {{ interpretation.vote_count }}
       </span>
 
-      {% if not hide_vote_btns %}
+      {% if not hide_vote_btns and current_user.is_authenticated %}
         <div class="vote-button cursor-pointer" data-vote-for="interpretation" data-entity-id="{{ interpretation.id }}" data-positive="false">
           <svg class="w-6 h-6 select-none
           {% if interpretation.current_user_vote == False %}
