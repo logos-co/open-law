@@ -14,21 +14,22 @@ export function initWallet() {
   const origin = window.location.origin;
   // connect to ethereum network and sign transactions with Metamask
 
-  async function signInWithEthereum() {
+  async function signInWithEthereum(isMobile: boolean) {
     if (!window.hasOwnProperty('ethereum')) {
-      let result = confirm(
-        "You don't have needed extension! Do you want to install it?",
-      );
-      localStorage.setItem('showExtensionAlert', 'false');
-      if (result) {
-        window.open('https://metamask.io/', '_blank');
+      if (isMobile) {
+        location.replace(`https://join.status.im/b/https://${domain}`);
+      } else {
+        let result = confirm(
+          "You don't have needed extension! Do you want to install it?",
+        );
+        localStorage.setItem('showExtensionAlert', 'false');
+        if (result) {
+          window.open('https://metamask.io/', '_blank');
+        }
       }
       return;
     }
-    if (!window.hasOwnProperty('ethereum')) {
-      console.error('Required extension not found');
-      return;
-    }
+
     const eOwner: IEthereumOwner = window as any;
     const provider = new ethers.providers.Web3Provider(eOwner.ethereum);
     const signer = provider.getSigner();
@@ -69,7 +70,8 @@ export function initWallet() {
   if (connectWalletBtns) {
     connectWalletBtns.forEach(btn =>
       btn.addEventListener('click', () => {
-        signInWithEthereum();
+        const isMobile = !!btn.getAttribute('data-is-mobile');
+        signInWithEthereum(isMobile);
       }),
     );
   }
