@@ -22,8 +22,8 @@
   <!-- prettier-ignore -->
   <div class="flex flex-col w-full">
   {% if current_user.is_authenticated and books.total>0  %}
-    <div class="flex justify-between mt-1">
-    <h1 class=" text-lg font-extrabold dark:text-white ml-4">Fav books</h1>
+    <div class="flex justify-between items-center mt-1">
+    <h1 class=" text-[2rem] font-extrabold dark:text-white ml-4">Fav books</h1>
     {% if current_user.is_authenticated %}
     {% include 'book/components/header_buttons.html' %}
     {% endif %}

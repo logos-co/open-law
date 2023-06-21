@@ -76,19 +76,16 @@
 
         <!-- prettier-ignore -->
         {% if not current_user.is_authenticated %}
-        <button
-          id="connectWalletBtn"
-          type="button"
-          class="md:flex hidden text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-          Connect wallet
-        </button>
-        <a
-          href="https://join.status.im/b/{{request.base_url}}"
-          class="md:hidden flex text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-        >
-          Connect wallet
-        </a>
-        {% endif %} {% if current_user.is_authenticated %}
+          <button
+            id="connectWalletBtn"
+            type="button"
+            class="md:flex hidden text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+            Connect wallet
+          </button>
+        {% endif %}
+
+        <!-- prettier-ignore -->
+        {% if current_user.is_authenticated %}
         <div class="md:flex hidden">
           <div class="items-center md:ml-3 hidden md:flex">
             <!-- prettier-ignore -->

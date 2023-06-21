@@ -34,6 +34,7 @@ def search_interpretations():
         ),
         page=pagination,
         count=count,
+        search_query=q,
     )
 
 
@@ -87,6 +88,7 @@ def search_books():
         books=books.paginate(page=pagination.page, per_page=pagination.per_page),
         page=pagination,
         count=count,
+        search_query=q,
     )
 
 
@@ -119,6 +121,7 @@ def search_users():
         users=users.paginate(page=pagination.page, per_page=pagination.per_page),
         page=pagination,
         count=count,
+        search_query=q,
     )
 
 
@@ -142,6 +145,7 @@ def search_tags():
         tags=tags.paginate(page=pagination.page, per_page=pagination.per_page),
         page=pagination,
         count=count,
+        search_query=q,
     )
 
 

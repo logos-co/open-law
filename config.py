@@ -13,6 +13,7 @@ class BaseConfig(BaseSettings):
 
     ENV: str = "base"
     APP_NAME: str = "Open Law"
+    SERVER_NAME: str = "open-law.net"
     SECRET_KEY: str
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
     WTF_CSRF_ENABLED: bool = False

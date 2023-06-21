@@ -49,10 +49,11 @@
   <!-- prettier-ignore -->
   {% if current_user.is_authenticated and books.total %}
   <div class="flex flex-col w-full">
-    <div class="flex justify-between mt-1">
-      <h1 class="text-lg font-extrabold dark:text-white ml-4">My library</h1>
-      {% if current_user.is_authenticated %} {% include
-      'book/components/header_buttons.html' %} {% endif %}
+    <div class="flex justify-between items-center mt-1">
+      <h1 class="text-[2rem] font-extrabold dark:text-white ml-4">My library</h1>
+      {% if current_user.is_authenticated %}
+        {% include 'book/components/header_buttons.html' %}
+      {% endif %}
     </div>
   </div>
   {% endif %} {% for book in books if not book.is_deleted %} {% include
