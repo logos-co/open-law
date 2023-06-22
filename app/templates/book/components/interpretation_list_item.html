@@ -9,6 +9,10 @@
           {% endif %}
           " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" > <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /> </svg>
         </div>
+      {% elif not current_user.is_authenticated %}
+        <button class="cursor-pointer" data-modal-target="connect_wallet_alert_modal" data-modal-toggle="connect_wallet_alert_modal">
+          <svg class="w-6 h-6 select-none " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" > <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /> </svg>
+        </button>
       {% endif %}
 
       <span class="vote-count text-3xl select-none {% if interpretation.vote_count < 0 %} text-red-500 {% elif interpretation.vote_count > 0 %} text-green-500 {% endif %} " >
@@ -23,6 +27,10 @@
           {% endif %}
           " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /> </svg>
         </div>
+      {% elif not current_user.is_authenticated %}
+        <button class="cursor-pointer" data-modal-target="connect_wallet_alert_modal" data-modal-toggle="connect_wallet_alert_modal">
+          <svg class="w-6 h-6 select-none " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /> </svg>
+        </button>
       {% endif %}
 
       {% if show_control_btns %}

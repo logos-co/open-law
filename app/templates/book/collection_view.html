@@ -129,6 +129,8 @@
   </div>
   <!-- Here start book-preview on right side-->
   <div
+    <<<<<<<
+    HEAD
     class="md:hidden w-full p-3 px-4 md:w-4/6 dark:text-white dark:bg-gray-500 bg-gray-400 {% if book.active_version.active_children %} hidden {% endif %}">
     <div class="text-center text-xs">
       Editing a book is not available on mobile (yet). Please browse from your
@@ -138,6 +140,19 @@
 
   <div
     class="w-full p-3 px-6 md:w-4/6 dark:text-white {% if not book.active_version.active_children %} hidden {% endif %} md:inline">
+    ======= class="md:hidden w-full p-3 px-4 md:w-4/6 dark:text-white
+    dark:bg-gray-500 bg-gray-400 1 {% if
+    book.active_version.root_collection.active_children %} hidden {% endif %} "
+    >
+    <div class="text-center text-xs">
+      Editing a book is not available on mobile (yet). Please browse from your
+      desktop to access all the features.
+    </div>
+  </div>
+
+  <div
+    class="w-full p-3 px-6 md:w-4/6 dark:text-white {% if not book.active_version.root_collection.active_children %} hidden {% endif %} md:inline">
+    >>>>>>> develop
     <p class="text-xs mb-3">
       {% if book.original_book %} Forked by
       <a
