@@ -11,7 +11,7 @@
   {% if not current_user.is_authenticated %}
   <!-- prettier-ignore -->
   <div class="mx-auto my-auto h-full w-full p-2">
-  <button type="button" id="connectWalletBtn" class="w-full h-full text-black dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-100 font-medium rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center border border-gray-200 dark:border-gray-700"><div class="my-auto"></div> Connect you wallet to see your contributions! </div></button></div>
+  <button type="button" id="connectWalletBtn" class="w-full h-full text-black dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-100 font-medium rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center border border-gray-200 dark:border-gray-700"><div class="my-auto"></div> Connect your wallet to see your contributions! </div></button></div>
   <!-- prettier-ignore -->
   {% endif %}
   {% if current_user.is_authenticated and not interpretations.total %}
