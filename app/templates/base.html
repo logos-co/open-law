@@ -82,19 +82,20 @@
     {% endwith %}
 
     {% block body %}
+      {% if current_user.is_authenticated %}
+        {% include 'book/modals/add_book_modal.html' %}
+      {% endif %}
+      {% include 'auth/connect_wallet_alert_modal.html' %}
 
-    {% if current_user.is_authenticated %}
-      {% include 'book/modals/add_book_modal.html' %}
-    {% endif %}
-    {% include 'auth/connect_wallet_alert_modal.html' %}
+      <!-- prettier-ignore -->
+      <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript" defer></script>
 
-    <!-- prettier-ignore -->
-    <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript" defer></script>
+      <div class="p-0 mt-16 md:mt-135 h-auto">
+        <!-- Main Content -->
+        {% block content %}{% endblock %}
+      </div>
 
-    <div class="p-0 mt-16 md:mt-135 h-auto">
-      <!-- Main Content -->
-      {% block content %}{% endblock %}
-    </div>
+      <footer class="w-full h-12"></footer>
     {% endblock %}
     <!-- scripts -->
     {% block scripts %} {% endblock %}
