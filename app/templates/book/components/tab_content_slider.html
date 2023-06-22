@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
-<div id="tab-content-slide" aria-label="Slider" class="w-full border-gray-200 dark:border-gray-700 h-screen md:hidden fixed top-16 left-0 z-40 transition-transform -translate-x-full bg-white border-r md:translate-x-0 dark:bg-gray-800 bg-opacity-0">
-  <div id="accordion-collapse-mobile" data-accordion="open" class="p-3 w-full border-r fixed inset-0 mt-16 overflow-y-scroll">
+<div id="tab-content-slide" aria-label="Slider" class="w-screen break-words border-gray-200 dark:border-gray-700 h-full md:hidden fixed top-16 left-0 z-40 transition-transform -translate-x-full bg-white border-r md:translate-x-0 dark:bg-gray-800 bg-opacity-0">
+  <div id="accordion-collapse-mobile" data-accordion="open" class="p-3 w-11/12 border-r fixed inset-0 mt-16 overflow-y-scroll">
     <!-- prettier-ignore -->
       <div class="md:hidden w-full flex dark:text-white justify-between">
         <!-- prettier-ignore -->
@@ -11,9 +11,7 @@
       </div>
 
       <div
-        class="md:hidden w-full mt-3 p-3 px-4 md:w-4/6 dark:text-white dark:bg-gray-500 bg-gray-400
-          {% if book.active_version.root_collection.active_children %} hidden {% endif %}
-        "
+        class="md:hidden w-full mt-3 p-3 px-4 md:w-4/6 dark:text-white dark:bg-gray-500 bg-gray-400"
       >
         <div class="text-center text-xs ">
           Editing a book is not available on mobile (yet). Please browse from your desktop to access all the features.
@@ -28,17 +26,6 @@
 
       {% for collection in children_collections if not collection.is_root and not collection.is_deleted %}
         <div
-          {% if not collection.active_children and not collection.active_sections %}
-            id="empty-dnd-entity"
-          {% elif collection.active_children %}
-            {% if not version and has_permission(collection, Access.U) %}
-              data-dnd="dnd-sub-collection"
-            {% endif %}
-          {% elif collection.active_sections %}
-            {% if not version and has_permission(collection, Access.U) %}
-              id="draggableSectionItems"
-            {% endif %}
-          {% endif %}
           data-entity-type="collection"
           data-entity-id="{{collection.id}}"
           class="filter {% if not version and not has_permission(collection, Access.U) %}denied{% endif %}"
@@ -70,11 +57,11 @@
         <!-- prettier-ignore -->
         {% if collection.active_children %}
         <div id="accordion-collapse-mobile-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-mobile-heading-{{collection.id}}" >
-          {{recursive_render("book/components/sub_collection_tab_content.html",collection,book,version)|safe}}
+          {{recursive_render("book/components/sub_collection_tab_content_mobile.html",collection,book,version)|safe}}
         </div>
         {% elif collection.active_sections %}
         <div id="accordion-collapse-mobile-body-{{collection.id}}" class="hidden" aria-labelledby="accordion-collapse-mobile-heading-{{collection.id}}" >
-          <div {% if not version and has_permission(collection, Access.U) %}id="draggableSectionItems"{% endif %} data-entity-id="{{collection.id}}" data-entity-type="collection" data-book-id="{{book.id}}" class="{% if not has_permission(collection, Access.U) %}filter{% endif %}">
+          <div data-entity-id="{{collection.id}}" data-entity-type="collection" data-book-id="{{book.id}}" class="{% if not has_permission(collection, Access.U) %}filter{% endif %}">
             {% for section in collection.active_sections %}
               {% include 'book/components/section_tab_content.html' %}
             {% endfor %}
@@ -84,7 +71,6 @@
         <div
           id="accordion-collapse-mobile-body-{{collection.id}}"
           class="pl-6 pb-6 {% if not version and not has_permission(collection, Access.U) %}filter{% endif %}"
-          data-dnd="dnd-sub-collection"
           data-book-id="{{book.id}}"
           data-entity-type="collection"
           data-entity-id="{{collection.id}}"

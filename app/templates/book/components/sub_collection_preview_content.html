@@ -3,7 +3,9 @@
 <!-- prettier-ignore -->
 {% for sub_collection in collection.active_children if not sub_collection.is_deleted%}
 
-<p class="my-3 font-bold text-justify" id="collection-{{sub_collection.label}}">
+<p
+  class="my-3 font-bold text-justify break-words"
+  id="collection-{{sub_collection.label}}">
   {{ "#" * loop_index }} {{sub_collection.label}}
 </p>
 <!-- prettier-ignore -->
