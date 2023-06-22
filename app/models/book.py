@@ -148,3 +148,7 @@ class Book(BaseModel):
         )
 
         return interpretations
+
+    @property
+    def contributors_users(self):
+        return [contributors.user for contributors in self.contributors]
