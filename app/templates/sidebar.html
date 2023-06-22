@@ -26,12 +26,6 @@
             <a href="{{ url_for('user.profile',user_id=current_user.id) }}" class="ml-2">{{ current_user.username }}</a>
           </span>
         </li>
-        <li class="md:hidden">
-          <a href="{{ url_for('user.edit_profile') }}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-            <!-- prettier-ignore -->
-            <span >Edit profile</span>
-          </a>
-        </li>
         <li class="md:hidden" id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification" >
           <!-- prettier-ignore -->
           <span class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" >
@@ -82,7 +76,15 @@
           <span>Search</span>
         </a>
       </li>
+      {% if current_user.is_authenticated %}
       <li class="md:hidden">
+          <a href="{{ url_for('user.edit_profile') }}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+            <!-- prettier-ignore -->
+            <span >Edit profile</span>
+          </a>
+        </li>
+      <li class="md:hidden">
+      {% endif %}
         <div id="theme-toggle" class="absolute bottom-14 left-3 cursor-pointer flex items-center mt-2  p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
           <button type="button" class=" text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm">
             <!-- prettier-ignore -->
