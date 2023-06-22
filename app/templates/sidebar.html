@@ -45,7 +45,18 @@
           </span>
         </li>
       {% endif %}
-      {% if current_user.is_authenticated %}
+      {% if not current_user.is_authenticated %}
+        <li>
+
+          <button
+            id="connectWalletBtn"
+            type="button"
+            data-is-mobile="true"
+            class="md:hidden flex justify-center w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5">
+            Connect wallet
+          </button>
+        </li>
+      {% endif %}
       <li>
         <a href="{{ url_for('book.my_library') }}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
           <!-- prettier-ignore -->
@@ -64,19 +75,7 @@
           <span>Favorite Books</span>
         </a>
       </li>
-      {% endif %}
-      {% if not current_user.is_authenticated %}
-        <li>
 
-          <button
-            id="connectWalletBtn"
-            type="button"
-            data-is-mobile="true"
-            class="md:hidden flex justify-center w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5">
-            Connect wallet
-          </button>
-        </li>
-      {% endif %}
        <li>
         <a href="{{ url_for('search.search_interpretations',q='')}}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
           <!-- prettier-ignore -->

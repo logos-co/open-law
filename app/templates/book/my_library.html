@@ -22,7 +22,7 @@
   </div>
   {% endif %} {% if current_user.is_authenticated and not books.total %}
   <div class="mx-auto my-auto h-full w-full p-2">
-    {% include 'book/components/new_book_btn.html'  %}
+    {% include 'book/components/new_book_btn.html' %}
   </div>
   {% endif %}
 
@@ -30,18 +30,19 @@
   {% if current_user.is_authenticated and books.total %}
   <div class="flex flex-col w-full">
     <div class="flex justify-between items-center mt-1">
-      <h1 class="text-[2rem] font-extrabold dark:text-white ml-4">My library</h1>
-      {% if current_user.is_authenticated %}
-        {% include 'book/components/header_buttons.html' %}
-      {% endif %}
+      <h1 class="text-[2rem] font-extrabold dark:text-white ml-4">
+        My library
+      </h1>
+      {% if current_user.is_authenticated %} {% include
+      'book/components/header_buttons.html' %} {% endif %}
     </div>
   </div>
-  {% endif %}
-
-  <div class="md:hidden flex justify-between border-b py-3 px-4 border-gray-200 dark:border-gray-700">
-    {% include 'book/components/new_book_btn.html' %}
-    {% include 'book/components/sort_by_btn.html' %}
+  <div
+    class="md:hidden flex justify-between border-b py-3 px-4 border-gray-200 dark:border-gray-700">
+    {% include 'book/components/new_book_btn.html' %} {% include
+    'book/components/sort_by_btn.html' %}
   </div>
+  {% endif %}
 
   <!-- prettier-ignore -->
   {% for book in books if not book.is_deleted %}

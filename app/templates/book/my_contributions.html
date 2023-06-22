@@ -29,11 +29,12 @@
           {% include 'book/components/header_buttons.html' %}
         {% endif %}
     </div>
-  {% endif %}
-
-  <div class="md:hidden flex justify-end border-b py-3 px-4 border-gray-200 dark:border-gray-700">
+      <div class="md:hidden flex justify-end border-b py-3 px-4 border-gray-200 dark:border-gray-700">
     {% include 'book/components/sort_by_btn.html' %}
   </div>
+  {% endif %}
+
+
 
 
   {% for interpretation in interpretations %}
