@@ -48,7 +48,7 @@
 <div id="myTabContent">
   <!-- prettier-ignore -->
   <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="library" role="tabpanel" aria-labelledby="library-tab">
-    {% for book in user.books if not book.is_deleted %}
+    {% for book in books %}
       {% include 'book/components/book_list_item.html' %}
     {% endfor %}
   </div>

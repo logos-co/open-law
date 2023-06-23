@@ -9,7 +9,7 @@
       </a>
     {% endif %}
     <a class="flex font-bold text-base" href="{{url_for('book.collection_view',book_id=book.id)}}">
-      {% if not hide_contributing_label and book.user_id != current_user.id %}
+      {% if not hide_contributing_label and book.user_id != current_user.id and current_user in book.contributors_users %}
         <span class="mr-2 bg-blue-400 dark:!text-black font-normal rounded text-center px-1">Contributing</span>
       {% endif %}
       <span class="truncate overflow-x-scroll">

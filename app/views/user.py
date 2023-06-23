@@ -71,11 +71,25 @@ def profile(user_id: int):
     interpretations: m.Interpretation = m.Interpretation.query.filter_by(
         user_id=user_id
     )
+    books: m.Interpretation = (
+        db.session.query(
+            m.Book,
+        )
+        .join(m.BookContributor, m.BookContributor.book_id == m.Book.id, full=True)
+        .filter(
+            or_(
+                m.Book.user_id == user_id,
+                m.BookContributor.user_id == user_id,
+            ),
+            m.Book.is_deleted == False,  # noqa: E712
+        )
+    ).all()
+
     if not user:
         log(log.ERROR, "Not found user by id : [%s]", user_id)
         flash("Cannot find user data", "danger")
     return render_template(
-        "user/profile.html", user=user, interpretations=interpretations
+        "user/profile.html", user=user, interpretations=interpretations, books=books
     )
 
 
