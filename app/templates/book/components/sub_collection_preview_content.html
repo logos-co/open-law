@@ -146,7 +146,9 @@
     {% for section in collection.active_sections %}
 <a
   href="{{url_for('book.interpretation_view', book_id=book.id, section_id=section.copy_of or section.id)}}">
-  <p id="section-{{section.label}}" class="my-3">{{ section.label }}</p>
+  <p id="section-{{section.label}}" class="my-3 underline">
+    {{ section.label }}
+  </p>
 </a>
 {% if not section.active_interpretations %}
 <p class="ml-3 my-3 italic text-sm">This section is empty</p>
