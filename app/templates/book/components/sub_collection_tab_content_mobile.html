@@ -17,7 +17,7 @@
   <!-- prettier-ignore -->
     {% for sub_collection in collection.active_children if not sub_collection.is_deleted%}
       <div
-        id="accordion-nested-collapse"
+        id="accordion-nested-collapse-mobile"
         data-accordion="open"
         data-entity-id="{{sub_collection.id}}"
         data-entity-type="sub_collection"
@@ -28,14 +28,14 @@
           <button
             class="bg-inherit"
             type="button"
-            data-accordion-target="#accordion-nested-collapse-body-{{sub_collection.parent.id}}-{{sub_collection.id}}"
+            data-accordion-target="#accordion-nested-collapse-mobile-body-{{sub_collection.parent.id}}-{{sub_collection.id}}"
             aria-expanded="true"
-            aria-controls="accordion-nested-collapse-body-{{sub_collection.parent.id}}-{{sub_collection.id}}">
+            aria-controls="accordion-nested-collapse-mobile-body-{{sub_collection.parent.id}}-{{sub_collection.id}}">
             <!-- prettier-ignore -->
             <svg data-accordion-icon class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
           </button>
           <!-- prettier-ignore -->
-          <button href="#collection-{{sub_collection.label}}" id="accordion-nested-collapse-heading-{{sub_collection.parent.id}}-{{sub_collection.id}}" class="w-full text-black dark:text-white">
+          <button href="#collection-{{sub_collection.label}}" id="accordion-nested-collapse-mobile-heading-{{sub_collection.parent.id}}-{{sub_collection.id}}" class="w-full text-black dark:text-white">
             <form id="rename-sub-collection-label-form-{{sub_collection.id}}" data-book-id="{{book.id}}" data-collection-id="{{collection.id}}" data-sub-collection-id="{{sub_collection.id}}" method="post" class="mb-0">
               {{ form_hidden_tag() }}
               <!-- prettier-ignore -->
@@ -53,9 +53,9 @@
           {% endif %}
         </div>
         <!-- prettier-ignore -->
-        <div id="accordion-nested-collapse-body-{{sub_collection.parent.id}}-{{sub_collection.id}}" class="hidden pl-6 pb-1" aria-labelledby="accordion-nested-collapse-heading-{{sub_collection.id}}">
+        <div id="accordion-nested-collapse-mobile-body-{{sub_collection.parent.id}}-{{sub_collection.id}}" class="hidden pl-6 pb-1" aria-labelledby="accordion-nested-collapse-mobile-heading-{{sub_collection.id}}">
           {% if sub_collection.active_children %}
-            {{recursive_render("book/components/sub_collection_tab_content.html",sub_collection,book,version)|safe}}
+            {{recursive_render("book/components/sub_collection_tab_content_mobile.html",sub_collection,book,version)|safe}}
           {% elif sub_collection.active_sections  %}
             <div data-entity-id="{{sub_collection.id}}" data-entity-type="sub_collection" data-book-id="{{book.id}}" class="{% if not has_permission(collection, Access.U) %}filter{% endif %}">
               <!-- here comes for loop for all section in this sub_collection-->
