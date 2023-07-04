@@ -25,6 +25,11 @@ services:
       - db
     ports:
       - '127.0.0.1:${LOCAL_WEB_PORT:-8000}:${LOCAL_WEB_PORT:-8000}'
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${LOCAL_WEB_PORT:-8000}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   db_data:

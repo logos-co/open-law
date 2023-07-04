@@ -1,13 +1,16 @@
 import os
+import logging
 import warnings
 from uuid import uuid4
 
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from werkzeug.exceptions import HTTPException
 from flask_migrate import Migrate
 from flask_admin import Admin
+from sqlalchemy.sql import text
+from healthcheck import HealthCheck
 
 from app.logger import log
 
@@ -15,7 +18,6 @@ from app.logger import log
 login_manager = LoginManager()
 db = SQLAlchemy()
 migration = Migrate()
-
 
 def create_app(environment="development"):
     from config import config
@@ -36,6 +38,18 @@ def create_app(environment="development"):
 
     # Instantiate app.
     app = Flask(__name__)
+    app.logger.setLevel(logging.DEBUG)
+
+    # Add healthcheck
+    def db_available():
+        try:
+            db.session.execute(text('SELECT 1'))
+        except Exception as e:
+            return False, str(e)
+        return True, 'database is ok'
+
+    health = HealthCheck(app, '/health')
+    health.add_check(db_available)
 
     # Set app config.
     env = os.environ.get("APP_ENV", environment)
